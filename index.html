@@ -381,7 +381,7 @@
     <section class="grid">
 
       <!-- GYM -->
-      <div class="card span6" data-poster="assets/gym.jpg">
+      <div class="card span6" style="--poster:url('assets/gym.jpg');">
         <a class="cardlink" href="gym.html" aria-label="Gym Packs"></a>
         <div class="media">
           <video muted playsinline preload="metadata" poster="assets/gym.jpg">
@@ -400,7 +400,7 @@
       </div>
 
       <!-- LOCK-IN -->
-      <div class="card span6" data-poster="assets/lockin.jpg">
+      <div class="card span6" style="--poster:url('assets/lockin.jpg');">
         <a class="cardlink" href="lock-in.html" aria-label="Lock-In Packs"></a>
         <div class="media">
           <video muted playsinline preload="metadata" poster="assets/lockin.jpg">
@@ -419,7 +419,7 @@
       </div>
 
       <!-- WORK -->
-      <div class="card span4" data-poster="assets/work.jpg">
+      <div class="card span4" style="--poster:url('assets/work.jpg');">
         <a class="cardlink" href="work.html" aria-label="Work Packs"></a>
         <div class="media">
           <video muted playsinline preload="metadata" poster="assets/work.jpg">
@@ -438,7 +438,7 @@
       </div>
 
       <!-- GAMING -->
-      <div class="card span4" data-poster="assets/gaming.jpg">
+      <div class="card span4" style="--poster:url('assets/gaming.jpg');">
         <a class="cardlink" href="gaming.html" aria-label="Gaming Packs"></a>
         <div class="media">
           <video muted playsinline preload="metadata" poster="assets/gaming.jpg">
@@ -457,7 +457,7 @@
       </div>
 
       <!-- MYSTERY -->
-      <div class="card span4" data-poster="assets/mystery.jpg">
+      <div class="card span4" style="--poster:url('assets/mystery.jpg');">
         <a class="cardlink" href="mystery.html" aria-label="Mystery Drops"></a>
         <div class="media">
           <video muted playsinline preload="metadata" poster="assets/mystery.jpg">
@@ -476,7 +476,7 @@
       </div>
 
       <!-- FRESH -->
-      <div class="card span6" data-poster="assets/fresh.jpg">
+     <div class="card span6" style="--poster:url('assets/fresh.jpg');">
         <a class="cardlink" href="fresh.html" aria-label="Fresh Packs"></a>
         <div class="media">
           <video muted playsinline preload="metadata" poster="assets/fresh.jpg">
@@ -518,19 +518,6 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Poster fallback for browsers: apply background image under the video
-    document.querySelectorAll('.card').forEach(card => {
-      const poster = card.getAttribute('data-poster');
-      if(poster){
-        const media = card.querySelector('.media');
-        if(media) media.style.setProperty('--poster', `url(${poster})`);
-        // Use ::before to show poster
-        const style = document.createElement('style');
-        style.textContent = `.card[data-poster="${poster}"] .media::before{background-image:url("${poster}")}`;
-        document.head.appendChild(style);
-      }
-    });
 
     // Hover-to-play (desktop)
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
