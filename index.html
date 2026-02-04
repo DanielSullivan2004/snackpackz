@@ -6,7 +6,6 @@
   <title>Snack Packz</title>
   <meta name="description" content="Snack Packz — gym packs, lock-in packs, work packs, gaming packs and mystery drops." />
 
-  <!-- Sidemen-ish vibe without copying: bold condensed caps -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -14,7 +13,6 @@
   <style>
     :root{
       --bg:#07080c;
-      --panel:#0f1220;
       --panel2:#0c0f1a;
       --line:#20253a;
       --text:#eef1f7;
@@ -38,19 +36,17 @@
     a{color:inherit; text-decoration:none}
 
     .wrap{max-width:1120px; margin:0 auto; padding:18px}
+
     header{
       display:flex; align-items:center; justify-content:space-between;
       gap:12px; padding:8px 0 16px;
     }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      min-width: 0;
-    }
+    .brand{display:flex; align-items:center; gap:12px; min-width:0;}
     .mark{
       width:42px; height:42px; border-radius:16px;
       background: linear-gradient(135deg, var(--yellow), var(--orange));
       box-shadow: 0 14px 40px rgba(255,212,0,.16);
-      flex: 0 0 auto;
+      flex:0 0 auto;
     }
     .titleblock{min-width:0}
     .title{
@@ -94,22 +90,10 @@
       padding: 18px;
       overflow:hidden;
     }
-    .hero h2{
-      margin:0 0 8px;
-      font-size: 22px;
-      letter-spacing: .2px;
-    }
-    .hero p{
-      margin:0;
-      color:var(--muted);
-      line-height: 1.45;
-      font-size: 14px;
-    }
+    .hero h2{margin:0 0 8px; font-size: 22px; letter-spacing:.2px;}
+    .hero p{margin:0; color:var(--muted); line-height:1.45; font-size:14px;}
 
-    .chips{
-      display:flex; flex-wrap:wrap; gap:8px;
-      margin-top:12px;
-    }
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
     .chip{
       display:inline-flex; align-items:center; gap:8px;
       padding:8px 10px;
@@ -119,6 +103,7 @@
       color: var(--muted);
       font-size: 12.5px;
     }
+    .notice{margin-top:10px; font-size:12.5px; color:var(--muted);}
 
     .grid{
       margin-top:14px;
@@ -127,15 +112,19 @@
       gap: 14px;
     }
 
+    /* ------------------ CARDS ------------------ */
     .card{
       grid-column: span 12;
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
       box-shadow: var(--shadow);
-      overflow:hidden;
       position: relative;
       min-height: 180px;
+
+      overflow: visible;                 /* ring can sit outside */
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+      will-change: transform;
     }
 
     @media (min-width: 800px){
@@ -149,33 +138,44 @@
 
     .media{
       position:absolute; inset:0;
+      border-radius: var(--radius);
+      overflow:hidden;                   /* keep media clipped nicely */
       background: var(--panel2);
     }
-    /* Fallback image (shows if video missing) */
-    .media::before{
-  content:"";
-  position:absolute; inset:0;
-  background-image: var(--poster, none);
-  background-size: cover;
-  background-position: center;
-  filter: saturate(1.1) contrast(1.05);
-  opacity: .92;
-  transform: scale(1.02);
-}
 
+    /* Poster image (always available) */
+    .media::before{
+      content:"";
+      position:absolute; inset:0;
+      background-image: var(--poster);
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.1) contrast(1.05);
+      opacity: .95;
+      transform: scale(1.02);
+      transition: transform 1.2s ease;
+    }
+
+    /* Video sits on top, but is invisible until actually ready */
     video{
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit: cover;
       filter: saturate(1.1) contrast(1.05);
-      opacity: .90;
       transform: scale(1.02);
+      opacity: 0;
+      transition: opacity .25s ease, transform 1.2s ease;
+      pointer-events:none;
+    }
+    video[data-ready="1"]{
+      opacity: .90;
     }
 
     .overlay{
       position:absolute; inset:0;
+      border-radius: var(--radius);
       background:
-        linear-gradient(180deg, rgba(7,8,12,.10), rgba(7,8,12,.68)),
+        linear-gradient(180deg, rgba(7,8,12,.05), rgba(7,8,12,.62)),
         radial-gradient(700px 260px at 15% 10%, rgba(255,212,0,.18), transparent 55%);
       pointer-events:none;
     }
@@ -184,10 +184,9 @@
       position:absolute; left:14px; right:14px; bottom:14px;
       display:flex; align-items:flex-end; justify-content:space-between;
       gap: 10px;
+      transition: transform .25s ease;
     }
-    .meta{
-      min-width: 0;
-    }
+
     .kicker{
       display:inline-flex; gap:8px; align-items:center;
       padding:7px 10px;
@@ -198,6 +197,7 @@
       color: rgba(238,241,247,.92);
       backdrop-filter: blur(6px);
     }
+
     .name{
       margin:10px 0 4px;
       font-weight: 900;
@@ -212,6 +212,7 @@
       line-height: 1.35;
       max-width: 46ch;
     }
+
     .go{
       flex: 0 0 auto;
       padding: 10px 12px;
@@ -223,120 +224,81 @@
       font-size: 12.5px;
     }
 
-    .card:hover .go{background: rgba(255,212,0,.20)}
-    .card:active{transform: translateY(1px)}
+    .cardlink{
+      position:absolute; inset:0;
+      z-index: 3;
+    }
 
-    /* ===== Lightning ring OUTSIDE only (safe) ===== */
+    /* Hover lift + zoom */
+    .card:hover{
+      transform: translateY(-3px);
+      border-color: rgba(255,212,0,.25);
+      box-shadow: 0 22px 70px rgba(0,0,0,.55);
+    }
+    .card:hover .media::before,
+    .card:hover video{
+      transform: scale(1.08);
+    }
+    .card:hover .content{
+      transform: translateY(-2px);
+    }
+    .card:hover .go{ background: rgba(255,212,0,.20); }
 
-/* Make sure card can host the ring */
-.card{
-  position: relative;
-  overflow: visible; /* IMPORTANT: allows ring outside */
-}
+    /* ------------------ RING (CLEAN OUTSIDE) ------------------ */
+    /* No masks. No diagonal bugs. */
+    @property --spin {
+      syntax: '<angle>';
+      inherits: false;
+      initial-value: 0deg;
+    }
 
-/* Outer ring layer */
-.card::after{
-  content:"";
-  position:absolute;
-  inset:-5px; /* OUTSIDE the card */
-  border-radius: calc(var(--radius) + 6px);
+    .card::after{
+      content:"";
+      position:absolute;
+      inset:-4px;
+      border-radius: calc(var(--radius) + 6px);
+      border: 2px solid transparent;
+      opacity: 0;
+      pointer-events:none;
+      z-index: 1;
 
-  /* ring thickness */
-  border: 2px solid transparent;
+      border-image: conic-gradient(
+        from var(--spin),
+        rgba(255,212,0,0) 0deg,
+        rgba(255,212,0,.95) 70deg,
+        rgba(255,159,26,.95) 120deg,
+        rgba(120,170,255,.85) 170deg,
+        rgba(255,212,0,.95) 230deg,
+        rgba(255,159,26,.95) 290deg,
+        rgba(255,212,0,0) 360deg
+      ) 1;
 
-  /* the animated lightning colour */
-  background:
-    conic-gradient(
-      from 0deg,
-      rgba(255,212,0,0) 0deg,
-      rgba(255,212,0,.95) 55deg,
-      rgba(255,159,26,.95) 95deg,
-      rgba(120,170,255,.85) 135deg,
-      rgba(255,212,0,.95) 185deg,
-      rgba(255,159,26,.95) 225deg,
-      rgba(120,170,255,.85) 265deg,
-      rgba(255,212,0,.95) 320deg,
-      rgba(255,212,0,0) 360deg
-    );
+      filter:
+        drop-shadow(0 0 10px rgba(255,212,0,.18))
+        drop-shadow(0 0 18px rgba(120,170,255,.14));
+    }
 
-  /* mask to keep it as a thin OUTLINE ring */
-  -webkit-mask:
-    linear-gradient(#000 0 0) padding-box,
-    linear-gradient(#000 0 0) border-box;
-  -webkit-mask-composite: xor;
-          mask-composite: exclude;
+    .card:hover::after{
+      opacity: 1;
+      animation: spinRing .9s linear infinite, flicker .22s infinite;
+    }
 
-  padding: 2px; /* ring thickness control */
-  opacity: 0;
-  pointer-events:none;
-  z-index: 0;
+    @keyframes spinRing{ to { --spin: 360deg; } }
+    @keyframes flicker{
+      0%,100%{
+        filter: drop-shadow(0 0 10px rgba(255,212,0,.18)) drop-shadow(0 0 18px rgba(120,170,255,.14));
+      }
+      50%{
+        filter: drop-shadow(0 0 14px rgba(255,212,0,.28)) drop-shadow(0 0 26px rgba(120,170,255,.22));
+      }
+    }
 
-  /* glow */
-  filter: drop-shadow(0 0 10px rgba(255,212,0,.22))
-          drop-shadow(0 0 18px rgba(120,170,255,.14));
-}
-
-/* show + animate only on hover */
-.card:hover::after{
-  opacity: 1;
-  animation: ringSpin 1.05s linear infinite, ringFlicker .22s infinite;
-}
-
-/* Ensure your actual content stays above */
-.card .media,
-.card .overlay,
-.card .content{
-  position: relative;
-  z-index: 2;
-}
-
-/* Animations */
-@keyframes ringSpin{
-  to{ transform: rotate(360deg); }
-}
-@keyframes ringFlicker{
-  0%,100%{ filter: drop-shadow(0 0 10px rgba(255,212,0,.22)) drop-shadow(0 0 18px rgba(120,170,255,.14)); }
-  50%{    filter: drop-shadow(0 0 14px rgba(255,212,0,.32)) drop-shadow(0 0 26px rgba(120,170,255,.22)); }
-}
-
-    /* ===== IMAGE / VIDEO SLOW ZOOM ON HOVER ===== */
-
-.card{
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-  will-change: transform;
-}
-
-.card .media::before,
-.card video{
-  transition: transform 1.2s ease;
-  transform: scale(1.02);
-}
-
-  /* If video file doesn't load, don't hide the poster image */
-video{
-  opacity: 0;              /* default invisible */
-}
-
-/* When video can play, show it */
-video[data-ready="1"]{
-  opacity: .90;
-}
-
-
-.card:hover{
-  transform: translateY(-3px);
-  box-shadow: 0 22px 70px rgba(0,0,0,.55);
-}
-
-.card:hover .media::before,
-.card:hover video{
-  transform: scale(1.08); /* THIS is the slow zoom */
-}
-
-.card:hover .content{
-  transform: translateY(-2px);
-  transition: transform .25s ease;
-}
+    /* Ensure layers order */
+    .media, .overlay, .content{ z-index: 2; }
+    .media, .overlay, .content{ position:absolute; }
+    .media{ inset:0; }
+    .overlay{ inset:0; }
+    .content{ left:14px; right:14px; bottom:14px; }
 
     footer{
       margin: 18px 0 8px;
@@ -345,19 +307,14 @@ video[data-ready="1"]{
       text-align:center;
     }
 
-    .notice{
-      margin-top:10px;
-      font-size: 12.5px;
-      color: var(--muted);
-    }
-
-    /* Make the entire card clickable */
-    .cardlink{
-      position:absolute; inset:0;
-      z-index: 2;
+    /* Mobile: no hover. Keep it calm */
+    @media (hover: none){
+      .card:hover{ transform:none; }
+      .card:hover::after{ opacity:0; animation:none; }
     }
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <header>
@@ -377,15 +334,15 @@ video[data-ready="1"]{
 
     <section class="hero">
       <h2>Packs for real life. Not dead sandwiches.</h2>
-      <p>
-        Choose a category, tap a pack, and message to order. Items change based on what’s in stock, but the vibe stays the same.
-      </p>
+      <p>Choose a category, tap a pack, and message to order. Items change based on what’s in stock, but the vibe stays the same.</p>
+
       <div class="chips">
         <span class="chip">💛 Sticker inside</span>
         <span class="chip">🎟️ Prize draw entry</span>
         <span class="chip">🎲 RNG drops sometimes</span>
         <span class="chip">⚠️ No energy drinks to under 16s</span>
       </div>
+
       <p class="notice">Hover a category = the video starts moving. Click = you’re in.</p>
     </section>
 
@@ -395,7 +352,7 @@ video[data-ready="1"]{
       <div class="card span6" style="--poster:url('assets/gym.jpg');">
         <a class="cardlink" href="gym.html" aria-label="Gym Packs"></a>
         <div class="media">
-          <video muted playsinline preload="metadata" poster="assets/gym.jpg">
+          <video muted playsinline preload="metadata">
             <source src="assets/gym.mp4" type="video/mp4">
           </video>
         </div>
@@ -414,7 +371,7 @@ video[data-ready="1"]{
       <div class="card span6" style="--poster:url('assets/lockin.jpg');">
         <a class="cardlink" href="lock-in.html" aria-label="Lock-In Packs"></a>
         <div class="media">
-          <video muted playsinline preload="metadata" poster="assets/lockin.jpg">
+          <video muted playsinline preload="metadata">
             <source src="assets/lockin.mp4" type="video/mp4">
           </video>
         </div>
@@ -433,7 +390,7 @@ video[data-ready="1"]{
       <div class="card span4" style="--poster:url('assets/work.jpg');">
         <a class="cardlink" href="work.html" aria-label="Work Packs"></a>
         <div class="media">
-          <video muted playsinline preload="metadata" poster="assets/work.jpg">
+          <video muted playsinline preload="metadata">
             <source src="assets/work.mp4" type="video/mp4">
           </video>
         </div>
@@ -452,7 +409,7 @@ video[data-ready="1"]{
       <div class="card span4" style="--poster:url('assets/gaming.jpg');">
         <a class="cardlink" href="gaming.html" aria-label="Gaming Packs"></a>
         <div class="media">
-          <video muted playsinline preload="metadata" poster="assets/gaming.jpg">
+          <video muted playsinline preload="metadata">
             <source src="assets/gaming.mp4" type="video/mp4">
           </video>
         </div>
@@ -471,7 +428,7 @@ video[data-ready="1"]{
       <div class="card span4" style="--poster:url('assets/mystery.jpg');">
         <a class="cardlink" href="mystery.html" aria-label="Mystery Drops"></a>
         <div class="media">
-          <video muted playsinline preload="metadata" poster="assets/mystery.jpg">
+          <video muted playsinline preload="metadata">
             <source src="assets/mystery.mp4" type="video/mp4">
           </video>
         </div>
@@ -487,10 +444,10 @@ video[data-ready="1"]{
       </div>
 
       <!-- FRESH -->
-     <div class="card span6" style="--poster:url('assets/fresh.jpg');">
+      <div class="card span6" style="--poster:url('assets/fresh.jpg');">
         <a class="cardlink" href="fresh.html" aria-label="Fresh Packs"></a>
         <div class="media">
-          <video muted playsinline preload="metadata" poster="assets/fresh.jpg">
+          <video muted playsinline preload="metadata">
             <source src="assets/fresh.mp4" type="video/mp4">
           </video>
         </div>
@@ -506,7 +463,7 @@ video[data-ready="1"]{
       </div>
 
       <!-- CTA -->
-      <div class="card span6" style="min-height:220px;">
+      <div class="card span6" style="--poster:url('assets/custom.jpg'); min-height:220px;">
         <a class="cardlink" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20a%20custom%20pack.%20Budget%3A%20%C2%A3__%20%7C%20Category%3A%20__%20%7C%20Notes%3A%20__" target="_blank" rel="noopener" aria-label="Custom Pack"></a>
         <div class="media"></div>
         <div class="overlay"></div>
@@ -530,44 +487,31 @@ video[data-ready="1"]{
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Hover-to-play (desktop)
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    // Mark videos ready ONLY when they can actually play.
     document.querySelectorAll('.card video').forEach(v => {
-  // Keep poster visible until video actually loads
-  v.pause();
-  v.currentTime = 0;
+      const markReady = () => v.setAttribute('data-ready', '1');
+      v.addEventListener('canplay', markReady, { once: true });
+      v.addEventListener('loadeddata', markReady, { once: true });
+      v.addEventListener('error', () => v.removeAttribute('data-ready'));
+    });
 
-  const markReady = () => v.setAttribute("data-ready","1");
+    function playVideo(v){
+      if(prefersReduced) return;
+      try{ v.play(); }catch(e){}
+    }
+    function pauseVideo(v){
+      try{ v.pause(); v.currentTime = 0; }catch(e){}
+    }
 
-  v.addEventListener("canplay", markReady, { once:true });
-  v.addEventListener("loadeddata", markReady, { once:true });
-
-  // If file missing / error, keep poster visible
-  v.addEventListener("error", () => {
-    v.removeAttribute("data-ready");
-  });
-});
-
-
-    // Pointer-based hover
+    // Hover to play
     document.querySelectorAll('.card').forEach(card => {
       const v = card.querySelector('video');
       if(!v) return;
 
       card.addEventListener('mouseenter', () => playVideo(v));
       card.addEventListener('mouseleave', () => pauseVideo(v));
-
-      // Mobile: tap once to preview, tap again to go (because no hover)
-      let tappedOnce = false;
-      card.addEventListener('touchstart', () => {
-        if(prefersReduced) return;
-        if(!tappedOnce){
-          playVideo(v);
-          tappedOnce = true;
-          setTimeout(() => tappedOnce = false, 1400);
-        }
-      }, {passive:true});
     });
   </script>
 </body>
