@@ -3,123 +3,245 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Quick Packs</title>
-  <meta name="description" content="Gym packs, work packs, and random drops. Simple, fast, local." />
+  <title>Snack Packz</title>
+  <meta name="description" content="Snack Packz — gym packs, lock-in packs, work packs, gaming packs and mystery drops." />
+
+  <!-- Sidemen-ish vibe without copying: bold condensed caps -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg:#0b0c10;
-      --card:#12141c;
-      --text:#e9ecf1;
-      --muted:#a6adbb;
-      --line:#222636;
-      --accent:#ffd400;
-      --accent2:#ff9f1a;
+      --bg:#07080c;
+      --panel:#0f1220;
+      --panel2:#0c0f1a;
+      --line:#20253a;
+      --text:#eef1f7;
+      --muted:#a4adbf;
+      --yellow:#ffd400;
+      --orange:#ff9f1a;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius: 22px;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(1200px 600px at 15% -10%, rgba(255,212,0,.18), transparent 55%),
-        radial-gradient(900px 500px at 100% 0%, rgba(120,170,255,.12), transparent 55%),
-        var(--bg);
       color:var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(255,212,0,.20), transparent 55%),
+        radial-gradient(700px 450px at 100% 0%, rgba(100,170,255,.14), transparent 55%),
+        var(--bg);
     }
-    a{color:inherit}
-    .wrap{max-width:980px; margin:0 auto; padding:20px}
+    a{color:inherit; text-decoration:none}
+
+    .wrap{max-width:1120px; margin:0 auto; padding:18px}
     header{
       display:flex; align-items:center; justify-content:space-between;
-      gap:14px; padding:14px 0 18px;
+      gap:12px; padding:8px 0 16px;
     }
-    .brand{display:flex; align-items:center; gap:12px;}
-    .logo{
-      width:42px; height:42px; border-radius:14px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      box-shadow: 0 10px 30px rgba(255,212,0,.18);
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 0;
     }
-    .brand h1{font-size:18px; margin:0; letter-spacing:.3px}
-    .brand p{margin:2px 0 0; color:var(--muted); font-size:12.5px}
+    .mark{
+      width:42px; height:42px; border-radius:16px;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      box-shadow: 0 14px 40px rgba(255,212,0,.16);
+      flex: 0 0 auto;
+    }
+    .titleblock{min-width:0}
+    .title{
+      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      letter-spacing: 1px;
+      font-size: 28px;
+      line-height: 1;
+      margin:0;
+      text-transform: uppercase;
+    }
+    .subtitle{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 14px; border-radius:14px;
+      padding:10px 14px;
+      border-radius: 14px;
       border:1px solid var(--line);
       background: rgba(255,255,255,.04);
-      text-decoration:none;
-      font-weight:700;
+      font-weight: 800;
+      gap:8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
     .btn.primary{
-      background: rgba(255,212,0,.16);
       border-color: rgba(255,212,0,.35);
+      background: rgba(255,212,0,.14);
     }
+    .btn:active{transform: translateY(1px)}
+
     .hero{
       border:1px solid var(--line);
+      border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border-radius:20px;
-      padding:18px;
+      box-shadow: var(--shadow);
+      padding: 18px;
+      overflow:hidden;
     }
-    .hero h2{margin:0 0 8px; font-size:26px}
-    .hero p{margin:0; color:var(--muted); line-height:1.5}
+    .hero h2{
+      margin:0 0 8px;
+      font-size: 22px;
+      letter-spacing: .2px;
+    }
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .chips{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-top:12px;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size: 12.5px;
+    }
+
     .grid{
-      display:grid; gap:14px; margin-top:14px;
+      margin-top:14px;
+      display:grid;
       grid-template-columns: repeat(12, 1fr);
+      gap: 14px;
     }
+
     .card{
       grid-column: span 12;
-      border:1px solid var(--line);
-      background: rgba(18,20,28,.86);
-      border-radius:20px;
-      padding:16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position: relative;
+      min-height: 180px;
     }
-    @media (min-width: 760px){
-      .card.half{grid-column: span 6;}
-      .card.third{grid-column: span 4;}
+
+    @media (min-width: 800px){
+      .card{min-height: 220px}
+      .card.span6{grid-column: span 6;}
+      .card.span4{grid-column: span 4;}
       .hero{padding:22px}
-      .hero h2{font-size:30px}
+      .hero h2{font-size: 26px}
+      .title{font-size: 32px}
     }
-    .tag{
+
+    .media{
+      position:absolute; inset:0;
+      background: var(--panel2);
+    }
+    /* Fallback image (shows if video missing) */
+    .media::before{
+      content:"";
+      position:absolute; inset:0;
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.1) contrast(1.05);
+      opacity: .85;
+      transform: scale(1.02);
+    }
+
+    video{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit: cover;
+      filter: saturate(1.1) contrast(1.05);
+      opacity: .90;
+      transform: scale(1.02);
+    }
+
+    .overlay{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, rgba(7,8,12,.10), rgba(7,8,12,.68)),
+        radial-gradient(700px 260px at 15% 10%, rgba(255,212,0,.18), transparent 55%);
+      pointer-events:none;
+    }
+
+    .content{
+      position:absolute; left:14px; right:14px; bottom:14px;
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap: 10px;
+    }
+    .meta{
+      min-width: 0;
+    }
+    .kicker{
       display:inline-flex; gap:8px; align-items:center;
-      padding:6px 10px; border-radius:999px;
-      background: rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      color:var(--muted);
-      font-size:12.5px;
+      padding:7px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      border-radius: 999px;
+      font-size: 12px;
+      color: rgba(238,241,247,.92);
+      backdrop-filter: blur(6px);
     }
-    .card h3{margin:10px 0 6px; font-size:18px}
-    .small{color:var(--muted); font-size:13.5px; line-height:1.45}
-    ul{margin:10px 0 0 18px; padding:0}
-    li{margin:6px 0; color:var(--text)}
-    .price{
-      margin-top:12px;
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
-      padding-top:12px; border-top:1px solid var(--line);
+    .name{
+      margin:10px 0 4px;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: .2px;
+      text-transform: uppercase;
     }
-    .pill{
-      padding:7px 10px; border-radius:12px;
-      background: rgba(255,255,255,.04);
-      border:1px solid var(--line);
-      color:var(--muted);
-      font-size:12.5px;
+    .desc{
+      margin:0;
+      color: rgba(238,241,247,.86);
+      font-size: 13.5px;
+      line-height: 1.35;
+      max-width: 46ch;
     }
+    .go{
+      flex: 0 0 auto;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,212,0,.35);
+      background: rgba(255,212,0,.14);
+      font-weight: 900;
+      text-transform: uppercase;
+      font-size: 12.5px;
+    }
+
+    .card:hover .go{background: rgba(255,212,0,.20)}
+    .card:active{transform: translateY(1px)}
+
     footer{
-      margin:18px 0 6px;
-      color:var(--muted);
-      font-size:12.5px;
+      margin: 18px 0 8px;
+      color: var(--muted);
+      font-size: 12.5px;
       text-align:center;
     }
+
     .notice{
       margin-top:10px;
-      font-size:12.5px;
-      color:var(--muted);
+      font-size: 12.5px;
+      color: var(--muted);
     }
-    .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
-    .input{
-      width:100%;
-      padding:11px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      font-size:14px;
+
+    /* Make the entire card clickable */
+    .cardlink{
+      position:absolute; inset:0;
+      z-index: 2;
     }
   </style>
 </head>
@@ -127,144 +249,223 @@
   <div class="wrap">
     <header>
       <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <h1>Quick Packs</h1>
-          <p>Gym packs • Work packs • Random drops</p>
+        <div class="mark" aria-hidden="true"></div>
+        <div class="titleblock">
+          <h1 class="title">Snack Packz</h1>
+          <p class="subtitle">Gym • Lock-In • Work • Gaming • Mystery • Fresh</p>
         </div>
       </div>
 
-      <!-- CHANGE THIS LINK TO YOUR WHATSAPP NUMBER -->
-      <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=Hi%20-%20I%20want%20to%20order%20a%20pack" target="_blank" rel="noopener">
-        Order on WhatsApp
+      <!-- CHANGE THIS ONCE -->
+      <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">
+        Order
       </a>
     </header>
 
     <section class="hero">
-      <span class="tag">Local • Simple • Fast</span>
-      <h2>Packs that make life easier.</h2>
+      <h2>Packs for real life. Not dead sandwiches.</h2>
       <p>
-        Not a “brand drink” thing. Just proper ready-to-go packs. Gym pack, work pack, and a random one when you want a surprise.
-        Message to order — I’ll tell you what’s available and the price.
+        Choose a category, tap a pack, and message to order. Items change based on what’s in stock, but the vibe stays the same.
       </p>
-      <p class="notice">⚠️ NOTE: Energy drinks are age-restricted. I won’t sell to under 16s.</p>
+      <div class="chips">
+        <span class="chip">💛 Sticker inside</span>
+        <span class="chip">🎟️ Prize draw entry</span>
+        <span class="chip">🎲 RNG drops sometimes</span>
+        <span class="chip">⚠️ No energy drinks to under 16s</span>
+      </div>
+      <p class="notice">Hover a category = the video starts moving. Click = you’re in.</p>
     </section>
 
     <section class="grid">
-      <div class="card half">
-        <span class="tag">Most popular</span>
-        <h3>Gym Pack</h3>
-        <p class="small">The “I’m going gym and can’t be bothered” pack.</p>
-        <ul>
-          <li>Energy drink (varies)</li>
-          <li>Deodorant / body spray (mini or full depending on stock)</li>
-          <li>Something that smells nice (freshener / wipe etc.)</li>
-          <li>Sticker (Quick Packs)</li>
-          <li>Prize draw entry (code inside)</li>
-          <li>Optional freebies (if brands chuck stuff in)</li>
-        </ul>
-        <div class="price">
-          <span class="pill">From £— (set your price)</span>
-          <a class="btn" href="#how">How it works</a>
+
+      <!-- GYM -->
+      <div class="card span6" data-poster="assets/gym.jpg">
+        <a class="cardlink" href="gym.html" aria-label="Gym Packs"></a>
+        <div class="media">
+          <video muted playsinline preload="metadata" poster="assets/gym.jpg">
+            <source src="assets/gym.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="meta">
+            <span class="kicker">🏋️ Gym</span>
+            <div class="name">Gym Packs</div>
+            <p class="desc">Starter, OG, Sweat Session, Afterburn. Sort your bag in 10 seconds.</p>
+          </div>
+          <div class="go">Enter</div>
         </div>
       </div>
 
-      <div class="card half">
-        <span class="tag">Value</span>
-        <h3>Work Pack</h3>
-        <p class="small">Cheaper than a random shop run. No dead sandwich.</p>
-        <ul>
-          <li>Drink (energy or soft)</li>
-          <li>Snack (crisps / bar / sweet)</li>
-          <li>Something useful (wipes / gum / mints)</li>
-          <li>Sticker + prize draw entry</li>
-        </ul>
-        <div class="price">
-          <span class="pill">From £— (set your price)</span>
-          <a class="btn" href="#packs">What’s inside changes</a>
+      <!-- LOCK-IN -->
+      <div class="card span6" data-poster="assets/lockin.jpg">
+        <a class="cardlink" href="lock-in.html" aria-label="Lock-In Packs"></a>
+        <div class="media">
+          <video muted playsinline preload="metadata" poster="assets/lockin.jpg">
+            <source src="assets/lockin.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="meta">
+            <span class="kicker">🧠 Lock-In</span>
+            <div class="name">Lock-In Packs</div>
+            <p class="desc">Revision, grind, all-nighters. Focus mode activated.</p>
+          </div>
+          <div class="go">Enter</div>
         </div>
       </div>
 
-      <div class="card third" id="packs">
-        <span class="tag">Fun</span>
-        <h3>Random Drop</h3>
-        <p class="small">A random little pack. Could be a small toy, weird sweet, mini spray, anything. Proper lucky dip.</p>
-        <div class="price">
-          <span class="pill">From £—</span>
-          <a class="btn" href="https://wa.me/44YOURNUMBERHERE?text=Hi%20-%20what%20Random%20Drops%20have%20you%20got%20today%3F" target="_blank" rel="noopener">Ask what’s in today</a>
+      <!-- WORK -->
+      <div class="card span4" data-poster="assets/work.jpg">
+        <a class="cardlink" href="work.html" aria-label="Work Packs"></a>
+        <div class="media">
+          <video muted playsinline preload="metadata" poster="assets/work.jpg">
+            <source src="assets/work.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="meta">
+            <span class="kicker">🧰 Work / Shift</span>
+            <div class="name">Shift Packs</div>
+            <p class="desc">Cheaper than random shop runs. No dead meal deals.</p>
+          </div>
+          <div class="go">Enter</div>
         </div>
       </div>
 
-      <div class="card third">
-        <span class="tag">Simple</span>
-        <h3>No fake stuff</h3>
-        <p class="small">
-          I’m not relabelling products. Everything is sold as-is. The “brand” is the pack + service, like a mini convenience shop.
-        </p>
-        <div class="price">
-          <span class="pill">Clean & legit</span>
+      <!-- GAMING -->
+      <div class="card span4" data-poster="assets/gaming.jpg">
+        <a class="cardlink" href="gaming.html" aria-label="Gaming Packs"></a>
+        <div class="media">
+          <video muted playsinline preload="metadata" poster="assets/gaming.jpg">
+            <source src="assets/gaming.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="meta">
+            <span class="kicker">🎮 Gaming</span>
+            <div class="name">Gaming Packs</div>
+            <p class="desc">Queue, clutch, late nights. Don’t tilt hungry.</p>
+          </div>
+          <div class="go">Enter</div>
         </div>
       </div>
 
-      <div class="card third" id="how">
-        <span class="tag">Fast</span>
-        <h3>How ordering works</h3>
-        <ol class="small" style="margin:10px 0 0 18px;">
-          <li>You message what pack you want.</li>
-          <li>I tell you what’s available + price.</li>
-          <li>You confirm. I sort it.</li>
-          <li>Collection / meet-up / drop-off (depends).</li>
-        </ol>
-        <div class="price">
-          <span class="pill">Start small. Move quick.</span>
+      <!-- MYSTERY -->
+      <div class="card span4" data-poster="assets/mystery.jpg">
+        <a class="cardlink" href="mystery.html" aria-label="Mystery Drops"></a>
+        <div class="media">
+          <video muted playsinline preload="metadata" poster="assets/mystery.jpg">
+            <source src="assets/mystery.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="meta">
+            <span class="kicker">🎲 Mystery</span>
+            <div class="name">RNG Drops</div>
+            <p class="desc">Lucky dip energy. Loot drop vibes. Could be elite.</p>
+          </div>
+          <div class="go">Enter</div>
         </div>
       </div>
 
-      <div class="card">
-        <span class="tag">Contact</span>
-        <h3>Want a custom pack?</h3>
-        <p class="small">Tell me your budget and what you want (gym, work, gift). I’ll make one up from what’s available.</p>
-
-        <div class="row">
-          <input class="input" id="budget" placeholder="Budget e.g. £5 / £8 / £10" />
-          <input class="input" id="notes" placeholder="What you want inside (e.g. deodorant + energy + sweet + wipes)" />
+      <!-- FRESH -->
+      <div class="card span6" data-poster="assets/fresh.jpg">
+        <a class="cardlink" href="fresh.html" aria-label="Fresh Packs"></a>
+        <div class="media">
+          <video muted playsinline preload="metadata" poster="assets/fresh.jpg">
+            <source src="assets/fresh.mp4" type="video/mp4">
+          </video>
         </div>
-
-        <div class="row">
-          <a class="btn primary" id="sendBtn" href="#" target="_blank" rel="noopener">Send on WhatsApp</a>
-          <span class="pill">Tip: keep it simple first</span>
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="meta">
+            <span class="kicker">🧼 Fresh</span>
+            <div class="name">Fresh Packs</div>
+            <p class="desc">Deo, wipes, mints, smell-good. Reset your day.</p>
+          </div>
+          <div class="go">Enter</div>
         </div>
-
-        <p class="notice">Update your WhatsApp link in the code: replace <b>44YOURNUMBERHERE</b> with your number (no spaces).</p>
       </div>
+
+      <!-- CTA -->
+      <div class="card span6" style="min-height:220px;">
+        <a class="cardlink" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20a%20custom%20pack.%20Budget%3A%20%C2%A3__%20%7C%20Category%3A%20__%20%7C%20Notes%3A%20__" target="_blank" rel="noopener" aria-label="Custom Pack"></a>
+        <div class="media"></div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div class="meta">
+            <span class="kicker">💬 Custom</span>
+            <div class="name">Build Me One</div>
+            <p class="desc">Tell me your budget + vibe. I’ll make a pack from what’s available. Simple.</p>
+          </div>
+          <div class="go">Message</div>
+        </div>
+      </div>
+
     </section>
 
     <footer>
-      © <span id="year"></span> Quick Packs. Built simple. Stock and items change.
+      © <span id="year"></span> Snack Packz • stock changes • good vibes only
     </footer>
   </div>
 
   <script>
-    // set year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // WhatsApp custom message generator
-    const sendBtn = document.getElementById('sendBtn');
-    const budget = document.getElementById('budget');
-    const notes = document.getElementById('notes');
+    // Poster fallback for browsers: apply background image under the video
+    document.querySelectorAll('.card').forEach(card => {
+      const poster = card.getAttribute('data-poster');
+      if(poster){
+        const media = card.querySelector('.media');
+        if(media) media.style.setProperty('--poster', `url(${poster})`);
+        // Use ::before to show poster
+        const style = document.createElement('style');
+        style.textContent = `.card[data-poster="${poster}"] .media::before{background-image:url("${poster}")}`;
+        document.head.appendChild(style);
+      }
+    });
 
-    function updateLink(){
-      const b = encodeURIComponent(budget.value.trim());
-      const n = encodeURIComponent(notes.value.trim());
-      const msg = encodeURIComponent(
-        `Hi - I want a custom pack.\nBudget: ${budget.value || '—'}\nNotes: ${notes.value || '—'}`
-      );
-      sendBtn.href = `https://wa.me/44YOURNUMBERHERE?text=${msg}`;
+    // Hover-to-play (desktop)
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll('.card video').forEach(v => {
+      // Freeze on first frame (pause)
+      v.pause();
+      v.currentTime = 0;
+    });
+
+    function playVideo(v){
+      if(prefersReduced) return;
+      try{ v.play(); }catch(e){}
     }
-    budget.addEventListener('input', updateLink);
-    notes.addEventListener('input', updateLink);
-    updateLink();
+    function pauseVideo(v){
+      try{ v.pause(); v.currentTime = 0; }catch(e){}
+    }
+
+    // Pointer-based hover
+    document.querySelectorAll('.card').forEach(card => {
+      const v = card.querySelector('video');
+      if(!v) return;
+
+      card.addEventListener('mouseenter', () => playVideo(v));
+      card.addEventListener('mouseleave', () => pauseVideo(v));
+
+      // Mobile: tap once to preview, tap again to go (because no hover)
+      let tappedOnce = false;
+      card.addEventListener('touchstart', () => {
+        if(prefersReduced) return;
+        if(!tappedOnce){
+          playVideo(v);
+          tappedOnce = true;
+          setTimeout(() => tappedOnce = false, 1400);
+        }
+      }, {passive:true});
+    });
   </script>
 </body>
 </html>
-
