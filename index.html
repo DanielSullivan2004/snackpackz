@@ -1,1 +1,270 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quick Packs</title>
+  <meta name="description" content="Gym packs, work packs, and random drops. Simple, fast, local." />
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --card:#12141c;
+      --text:#e9ecf1;
+      --muted:#a6adbb;
+      --line:#222636;
+      --accent:#ffd400;
+      --accent2:#ff9f1a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(255,212,0,.18), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(120,170,255,.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+    a{color:inherit}
+    .wrap{max-width:980px; margin:0 auto; padding:20px}
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:14px 0 18px;
+    }
+    .brand{display:flex; align-items:center; gap:12px;}
+    .logo{
+      width:42px; height:42px; border-radius:14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 30px rgba(255,212,0,.18);
+    }
+    .brand h1{font-size:18px; margin:0; letter-spacing:.3px}
+    .brand p{margin:2px 0 0; color:var(--muted); font-size:12.5px}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px; border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      text-decoration:none;
+      font-weight:700;
+    }
+    .btn.primary{
+      background: rgba(255,212,0,.16);
+      border-color: rgba(255,212,0,.35);
+    }
+    .hero{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius:20px;
+      padding:18px;
+    }
+    .hero h2{margin:0 0 8px; font-size:26px}
+    .hero p{margin:0; color:var(--muted); line-height:1.5}
+    .grid{
+      display:grid; gap:14px; margin-top:14px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+    .card{
+      grid-column: span 12;
+      border:1px solid var(--line);
+      background: rgba(18,20,28,.86);
+      border-radius:20px;
+      padding:16px;
+    }
+    @media (min-width: 760px){
+      .card.half{grid-column: span 6;}
+      .card.third{grid-column: span 4;}
+      .hero{padding:22px}
+      .hero h2{font-size:30px}
+    }
+    .tag{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12.5px;
+    }
+    .card h3{margin:10px 0 6px; font-size:18px}
+    .small{color:var(--muted); font-size:13.5px; line-height:1.45}
+    ul{margin:10px 0 0 18px; padding:0}
+    li{margin:6px 0; color:var(--text)}
+    .price{
+      margin-top:12px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      padding-top:12px; border-top:1px solid var(--line);
+    }
+    .pill{
+      padding:7px 10px; border-radius:12px;
+      background: rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12.5px;
+    }
+    footer{
+      margin:18px 0 6px;
+      color:var(--muted);
+      font-size:12.5px;
+      text-align:center;
+    }
+    .notice{
+      margin-top:10px;
+      font-size:12.5px;
+      color:var(--muted);
+    }
+    .row{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;}
+    .input{
+      width:100%;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      font-size:14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Quick Packs</h1>
+          <p>Gym packs • Work packs • Random drops</p>
+        </div>
+      </div>
+
+      <!-- CHANGE THIS LINK TO YOUR WHATSAPP NUMBER -->
+      <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=Hi%20-%20I%20want%20to%20order%20a%20pack" target="_blank" rel="noopener">
+        Order on WhatsApp
+      </a>
+    </header>
+
+    <section class="hero">
+      <span class="tag">Local • Simple • Fast</span>
+      <h2>Packs that make life easier.</h2>
+      <p>
+        Not a “brand drink” thing. Just proper ready-to-go packs. Gym pack, work pack, and a random one when you want a surprise.
+        Message to order — I’ll tell you what’s available and the price.
+      </p>
+      <p class="notice">⚠️ NOTE: Energy drinks are age-restricted. I won’t sell to under 16s.</p>
+    </section>
+
+    <section class="grid">
+      <div class="card half">
+        <span class="tag">Most popular</span>
+        <h3>Gym Pack</h3>
+        <p class="small">The “I’m going gym and can’t be bothered” pack.</p>
+        <ul>
+          <li>Energy drink (varies)</li>
+          <li>Deodorant / body spray (mini or full depending on stock)</li>
+          <li>Something that smells nice (freshener / wipe etc.)</li>
+          <li>Sticker (Quick Packs)</li>
+          <li>Prize draw entry (code inside)</li>
+          <li>Optional freebies (if brands chuck stuff in)</li>
+        </ul>
+        <div class="price">
+          <span class="pill">From £— (set your price)</span>
+          <a class="btn" href="#how">How it works</a>
+        </div>
+      </div>
+
+      <div class="card half">
+        <span class="tag">Value</span>
+        <h3>Work Pack</h3>
+        <p class="small">Cheaper than a random shop run. No dead sandwich.</p>
+        <ul>
+          <li>Drink (energy or soft)</li>
+          <li>Snack (crisps / bar / sweet)</li>
+          <li>Something useful (wipes / gum / mints)</li>
+          <li>Sticker + prize draw entry</li>
+        </ul>
+        <div class="price">
+          <span class="pill">From £— (set your price)</span>
+          <a class="btn" href="#packs">What’s inside changes</a>
+        </div>
+      </div>
+
+      <div class="card third" id="packs">
+        <span class="tag">Fun</span>
+        <h3>Random Drop</h3>
+        <p class="small">A random little pack. Could be a small toy, weird sweet, mini spray, anything. Proper lucky dip.</p>
+        <div class="price">
+          <span class="pill">From £—</span>
+          <a class="btn" href="https://wa.me/44YOURNUMBERHERE?text=Hi%20-%20what%20Random%20Drops%20have%20you%20got%20today%3F" target="_blank" rel="noopener">Ask what’s in today</a>
+        </div>
+      </div>
+
+      <div class="card third">
+        <span class="tag">Simple</span>
+        <h3>No fake stuff</h3>
+        <p class="small">
+          I’m not relabelling products. Everything is sold as-is. The “brand” is the pack + service, like a mini convenience shop.
+        </p>
+        <div class="price">
+          <span class="pill">Clean & legit</span>
+        </div>
+      </div>
+
+      <div class="card third" id="how">
+        <span class="tag">Fast</span>
+        <h3>How ordering works</h3>
+        <ol class="small" style="margin:10px 0 0 18px;">
+          <li>You message what pack you want.</li>
+          <li>I tell you what’s available + price.</li>
+          <li>You confirm. I sort it.</li>
+          <li>Collection / meet-up / drop-off (depends).</li>
+        </ol>
+        <div class="price">
+          <span class="pill">Start small. Move quick.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="tag">Contact</span>
+        <h3>Want a custom pack?</h3>
+        <p class="small">Tell me your budget and what you want (gym, work, gift). I’ll make one up from what’s available.</p>
+
+        <div class="row">
+          <input class="input" id="budget" placeholder="Budget e.g. £5 / £8 / £10" />
+          <input class="input" id="notes" placeholder="What you want inside (e.g. deodorant + energy + sweet + wipes)" />
+        </div>
+
+        <div class="row">
+          <a class="btn primary" id="sendBtn" href="#" target="_blank" rel="noopener">Send on WhatsApp</a>
+          <span class="pill">Tip: keep it simple first</span>
+        </div>
+
+        <p class="notice">Update your WhatsApp link in the code: replace <b>44YOURNUMBERHERE</b> with your number (no spaces).</p>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="year"></span> Quick Packs. Built simple. Stock and items change.
+    </footer>
+  </div>
+
+  <script>
+    // set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // WhatsApp custom message generator
+    const sendBtn = document.getElementById('sendBtn');
+    const budget = document.getElementById('budget');
+    const notes = document.getElementById('notes');
+
+    function updateLink(){
+      const b = encodeURIComponent(budget.value.trim());
+      const n = encodeURIComponent(notes.value.trim());
+      const msg = encodeURIComponent(
+        `Hi - I want a custom pack.\nBudget: ${budget.value || '—'}\nNotes: ${notes.value || '—'}`
+      );
+      sendBtn.href = `https://wa.me/44YOURNUMBERHERE?text=${msg}`;
+    }
+    budget.addEventListener('input', updateLink);
+    notes.addEventListener('input', updateLink);
+    updateLink();
+  </script>
+</body>
+</html>
 
