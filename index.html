@@ -225,6 +225,34 @@
     .card:hover .go{background: rgba(255,212,0,.20)}
     .card:active{transform: translateY(1px)}
 
+    /* ===== IMAGE / VIDEO SLOW ZOOM ON HOVER ===== */
+
+.card{
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  will-change: transform;
+}
+
+.card .media::before,
+.card video{
+  transition: transform 1.2s ease;
+  transform: scale(1.02);
+}
+
+.card:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 22px 70px rgba(0,0,0,.55);
+}
+
+.card:hover .media::before,
+.card:hover video{
+  transform: scale(1.08); /* THIS is the slow zoom */
+}
+
+.card:hover .content{
+  transform: translateY(-2px);
+  transition: transform .25s ease;
+}
+
     footer{
       margin: 18px 0 8px;
       color: var(--muted);
