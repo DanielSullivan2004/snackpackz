@@ -312,6 +312,17 @@
   transform: scale(1.02);
 }
 
+  /* If video file doesn't load, don't hide the poster image */
+video{
+  opacity: 0;              /* default invisible */
+}
+
+/* When video can play, show it */
+video[data-ready="1"]{
+  opacity: .90;
+}
+
+
 .card:hover{
   transform: translateY(-3px);
   box-shadow: 0 22px 70px rgba(0,0,0,.55);
@@ -523,18 +534,21 @@
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     document.querySelectorAll('.card video').forEach(v => {
-      // Freeze on first frame (pause)
-      v.pause();
-      v.currentTime = 0;
-    });
+  // Keep poster visible until video actually loads
+  v.pause();
+  v.currentTime = 0;
 
-    function playVideo(v){
-      if(prefersReduced) return;
-      try{ v.play(); }catch(e){}
-    }
-    function pauseVideo(v){
-      try{ v.pause(); v.currentTime = 0; }catch(e){}
-    }
+  const markReady = () => v.setAttribute("data-ready","1");
+
+  v.addEventListener("canplay", markReady, { once:true });
+  v.addEventListener("loadeddata", markReady, { once:true });
+
+  // If file missing / error, keep poster visible
+  v.addEventListener("error", () => {
+    v.removeAttribute("data-ready");
+  });
+});
+
 
     // Pointer-based hover
     document.querySelectorAll('.card').forEach(card => {
