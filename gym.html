@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gym Packs • Snack Packz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#07080c;--panel:#0f1220;--line:#20253a;--text:#eef1f7;--muted:#a4adbf;--yellow:#ffd400;--radius:22px}
+    *{box-sizing:border-box}
+    body{margin:0;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(900px 500px at 15% -10%, rgba(255,212,0,.18), transparent 55%), var(--bg)}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:980px;margin:0 auto;padding:18px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 14px}
+    .title{font-family:Anton,Impact,sans-serif;letter-spacing:1px;margin:0;text-transform:uppercase;font-size:26px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-weight:900}
+    .btn.primary{border-color:rgba(255,212,0,.35);background:rgba(255,212,0,.14)}
+    .hero{border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));padding:16px}
+    .hero p{margin:8px 0 0;color:var(--muted);line-height:1.45}
+    .grid{margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+    .card{grid-column:span 12;border:1px solid var(--line);border-radius:var(--radius);background:rgba(15,18,32,.7);padding:16px}
+    @media(min-width:760px){.card{grid-column:span 6}}
+    h3{margin:0 0 6px}
+    .small{color:var(--muted);margin:0 0 12px;line-height:1.45}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--muted);font-size:12.5px}
+    .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <a class="btn" href="index.html">← Back</a>
+      <h1 class="title">Gym Packs</h1>
+      <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20show%20me%20Gym%20Packs" target="_blank" rel="noopener">Order</a>
+    </div>
+
+    <div class="hero">
+      <span class="pill">🏋️ Built for the gym bag</span>
+      <p>Pick a pack name, message me, and I’ll confirm what’s inside today + price. Stock changes.</p>
+    </div>
+
+    <section class="grid">
+      <div class="card">
+        <h3>Starter Pack</h3>
+        <p class="small">Basic but solid. Drink + one fresh thing + snack.</p>
+        <div class="row">
+          <span class="pill">£—</span>
+          <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=I%20want%20the%20GYM%20Starter%20Pack" target="_blank" rel="noopener">Get it</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>OG Pack</h3>
+        <p class="small">The one that feels like the “proper” pack. Drink + deo + extras + sticker + prize draw.</p>
+        <div class="row">
+          <span class="pill">£—</span>
+          <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=I%20want%20the%20GYM%20OG%20Pack" target="_blank" rel="noopener">Get it</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Sweat Session Pack</h3>
+        <p class="small">For when you know it’s going to be a long one.</p>
+        <div class="row">
+          <span class="pill">£—</span>
+          <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=I%20want%20the%20GYM%20Sweat%20Session%20Pack" target="_blank" rel="noopener">Get it</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Afterburn Pack</h3>
+        <p class="small">Post-gym reset vibes. Fresh + snack + drink.</p>
+        <div class="row">
+          <span class="pill">£—</span>
+          <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=I%20want%20the%20GYM%20Afterburn%20Pack" target="_blank" rel="noopener">Get it</a>
+        </div>
+      </div>
+    </section>
+
+    <p style="color:#a4adbf;font-size:12.5px;text-align:center;margin:18px 0 6px;">
+      ⚠️ No energy drinks to under 16s.
+    </p>
+  </div>
+</body>
+</html>
