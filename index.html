@@ -153,14 +153,15 @@
     }
     /* Fallback image (shows if video missing) */
     .media::before{
-      content:"";
-      position:absolute; inset:0;
-      background-size: cover;
-      background-position: center;
-      filter: saturate(1.1) contrast(1.05);
-      opacity: .85;
-      transform: scale(1.02);
-    }
+  content:"";
+  position:absolute; inset:0;
+  background-image: var(--poster, none);
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.1) contrast(1.05);
+  opacity: .92;
+  transform: scale(1.02);
+}
 
     video{
       position:absolute; inset:0;
