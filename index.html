@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Snack Packz</title>
-  <meta name="description" content="Snack Packz — packs for real life. Gym, Lock-In, Work, Gaming, Mystery drops, Fresh." />
+  <meta name="description" content="Snack Packz — quick packs, daily drops, gym / lock-in / work / gaming / mystery / fresh." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,19 +14,20 @@
     :root{
       --bg:#07080c;
       --bg2:#0a0b12;
-      --panel: rgba(255,255,255,.04);
-      --panel2: rgba(255,255,255,.06);
-      --line: rgba(255,255,255,.10);
-      --line2: rgba(255,255,255,.14);
       --text:#eef1f7;
       --muted:#a4adbf;
+      --line: rgba(255,255,255,.10);
+      --line2: rgba(255,255,255,.16);
+      --glass: rgba(255,255,255,.05);
+      --glass2: rgba(255,255,255,.08);
       --yellow:#ffd400;
       --orange:#ff9f1a;
       --blue:#78aaff;
-      --radius: 22px;
-      --radius2: 28px;
-      --shadow: 0 28px 110px rgba(0,0,0,.62);
-      --shadow2: 0 12px 40px rgba(0,0,0,.35);
+
+      --r: 22px;
+      --r2: 28px;
+      --shadow: 0 28px 120px rgba(0,0,0,.65);
+      --shadow2: 0 14px 50px rgba(0,0,0,.40);
       --max: 1200px;
     }
 
@@ -37,87 +38,78 @@
       color:var(--text);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(1200px 720px at 14% -12%, rgba(255,212,0,.22), transparent 58%),
-        radial-gradient(980px 680px at 112% 6%, rgba(120,170,255,.18), transparent 56%),
+        radial-gradient(1200px 720px at 12% -12%, rgba(255,212,0,.20), transparent 58%),
+        radial-gradient(980px 680px at 112% 8%, rgba(120,170,255,.17), transparent 56%),
         radial-gradient(900px 600px at 60% 120%, rgba(255,159,26,.08), transparent 56%),
         var(--bg);
       overflow-x:hidden;
     }
     a{color:inherit; text-decoration:none}
-    button{font:inherit}
-    .wrap{max-width:var(--max); margin:0 auto; padding:18px}
+    button,input{font:inherit}
+    .wrap{max-width:var(--max); margin:0 auto; padding: 18px}
 
-    /* ---------- Top nav (sticky + blur) ---------- */
+    /* ---------------- Top nav ---------------- */
     .topbar{
       position: sticky;
       top: 0;
       z-index: 50;
-      backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(7,8,12,.78), rgba(7,8,12,.45));
+      backdrop-filter: blur(16px);
+      background: linear-gradient(180deg, rgba(7,8,12,.82), rgba(7,8,12,.45));
       border-bottom: 1px solid rgba(255,255,255,.06);
     }
     .topinner{
-      max-width:var(--max);
-      margin:0 auto;
+      max-width: var(--max);
+      margin: 0 auto;
       padding: 12px 18px;
       display:flex;
       align-items:center;
-      gap:14px;
       justify-content:space-between;
+      gap: 14px;
     }
 
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      min-width: 0;
-    }
+    .brand{display:flex; align-items:center; gap:12px; min-width:0;}
     .mark{
       width:42px; height:42px; border-radius:16px;
       background: linear-gradient(135deg, var(--yellow), var(--orange));
-      box-shadow:
-        0 18px 60px rgba(255,212,0,.18),
-        0 10px 28px rgba(0,0,0,.35);
+      box-shadow: 0 18px 60px rgba(255,212,0,.18), 0 10px 28px rgba(0,0,0,.35);
       flex:0 0 auto;
     }
     .titleblock{min-width:0}
     .title{
-      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      letter-spacing: 1px;
-      font-size: 28px;
-      line-height: 1;
       margin:0;
+      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      font-size: 28px;
+      letter-spacing: 1px;
+      line-height: 1;
       text-transform: uppercase;
-      text-shadow: 0 12px 36px rgba(0,0,0,.55);
+      text-shadow: 0 14px 40px rgba(0,0,0,.55);
     }
     .subtitle{
       margin:4px 0 0;
-      color:rgba(238,241,247,.72);
+      color: rgba(238,241,247,.65);
       font-size: 12.5px;
-      white-space: nowrap;
+      white-space:nowrap;
       overflow:hidden;
-      text-overflow: ellipsis;
+      text-overflow:ellipsis;
     }
 
-    .navright{
-      display:flex; align-items:center; gap:10px;
-      flex:0 0 auto;
-    }
-
-    .chipbtn{
+    .navright{display:flex; align-items:center; gap:10px; flex:0 0 auto;}
+    .pill{
       display:inline-flex; align-items:center; gap:8px;
-      padding:9px 10px;
+      padding: 9px 10px;
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.04);
       color: rgba(238,241,247,.86);
-      font-weight: 800;
+      font-weight: 900;
       font-size: 12.5px;
       cursor:pointer;
       transition: transform .2s ease, border-color .2s ease, background .2s ease;
       user-select:none;
     }
-    .chipbtn:hover{
+    .pill:hover{
       transform: translateY(-1px);
-      border-color: rgba(255,212,0,.26);
+      border-color: rgba(255,212,0,.28);
       background: rgba(255,212,0,.08);
     }
 
@@ -129,175 +121,221 @@
       background: rgba(255,255,255,.04);
       font-weight: 900;
       letter-spacing:.2px;
-      gap:8px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
       cursor:pointer;
       user-select:none;
+      transition: transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
     .btn.primary{
-      border-color: rgba(255,212,0,.55);
+      border-color: rgba(255,212,0,.60);
       background: linear-gradient(180deg, rgba(255,212,0,.22), rgba(255,212,0,.10));
-      box-shadow:
-        0 18px 55px rgba(0,0,0,.45),
-        0 0 24px rgba(255,212,0,.12);
+      box-shadow: 0 18px 55px rgba(0,0,0,.45), 0 0 28px rgba(255,212,0,.12);
     }
     .btn.primary:hover{
       transform: translateY(-2px) scale(1.02);
-      border-color: rgba(255,212,0,.72);
-      box-shadow:
-        0 28px 90px rgba(0,0,0,.60),
-        0 0 34px rgba(255,212,0,.18);
+      border-color: rgba(255,212,0,.78);
+      box-shadow: 0 28px 90px rgba(0,0,0,.60), 0 0 38px rgba(255,212,0,.18);
     }
     .btn:active{transform: translateY(0) scale(.99)}
 
-    /* ---------- Hero (brand-level) ---------- */
+    @media (max-width: 900px){
+      .subtitle{display:none}
+    }
+
+    /* ---------------- HERO (full campaign style) ---------------- */
     .hero{
       margin-top: 18px;
-      border-radius: var(--radius2);
-      border:1px solid rgba(255,255,255,.08);
+      border-radius: var(--r2);
+      border: 1px solid rgba(255,255,255,.08);
       box-shadow: var(--shadow);
       overflow:hidden;
       position: relative;
+      min-height: 420px;
       background: rgba(255,255,255,.02);
     }
 
+    /* background media layer */
     .heroMedia{
       position:absolute; inset:0;
-      background:
-        radial-gradient(900px 360px at 12% 0%, rgba(255,212,0,.20), transparent 58%),
-        radial-gradient(900px 360px at 90% 30%, rgba(120,170,255,.14), transparent 60%),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.01));
+      background: #0b0e17;
     }
+
+    /* fallback image always shows */
     .heroMedia::before{
       content:"";
       position:absolute; inset:0;
-      background-image: url('assets/hero.jpg');
+      background-image: url("./assets/hero.jpg");
       background-size: cover;
       background-position: center;
-      opacity: .40;
-      filter: saturate(1.05) contrast(1.05);
-      transform: scale(1.04);
+      opacity: .45;
+      filter: saturate(1.05) contrast(1.08);
+      transform: scale(1.03);
     }
-    .hero video{
+
+    /* video sits on top of image IF it can play */
+    .heroMedia video{
       position:absolute; inset:0;
       width:100%; height:100%;
       object-fit: cover;
-      opacity:0;
+      opacity: 0;
       transition: opacity .35s ease;
-      filter: saturate(1.05) contrast(1.05);
+      filter: saturate(1.05) contrast(1.08);
       transform: scale(1.03);
     }
-    .hero video[data-ready="1"]{opacity:.55}
+    .heroMedia video.is-on{ opacity: .62; }
 
+    /* top gradients like retail sites */
     .heroOverlay{
       position:absolute; inset:0;
       background:
-        linear-gradient(90deg, rgba(7,8,12,.85), rgba(7,8,12,.15) 62%, rgba(7,8,12,.70)),
-        linear-gradient(180deg, rgba(7,8,12,.40), rgba(7,8,12,.86));
+        radial-gradient(900px 340px at 18% 10%, rgba(255,212,0,.22), transparent 60%),
+        radial-gradient(900px 340px at 92% 20%, rgba(120,170,255,.16), transparent 60%),
+        linear-gradient(90deg, rgba(7,8,12,.88), rgba(7,8,12,.20) 60%, rgba(7,8,12,.80)),
+        linear-gradient(180deg, rgba(7,8,12,.30), rgba(7,8,12,.92));
       pointer-events:none;
     }
 
     .heroInner{
       position: relative;
-      padding: 28px;
+      padding: 34px;
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
+      grid-template-columns: 1.35fr .85fr;
       gap: 18px;
-      align-items:end;
+      align-items: end;
     }
-
     @media (max-width: 900px){
+      .hero{min-height: 520px;}
       .heroInner{grid-template-columns: 1fr; padding: 20px;}
-      .subtitle{display:none}
     }
 
     .heroH{
       margin:0 0 10px;
-      font-size: clamp(26px, 3.4vw, 44px);
-      letter-spacing: -.2px;
+      font-size: clamp(28px, 3.8vw, 52px);
       line-height: 1.02;
+      letter-spacing: -.2px;
+      text-shadow: 0 18px 40px rgba(0,0,0,.60);
     }
     .heroP{
-      margin:0 0 14px;
+      margin:0 0 16px;
       color: rgba(238,241,247,.82);
-      font-size: 14.8px;
-      line-height: 1.5;
-      max-width: 58ch;
+      font-size: 15px;
+      line-height: 1.55;
+      max-width: 62ch;
     }
 
-    .trustRow{
-      display:flex; flex-wrap:wrap; gap:10px;
-      margin-top: 12px;
+    /* “fun + marketing” CTA row */
+    .ctaRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
+    .ctaRow .btn{padding: 11px 14px}
+    .miniNote{
+      color: rgba(238,241,247,.62);
+      font-size: 12.8px;
     }
+
+    /* trust chips */
+    .trustRow{display:flex; flex-wrap:wrap; gap:10px; margin-top: 14px;}
     .trust{
       display:inline-flex; align-items:center; gap:8px;
-      padding: 9px 11px;
+      padding:9px 11px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
       color: rgba(238,241,247,.86);
-      font-weight: 700;
+      font-weight: 800;
       font-size: 12.5px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
     }
 
-    .searchBox{
+    /* right panel (search + “drop”) */
+    .panel{
       border-radius: 22px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
       box-shadow: var(--shadow2);
       padding: 14px;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px);
     }
-    .searchTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
+    .panelTop{
+      display:flex; align-items:baseline; justify-content:space-between; gap:10px;
     }
-    .searchTitle{
+    .panelTitle{
+      margin:0;
       font-weight: 900;
-      letter-spacing:.2px;
-      margin:0;
       font-size: 13px;
-      color: rgba(238,241,247,.90);
+      letter-spacing:.2px;
       text-transform: uppercase;
+      color: rgba(238,241,247,.90);
     }
-    .hint{
-      font-size:12px;
-      color: rgba(238,241,247,.62);
+    .panelHint{
       margin:0;
+      font-size: 12px;
+      color: rgba(238,241,247,.62);
     }
     .searchRow{
-      display:flex;
-      gap:10px;
-      align-items:center;
+      margin-top: 10px;
+      display:flex; gap:10px;
     }
     .search{
       flex:1 1 auto;
       border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.24);
       padding: 12px 12px;
       color: var(--text);
-      outline: none;
+      outline:none;
     }
     .search::placeholder{color: rgba(238,241,247,.55)}
-    .mini{
-      padding: 12px 12px;
+    .go{
       border-radius: 14px;
-      border:1px solid rgba(255,212,0,.35);
+      border:1px solid rgba(255,212,0,.40);
       background: rgba(255,212,0,.12);
+      padding: 12px 12px;
       font-weight: 900;
       text-transform: uppercase;
       font-size: 12px;
       cursor:pointer;
       transition: transform .2s ease, background .2s ease;
     }
-    .mini:hover{transform: translateY(-1px); background: rgba(255,212,0,.18)}
-    .mini:active{transform: translateY(0)}
+    .go:hover{transform: translateY(-1px); background: rgba(255,212,0,.18)}
+    .go:active{transform: translateY(0)}
 
-    /* ---------- Sections ---------- */
+    .dropBox{
+      margin-top: 12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      padding: 12px;
+      position: relative;
+      overflow:hidden;
+    }
+    .dropBox::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(520px 220px at 20% 0%, rgba(255,212,0,.16), transparent 62%),
+        radial-gradient(520px 220px at 90% 30%, rgba(120,170,255,.10), transparent 62%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .dropLine{
+      position:relative;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom: 8px;
+      font-size: 12.6px;
+      color: rgba(238,241,247,.78);
+    }
+    .dropBadge{
+      position:relative;
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      font-weight: 900;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    /* ---------------- Section headings ---------------- */
     .sectionHead{
       margin-top: 18px;
       display:flex; align-items:flex-end; justify-content:space-between;
@@ -313,10 +351,9 @@
     }
     .sectionHead p{
       margin:0;
-      color: rgba(238,241,247,.62);
+      color: rgba(238,241,247,.60);
       font-size: 13px;
     }
-
     .dividerLine{
       height:1px;
       margin-top: 8px;
@@ -324,7 +361,7 @@
       opacity:.95;
     }
 
-    /* ---------- Featured strip ---------- */
+    /* ---------------- Featured strip ---------------- */
     .featured{
       margin-top: 14px;
       display:grid;
@@ -340,7 +377,9 @@
       padding: 14px;
       position: relative;
       overflow:hidden;
+      cursor: pointer;
       transition: transform .2s ease, border-color .2s ease;
+      user-select:none;
     }
     .featCard::before{
       content:"";
@@ -355,37 +394,33 @@
     .featCard h4{margin:0 0 6px; position:relative; font-size: 14px; text-transform: uppercase; letter-spacing:.2px;}
     .featCard p{margin:0; position:relative; color: rgba(238,241,247,.72); font-size: 13px; line-height:1.35}
 
-    /* ---------- Category grid (premium) ---------- */
+    /* ---------------- Category cards ---------------- */
     .grid{
       margin-top: 14px;
       display:grid;
       grid-template-columns: repeat(12, 1fr);
       gap: 14px;
     }
-
     .card{
       grid-column: span 12;
-      border-radius: var(--radius);
+      border-radius: var(--r);
       border:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
       box-shadow: var(--shadow2);
       position: relative;
-      min-height: 220px;
+      min-height: 230px;
       overflow:hidden;
       transform: translateZ(0);
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
       user-select:none;
+      cursor:pointer;
     }
-
     @media (min-width: 900px){
       .card.span6{grid-column: span 6;}
       .card.span4{grid-column: span 4;}
     }
 
-    .media{
-      position:absolute; inset:0;
-      background: #0b0e17;
-    }
+    .media{position:absolute; inset:0; background: #0b0e17;}
     .media::before{
       content:"";
       position:absolute; inset:0;
@@ -397,30 +432,27 @@
       transform: scale(1.03);
       transition: transform 1.1s ease;
     }
-
-    /* Premium overlay: expensive gradient */
     .overlay{
       position:absolute; inset:0;
       background:
-        radial-gradient(800px 260px at 18% 10%, rgba(255,212,0,.18), transparent 60%),
-        radial-gradient(800px 260px at 90% 30%, rgba(120,170,255,.12), transparent 60%),
-        linear-gradient(180deg, rgba(7,8,12,.14), rgba(7,8,12,.78));
+        radial-gradient(800px 260px at 18% 10%, rgba(255,212,0,.16), transparent 60%),
+        radial-gradient(800px 260px at 92% 20%, rgba(120,170,255,.10), transparent 60%),
+        linear-gradient(180deg, rgba(7,8,12,.10), rgba(7,8,12,.78));
       pointer-events:none;
     }
-
-    /* Better than lightning ring: neon edge glow */
+    /* premium hover edge glow (NOT a ring) */
     .card::after{
       content:"";
       position:absolute; inset:0;
-      border-radius: var(--radius);
+      border-radius: var(--r);
       pointer-events:none;
       opacity:0;
       transition: opacity .25s ease;
       box-shadow:
         inset 0 0 0 1px rgba(255,255,255,.06),
         0 0 0 1px rgba(255,255,255,.06),
-        0 0 30px rgba(255,212,0,.12),
-        0 0 46px rgba(120,170,255,.10);
+        0 0 36px rgba(255,212,0,.12),
+        0 0 52px rgba(120,170,255,.10);
     }
 
     .content{
@@ -454,7 +486,7 @@
       line-height: 1.35;
       max-width: 50ch;
     }
-    .go{
+    .enter{
       flex: 0 0 auto;
       padding: 10px 12px;
       border-radius: 14px;
@@ -466,7 +498,6 @@
       box-shadow: 0 18px 40px rgba(0,0,0,.35);
       transition: transform .2s ease, background .2s ease;
     }
-
     .cardlink{position:absolute; inset:0; z-index: 5;}
 
     .card:hover{
@@ -476,41 +507,10 @@
     }
     .card:hover .media::before{transform: scale(1.10)}
     .card:hover .content{transform: translateY(-2px)}
-    .card:hover .go{transform: translateY(-1px); background: rgba(255,212,0,.18)}
+    .card:hover .enter{transform: translateY(-1px); background: rgba(255,212,0,.18)}
     .card:hover::after{opacity:1}
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .card, .media::before, .content, .go, .btn, .chipbtn{transition:none !important}
-    }
-
-    /* ---------- Footer ---------- */
-    footer{
-      margin: 22px 0 10px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      padding-top: 16px;
-      color: rgba(238,241,247,.65);
-      font-size: 12.5px;
-    }
-    .footgrid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap: 18px;
-      align-items:start;
-    }
-    @media (max-width: 900px){ .footgrid{grid-template-columns:1fr}}
-    .footlinks{
-      display:flex; gap:10px; flex-wrap:wrap;
-      margin-top:8px;
-    }
-    .footlinks a{
-      padding:8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-    }
-
-    /* ---------- Fun VFX layer ---------- */
+    /* ---------------- Fun VFX layer ---------------- */
     .fx{
       position: fixed;
       inset: 0;
@@ -520,10 +520,10 @@
     }
     .spark{
       position:absolute;
-      width: 6px; height: 6px;
+      width: 7px; height: 7px;
       border-radius: 999px;
       background: radial-gradient(circle, rgba(255,212,0,.95), rgba(255,212,0,0) 60%);
-      filter: drop-shadow(0 0 10px rgba(255,212,0,.25));
+      filter: drop-shadow(0 0 12px rgba(255,212,0,.25));
       opacity: .0;
       transform: translate(-50%,-50%);
       animation: pop .55s ease forwards;
@@ -538,7 +538,6 @@
       position:absolute;
       width: 8px; height: 12px;
       border-radius: 3px;
-      background: rgba(255,212,0,.9);
       opacity: .0;
       transform: translate(-50%,-50%) rotate(0deg);
       animation: fall .9s ease forwards;
@@ -550,10 +549,31 @@
       100%{opacity:0; transform: translate(calc(-50% + var(--dx)), calc(-50% + 220px)) rotate(280deg) scale(1)}
     }
 
-    /* Mobile: keep fun but lighter */
-    @media (max-width: 700px){
-      .heroInner{padding: 18px;}
-      .card{min-height: 200px}
+    /* ---------------- Footer ---------------- */
+    footer{
+      margin: 22px 0 10px;
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 16px;
+      color: rgba(238,241,247,.65);
+      font-size: 12.5px;
+    }
+    .footgrid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items:start;
+    }
+    @media (max-width: 900px){ .footgrid{grid-template-columns:1fr}}
+    .footlinks{display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;}
+    .footlinks a{
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .card,.media::before,.content,.enter,.btn,.pill{transition:none !important}
     }
   </style>
 </head>
@@ -561,7 +581,7 @@
 <body>
   <div class="fx" id="fx"></div>
 
-  <!-- Sticky top nav -->
+  <!-- Top Nav -->
   <div class="topbar">
     <div class="topinner">
       <div class="brand">
@@ -573,10 +593,8 @@
       </div>
 
       <div class="navright">
-        <button class="chipbtn" id="soundToggle" aria-pressed="false" title="Sound effects">
-          🔇 Sound: Off
-        </button>
-        <a class="btn primary" id="orderBtn" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">
+        <button class="pill" id="soundToggle" aria-pressed="false">🔇 Sound: Off</button>
+        <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">
           Order
         </a>
       </div>
@@ -584,11 +602,12 @@
   </div>
 
   <div class="wrap">
-    <!-- Hero -->
+
+    <!-- HERO -->
     <section class="hero">
       <div class="heroMedia" aria-hidden="true">
-        <video muted playsinline preload="metadata" id="heroVid">
-          <source src="assets/hero.mp4" type="video/mp4">
+        <video id="heroVid" muted playsinline autoplay loop preload="auto">
+          <source src="./assets/hero.mp4" type="video/mp4">
         </video>
       </div>
       <div class="heroOverlay" aria-hidden="true"></div>
@@ -601,6 +620,11 @@
             Mystery drops happen randomly. Stickers inside. Prize draw entries. Simple.
           </p>
 
+          <div class="ctaRow">
+            <a class="btn primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20a%20pack.%20Vibe%3A%20__%20%7C%20Budget%3A%20%C2%A3__" target="_blank" rel="noopener">Get a pack</a>
+            <span class="miniNote">Tip: tap <b>Mystery</b> for a loot drop.</span>
+          </div>
+
           <div class="trustRow">
             <span class="trust">🚚 Local delivery / meet-up</span>
             <span class="trust">🎟️ Prize draw entry</span>
@@ -609,18 +633,27 @@
           </div>
         </div>
 
-        <div class="searchBox">
-          <div class="searchTop">
-            <p class="searchTitle">Find your vibe</p>
-            <p class="hint">Try: “gym”, “fresh”, “cheap”, “og”.</p>
+        <div class="panel">
+          <div class="panelTop">
+            <p class="panelTitle">Find your vibe</p>
+            <p class="panelHint">Try: “gym”, “fresh”, “cheap”, “og”.</p>
           </div>
+
           <div class="searchRow">
             <input class="search" id="search" placeholder="Search packs / categories…" />
-            <button class="mini" id="searchBtn">Go</button>
+            <button class="go" id="searchBtn">Go</button>
           </div>
-          <p class="hint" style="margin-top:10px;">
-            Trending: <b>Gym OG</b> • <b>Fresh Reset</b> • <b>RNG Drop</b>
-          </p>
+
+          <div class="dropBox" id="dropBox">
+            <div class="dropLine">
+              <span>Today’s vibe:</span>
+              <span class="dropBadge">🔥 Popular</span>
+            </div>
+            <div class="dropLine" style="margin:0;">
+              <span style="opacity:.9;"><b>Gym OG</b> • <b>Fresh Reset</b> • <b>RNG Drop</b></span>
+              <span style="opacity:.7;">+ stickers</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -629,7 +662,7 @@
     <div class="sectionHead">
       <div>
         <h3>Featured today</h3>
-        <p>Fast choices people actually click. (Marketing = remove friction.)</p>
+        <p>Fast choices people actually click. (Remove friction.)</p>
       </div>
     </div>
     <div class="dividerLine"></div>
@@ -643,7 +676,7 @@
         <h4>🧼 Fresh “Reset Pack”</h4>
         <p>Deo + wipes + mints + smell-good. Feels like a restart button.</p>
       </div>
-      <div class="featCard" data-sfx="pop">
+      <div class="featCard" data-sfx="loot">
         <h4>🎲 Mystery “RNG Drop”</h4>
         <p>Random loot vibes. Could be elite. Click it if you like surprises.</p>
       </div>
@@ -653,108 +686,101 @@
     <div class="sectionHead" style="margin-top:18px;">
       <div>
         <h3>Shop by category</h3>
-        <p>Hover/tap for a little “game feel”. Clean + fun.</p>
+        <p>Hover/tap for a “game feel”.</p>
       </div>
     </div>
     <div class="dividerLine"></div>
 
     <section class="grid">
 
-      <div class="card span6" style="--poster:url('assets/gym.jpg');" data-sfx="tick">
+      <div class="card span6" style="--poster:url('./assets/gym.jpg');" data-sfx="tick">
         <a class="cardlink" href="gym.html" aria-label="Gym Packs"></a>
-        <div class="media"></div>
-        <div class="overlay"></div>
+        <div class="media"></div><div class="overlay"></div>
         <div class="content">
-          <div class="meta">
+          <div>
             <span class="kicker">🏋️ Gym</span>
             <div class="name">Gym Packs</div>
             <p class="desc">Starter, OG, Sweat Session, Afterburn. Sort your bag in 10 seconds.</p>
           </div>
-          <div class="go">Enter</div>
+          <div class="enter">Enter</div>
         </div>
       </div>
 
-      <div class="card span6" style="--poster:url('assets/lockin.jpg');" data-sfx="tick">
+      <div class="card span6" style="--poster:url('./assets/lockin.jpg');" data-sfx="tick">
         <a class="cardlink" href="lock-in.html" aria-label="Lock-In Packs"></a>
-        <div class="media"></div>
-        <div class="overlay"></div>
+        <div class="media"></div><div class="overlay"></div>
         <div class="content">
-          <div class="meta">
+          <div>
             <span class="kicker">🧠 Lock-In</span>
             <div class="name">Lock-In Packs</div>
             <p class="desc">Revision, grind, all-nighters. Focus mode activated.</p>
           </div>
-          <div class="go">Enter</div>
+          <div class="enter">Enter</div>
         </div>
       </div>
 
-      <div class="card span4" style="--poster:url('assets/work.jpg');" data-sfx="tick">
+      <div class="card span4" style="--poster:url('./assets/work.jpg');" data-sfx="tick">
         <a class="cardlink" href="work.html" aria-label="Work Packs"></a>
-        <div class="media"></div>
-        <div class="overlay"></div>
+        <div class="media"></div><div class="overlay"></div>
         <div class="content">
-          <div class="meta">
+          <div>
             <span class="kicker">🧰 Work / Shift</span>
             <div class="name">Shift Packs</div>
             <p class="desc">Cheaper than random shop runs. No dead meal deals.</p>
           </div>
-          <div class="go">Enter</div>
+          <div class="enter">Enter</div>
         </div>
       </div>
 
-      <div class="card span4" style="--poster:url('assets/gaming.jpg');" data-sfx="tick">
+      <div class="card span4" style="--poster:url('./assets/gaming.jpg');" data-sfx="tick">
         <a class="cardlink" href="gaming.html" aria-label="Gaming Packs"></a>
-        <div class="media"></div>
-        <div class="overlay"></div>
+        <div class="media"></div><div class="overlay"></div>
         <div class="content">
-          <div class="meta">
+          <div>
             <span class="kicker">🎮 Gaming</span>
             <div class="name">Gaming Packs</div>
             <p class="desc">Queue, clutch, late nights. Don’t tilt hungry.</p>
           </div>
-          <div class="go">Enter</div>
+          <div class="enter">Enter</div>
         </div>
       </div>
 
-      <div class="card span4" style="--poster:url('assets/mystery.jpg');" data-sfx="loot">
+      <div class="card span4" style="--poster:url('./assets/mystery.jpg');" data-sfx="loot">
         <a class="cardlink" href="mystery.html" aria-label="Mystery Drops"></a>
-        <div class="media"></div>
-        <div class="overlay"></div>
+        <div class="media"></div><div class="overlay"></div>
         <div class="content">
-          <div class="meta">
+          <div>
             <span class="kicker">🎲 Mystery</span>
             <div class="name">RNG Drops</div>
             <p class="desc">Lucky dip energy. Loot drop vibes. Could be elite.</p>
           </div>
-          <div class="go">Enter</div>
+          <div class="enter">Enter</div>
         </div>
       </div>
 
-      <div class="card span6" style="--poster:url('assets/fresh.jpg');" data-sfx="tick">
+      <div class="card span6" style="--poster:url('./assets/fresh.jpg');" data-sfx="tick">
         <a class="cardlink" href="fresh.html" aria-label="Fresh Packs"></a>
-        <div class="media"></div>
-        <div class="overlay"></div>
+        <div class="media"></div><div class="overlay"></div>
         <div class="content">
-          <div class="meta">
+          <div>
             <span class="kicker">🧼 Fresh</span>
             <div class="name">Fresh Packs</div>
             <p class="desc">Deo, wipes, mints, smell-good. Reset your day.</p>
           </div>
-          <div class="go">Enter</div>
+          <div class="enter">Enter</div>
         </div>
       </div>
 
       <div class="card span6" style="--poster:linear-gradient(135deg, rgba(255,212,0,.14), rgba(120,170,255,.10));" data-sfx="pop">
         <a class="cardlink" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20a%20custom%20pack.%20Budget%3A%20%C2%A3__%20%7C%20Category%3A%20__%20%7C%20Notes%3A%20__" target="_blank" rel="noopener" aria-label="Custom Pack"></a>
-        <div class="media"></div>
-        <div class="overlay"></div>
+        <div class="media"></div><div class="overlay"></div>
         <div class="content">
-          <div class="meta">
+          <div>
             <span class="kicker">💬 Custom</span>
             <div class="name">Build Me One</div>
-            <p class="desc">Tell me budget + vibe. I’ll build a pack from what’s available. Simple.</p>
+            <p class="desc">Tell me budget + vibe. I’ll build a pack from what’s available.</p>
           </div>
-          <div class="go">Message</div>
+          <div class="enter">Message</div>
         </div>
       </div>
 
@@ -785,32 +811,45 @@
         </div>
       </div>
     </footer>
+
   </div>
 
   <script>
-    // Year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Hero video: only show if loads
-    const heroVid = document.getElementById('heroVid');
+    // ---------- Hero video: make it WORK ----------
+    const heroVid = document.getElementById("heroVid");
     if(heroVid){
-      const markReady = () => heroVid.setAttribute('data-ready','1');
-      heroVid.addEventListener('canplay', markReady, {once:true});
-      heroVid.addEventListener('loadeddata', markReady, {once:true});
-      heroVid.addEventListener('error', () => heroVid.removeAttribute('data-ready'));
-      // gentle autoplay attempt (muted)
-      try { heroVid.play(); } catch(e){}
+      // If it can play, show it
+      const show = () => heroVid.classList.add("is-on");
+      const hide = () => heroVid.classList.remove("is-on");
+
+      heroVid.addEventListener("canplay", show, {once:true});
+      heroVid.addEventListener("playing", show, {once:true});
+      heroVid.addEventListener("error", hide);
+
+      // Try autoplay immediately
+      heroVid.play().then(show).catch(()=> {
+        // Safari sometimes needs a user gesture:
+        hide();
+        document.addEventListener("click", () => {
+          heroVid.play().then(show).catch(hide);
+        }, {once:true});
+        document.addEventListener("touchstart", () => {
+          heroVid.play().then(show).catch(hide);
+        }, {once:true, passive:true});
+      });
     }
 
-    // ----------- Fun: sound toggle (safe, user-controlled) -----------
+    // ---------- Sound toggle (user controlled) ----------
     let soundOn = false;
     let audioCtx = null;
-
     const soundToggle = document.getElementById('soundToggle');
-    const setSoundUI = () => {
+
+    function setSoundUI(){
       soundToggle.textContent = soundOn ? "🔊 Sound: On" : "🔇 Sound: Off";
       soundToggle.setAttribute("aria-pressed", soundOn ? "true" : "false");
-    };
+    }
     setSoundUI();
 
     function ensureAudio(){
@@ -846,19 +885,17 @@
       beep("pop");
     });
 
-    // ----------- Fun: VFX sparks + confetti loot drop -----------
+    // ---------- Fun VFX ----------
     const fx = document.getElementById("fx");
 
     function sparkBurst(x,y,amount=10){
       for(let i=0;i<amount;i++){
         const s = document.createElement("div");
         s.className = "spark";
-        const dx = (Math.random()*120 - 60) + "px";
-        const dy = (Math.random()*120 - 60) + "px";
         s.style.left = x + "px";
         s.style.top = y + "px";
-        s.style.setProperty("--dx", dx);
-        s.style.setProperty("--dy", dy);
+        s.style.setProperty("--dx", (Math.random()*140 - 70) + "px");
+        s.style.setProperty("--dy", (Math.random()*140 - 70) + "px");
         fx.appendChild(s);
         setTimeout(()=>s.remove(), 700);
       }
@@ -871,24 +908,21 @@
         c.style.left = x + "px";
         c.style.top = y + "px";
         c.style.background = (Math.random()>.5) ? "rgba(255,212,0,.9)" : "rgba(120,170,255,.75)";
-        c.style.setProperty("--dx", (Math.random()*220 - 110) + "px");
+        c.style.setProperty("--dx", (Math.random()*240 - 120) + "px");
         fx.appendChild(c);
         setTimeout(()=>c.remove(), 1100);
       }
     }
 
-    // Add micro fun to cards + featured
     function bindFun(el){
-      el.addEventListener("pointerenter", (e) => {
+      el.addEventListener("pointerenter", () => {
         const type = el.getAttribute("data-sfx") || "tick";
         if(type==="tick") beep("tick");
         if(type==="pop") beep("pop");
       });
 
       el.addEventListener("pointerdown", (e) => {
-        const r = el.getBoundingClientRect();
-        const x = e.clientX;
-        const y = e.clientY;
+        const x = e.clientX, y = e.clientY;
         const type = el.getAttribute("data-sfx") || "tick";
         sparkBurst(x,y, 12);
         if(type==="loot"){
@@ -900,9 +934,9 @@
       }, {passive:true});
     }
 
-    document.querySelectorAll(".card, .featCard, .btn").forEach(bindFun);
+    document.querySelectorAll(".card, .featCard, .btn, .pill").forEach(bindFun);
 
-    // Search UI (simple highlight + scroll)
+    // ---------- Search (scroll to hit) ----------
     const search = document.getElementById("search");
     const searchBtn = document.getElementById("searchBtn");
 
@@ -918,12 +952,10 @@
       }
       if(hit){
         hit.scrollIntoView({behavior:"smooth", block:"center"});
-        // little fun pulse
         const r = hit.getBoundingClientRect();
-        sparkBurst(r.left + r.width*0.75, r.top + r.height*0.55, 14);
+        sparkBurst(r.left + r.width*0.80, r.top + r.height*0.55, 14);
         beep("pop");
       }else{
-        // no results tiny feedback
         beep("tick");
       }
     }
