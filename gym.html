@@ -55,7 +55,7 @@
     .pill.primary{border-color:rgba(255,212,0,.35);background:rgba(255,212,0,.14)}
     .pill:active{transform:translateY(1px)}
 
-    /* HERO */
+    /* HERO (image -> video fade in when ready) */
     .hero{
       position:relative;
       border:1px solid var(--line);
@@ -72,10 +72,8 @@
       transform:scale(1.06);
       filter:saturate(1.05) contrast(1.05);
     }
-    /* Start: image visible, video hidden */
     .hero-img{opacity:.92; transition: opacity .35s ease;}
     .hero-vid{opacity:0;  transition: opacity .35s ease;}
-    /* When ready: video in, image out */
     .hero-media.video-ready .hero-vid{opacity:.92;}
     .hero-media.video-ready .hero-img{opacity:0;}
 
@@ -127,7 +125,7 @@
         </div>
         <div class="actions">
           <a class="pill" href="index.html#shop">Shop</a>
-          <a class="pill primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20gym%20packs%20today%3F" target="_blank" rel="noopener">Order</a>
+          <a class="pill primary" href="https://wa.me/447483849357?text=Yo%20-%20gym%20packs%20today%3F" target="_blank" rel="noopener">Order</a>
         </div>
       </div>
     </div>
@@ -157,41 +155,40 @@
         <span class="k">🏋️ Starter</span>
         <div class="name">Starter Pack</div>
         <div class="desc">Simple. Drink + snack + something small.</div>
-        <div class="row"><div class="price">£4.00</div><a class="btn" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20the%20Gym%20Starter%20Pack%20(%C2%A34)%20pls" target="_blank" rel="noopener">Order</a></div>
+        <div class="row"><div class="price">£4.00</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20I%20want%20the%20Gym%20Starter%20Pack%20(%C2%A34)%20pls" target="_blank" rel="noopener">Order</a></div>
       </div></div>
 
       <div class="card span6"><div class="pad">
         <span class="k">🔥 OG</span>
         <div class="name">OG Pack</div>
         <div class="desc">The one people actually re-order. Best value.</div>
-        <div class="row"><div class="price">£6.00</div><a class="btn" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20the%20Gym%20OG%20Pack%20(%C2%A36)%20pls" target="_blank" rel="noopener">Order</a></div>
+        <div class="row"><div class="price">£6.00</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20I%20want%20the%20Gym%20OG%20Pack%20(%C2%A36)%20pls" target="_blank" rel="noopener">Order</a></div>
       </div></div>
 
       <div class="card span4"><div class="pad">
         <span class="k">💦 Sweat</span>
         <div class="name">Sweat Session</div>
         <div class="desc">Hydration heavy + snack. For when you’re actually moving.</div>
-        <div class="row"><div class="price">£5.00</div><a class="btn" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20the%20Gym%20Sweat%20Session%20(%C2%A35)%20pls" target="_blank" rel="noopener">Order</a></div>
+        <div class="row"><div class="price">£5.00</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20I%20want%20the%20Gym%20Sweat%20Session%20(%C2%A35)%20pls" target="_blank" rel="noopener">Order</a></div>
       </div></div>
 
       <div class="card span4"><div class="pad">
         <span class="k">🔥 Afterburn</span>
         <div class="name">Afterburn Pack</div>
         <div class="desc">Post-workout reset. Snack + drink + bonus if we’ve got it.</div>
-        <div class="row"><div class="price">£7.00</div><a class="btn" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20the%20Gym%20Afterburn%20Pack%20(%C2%A37)%20pls" target="_blank" rel="noopener">Order</a></div>
+        <div class="row"><div class="price">£7.00</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20I%20want%20the%20Gym%20Afterburn%20Pack%20(%C2%A37)%20pls" target="_blank" rel="noopener">Order</a></div>
       </div></div>
 
       <div class="card span4"><div class="pad">
         <span class="k">🎲 RNG</span>
         <div class="name">Gym Loot</div>
         <div class="desc">Same budget, random upgrades. Could be elite.</div>
-        <div class="row"><div class="price">£6.50</div><a class="btn ghost" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20Gym%20Loot%20RNG%20(%C2%A36.50)%20pls%20-%20surprise%20me" target="_blank" rel="noopener">Order</a></div>
+        <div class="row"><div class="price">£6.50</div><a class="btn ghost" href="https://wa.me/447483849357?text=Yo%20-%20Gym%20Loot%20RNG%20(%C2%A36.50)%20pls%20-%20surprise%20me" target="_blank" rel="noopener">Order</a></div>
       </div></div>
     </section>
   </div>
 
   <script>
-    // HERO MEDIA SWITCH: image -> video when ready
     document.querySelectorAll(".hero-media").forEach(media => {
       const v = media.querySelector("video");
       if(!v) return;
