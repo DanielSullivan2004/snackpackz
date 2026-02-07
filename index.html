@@ -1,737 +1,1096 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snack Packz</title>
-  <meta name="description" content="Snack Packz — a 3D snack hub for real-life packs." />
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
-
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Snack Packz — Vibes</title>
+  <meta name="theme-color" content="#070A12" />
   <style>
     :root{
-      --bg:#06070b;
-      --panel: rgba(255,255,255,.06);
-      --panel2: rgba(255,255,255,.04);
-      --line: rgba(255,255,255,.10);
-      --line2: rgba(255,255,255,.14);
-      --text:#eef2ff;
-      --muted: rgba(238,242,255,.72);
-      --yellow:#ffd400;
-      --orange:#ff9f1a;
-      --blue:#7fb3ff;
-      --r: 26px;
-      --shadow: 0 24px 80px rgba(0,0,0,.55);
-      --shadow2: 0 10px 40px rgba(0,0,0,.35);
+      --bg:#050710;
+      --bg2:#070A12;
+      --txt:#EAF0FF;
+      --mut:#9AA6C7;
+      --line:rgba(255,255,255,.10);
+      --glass:rgba(12,16,30,.56);
+      --glass2:rgba(12,16,30,.38);
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --radius:22px;
+      --ringSize:min(72vmin, 520px);
+      --previewW:min(46vw, 560px);
+      --accent:#9BE7FF;
+      --accent2:#B7A8FF;
+      --good:#76FFD1;
+      --warn:#FFD27A;
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
-      color:var(--text);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--txt);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1200px 700px at 15% -10%, rgba(255,212,0,.20), transparent 60%),
-        radial-gradient(900px 700px at 105% 0%, rgba(127,179,255,.18), transparent 55%),
-        radial-gradient(900px 700px at 70% 120%, rgba(255,159,26,.12), transparent 60%),
-        var(--bg);
+        radial-gradient(1000px 600px at 15% 10%, rgba(155,231,255,.12), transparent 55%),
+        radial-gradient(900px 700px at 80% 25%, rgba(183,168,255,.10), transparent 60%),
+        radial-gradient(1000px 900px at 50% 110%, rgba(118,255,209,.06), transparent 55%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
       overflow-x:hidden;
     }
-    a{color:inherit;text-decoration:none}
 
-    /* ===== Top bar ===== */
-    .top{
-      position:sticky; top:0; z-index:50;
-      backdrop-filter: blur(10px);
-      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.22));
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
-    .wrap{max-width:1200px;margin:0 auto;padding:14px 18px}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .brand{display:flex;align-items:center;gap:12px;min-width:0}
-    .mark{
-      width:42px;height:42px;border-radius:16px;
-      background: linear-gradient(135deg,var(--yellow),var(--orange));
-      box-shadow: 0 18px 60px rgba(255,212,0,.18);
-      flex:0 0 auto;
-    }
-    .title{
-      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      letter-spacing: 1.2px;
-      font-size: 28px; line-height:1; margin:0;
-      text-transform: uppercase;
-      white-space:nowrap;
-    }
-    .sub{
-      margin:4px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      white-space:nowrap;
-      overflow:hidden;text-overflow:ellipsis;
-      max-width: 52vw;
+    a{ color:inherit; text-decoration:none; }
+
+    .wrap{
+      min-height:100%;
+      padding: clamp(14px, 2.5vw, 28px);
+      padding-bottom: 34px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
     }
 
-    .actions{display:flex;align-items:center;gap:10px}
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      box-shadow: var(--shadow2);
-      font-weight: 800;
-      font-size: 13px;
-      user-select:none;
-    }
-    .pill.small{padding:8px 10px;font-size:12.5px;font-weight:800}
-    .pill.primary{
-      border-color: rgba(255,212,0,.35);
-      background: rgba(255,212,0,.14);
-    }
-    .pill:active{transform: translateY(1px)}
-
-    /* ===== Stage ===== */
-    .stage{
-      max-width:1200px;
-      margin: 22px auto 40px;
-      padding: 0 18px;
-      position:relative;
-    }
-
-    /* Fancy faint star field */
-    .stars{
-      position:absolute; inset:-100px -40px -120px -40px;
-      pointer-events:none;
-      background-image:
-        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.55) 0, transparent 1px),
-        radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,.40) 0, transparent 1px),
-        radial-gradient(1px 1px at 55% 85%, rgba(255,255,255,.35) 0, transparent 1px),
-        radial-gradient(1px 1px at 25% 70%, rgba(255,255,255,.30) 0, transparent 1px),
-        radial-gradient(1px 1px at 90% 75%, rgba(255,255,255,.25) 0, transparent 1px);
-      opacity:.55;
-      filter: blur(.1px);
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 16px;
-      align-items:center;
-    }
-    @media (max-width: 980px){
-      .grid{grid-template-columns:1fr; gap:14px}
-      .sub{max-width: 70vw}
-    }
-
-    /* Hero card */
-    .hero{
-      border-radius: var(--r);
-      border: 1px solid rgba(255,255,255,.10);
-      background:
-        radial-gradient(900px 300px at 10% 10%, rgba(255,212,0,.14), transparent 55%),
-        radial-gradient(900px 300px at 100% 40%, rgba(127,179,255,.14), transparent 60%),
-        rgba(255,255,255,.05);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-      padding: 26px;
-      min-height: 260px;
-    }
-    .hero h1{
-      font-size: clamp(34px, 4.2vw, 56px);
-      line-height: 1.02;
-      margin:0 0 10px;
-      letter-spacing: -.6px;
-    }
-    .hero p{
-      margin:0;
-      color: var(--muted);
-      max-width: 62ch;
-      line-height: 1.5;
-      font-size: 14.5px;
-    }
-
-    .chips{
-      display:flex; flex-wrap:wrap; gap:10px;
-      margin-top: 14px;
-    }
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:9px 12px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      color: rgba(238,242,255,.86);
-      font-size: 12.5px;
-      backdrop-filter: blur(8px);
-    }
-
-    .hintrow{
-      display:flex; flex-wrap:wrap; gap:10px;
-      margin-top: 16px;
-      color: rgba(238,242,255,.78);
-      font-size: 12.5px;
-    }
-    .hint{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding:8px 10px;
-      border-radius: 999px;
-    }
-
-    /* ===== Ring panel ===== */
-    .ringPanel{
-      border-radius: var(--r);
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-      min-height: 380px;
+    /* Top bar */
+    .topbar{
       display:flex;
       align-items:center;
-      justify-content:center;
-      padding: 18px;
+      justify-content:space-between;
+      gap:16px;
+      padding: 12px 14px;
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.28);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
 
-    /* Donut */
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 0;
+    }
+    .logo{
+      width:38px;height:38px;border-radius:14px;
+      background:
+        radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(18px 18px at 70% 65%, rgba(155,231,255,.22), transparent 65%),
+        linear-gradient(135deg, rgba(155,231,255,.25), rgba(183,168,255,.20));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+    }
+    .brand h1{
+      margin:0;
+      font-size: 15px;
+      letter-spacing:.5px;
+      font-weight: 700;
+      line-height: 1.1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand p{
+      margin:0;
+      font-size: 12px;
+      color:var(--mut);
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .hint{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .chip{
+      font-size:12px;
+      color: rgba(234,240,255,.86);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      border-radius: 999px;
+      padding: 7px 10px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .dot{
+      width:7px;height:7px;border-radius:50%;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 4px rgba(155,231,255,.10);
+    }
+
+    /* Main layout */
+    .main{
+      flex:1;
+      display:grid;
+      grid-template-columns: 1fr var(--previewW);
+      gap: clamp(14px, 2.2vw, 22px);
+      align-items:center;
+    }
+
+    @media (max-width: 980px){
+      .main{
+        grid-template-columns: 1fr;
+        align-items:start;
+      }
+    }
+
+    /* Ring zone */
+    .ringZone{
+      position:relative;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding: clamp(10px, 1.5vw, 14px);
+    }
+
+    .ringCard{
+      width: min(100%, 720px);
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: clamp(14px, 2.2vw, 18px);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .ringCard:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(600px 250px at 20% 10%, rgba(155,231,255,.10), transparent 55%),
+        radial-gradient(650px 280px at 85% 25%, rgba(183,168,255,.10), transparent 60%),
+        radial-gradient(700px 320px at 45% 110%, rgba(118,255,209,.06), transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+    }
+
+    .ringTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      position:relative;
+      z-index:2;
+      margin-bottom: 10px;
+    }
+
+    .ringTop .title{
+      min-width:0;
+    }
+    .ringTop h2{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.4px;
+      font-weight: 750;
+    }
+    .ringTop p{
+      margin:5px 0 0;
+      font-size: 12.5px;
+      color: var(--mut);
+      line-height: 1.35;
+    }
+
+    .ctaMini{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: rgba(234,240,255,.92);
+      border-radius: 14px;
+      padding: 9px 11px;
+      font-size: 12px;
+      letter-spacing:.2px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.28); border-color: rgba(255,255,255,.20); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
+    .btn .ic{
+      width:18px;height:18px;border-radius:9px;
+      background: linear-gradient(180deg, rgba(155,231,255,.30), rgba(183,168,255,.22));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 8px 20px rgba(0,0,0,.22);
+    }
+
+    /* Donut itself */
     .donutWrap{
       position:relative;
-      width: 360px;
-      height: 360px;
-      max-width: 78vw;
-      max-height: 78vw;
-      user-select:none;
-      touch-action: none;
+      display:grid;
+      place-items:center;
+      height: calc(var(--ringSize) + 70px);
+      margin-top: 4px;
+      z-index:2;
+      touch-action: none; /* we handle pan ourselves */
     }
 
     .donut{
-      position:absolute; inset:0;
-      border-radius: 999px;
+      width: var(--ringSize);
+      height: var(--ringSize);
+      position:relative;
+      border-radius:50%;
+      filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
+    }
+
+    .donut:before{
+      /* Outer glow ring */
+      content:"";
+      position:absolute; inset:-10px;
+      border-radius:50%;
       background:
+        radial-gradient(circle at 50% 50%, rgba(155,231,255,.10), transparent 55%),
         conic-gradient(from 0deg,
-          rgba(255,212,0,.95),
-          rgba(255,159,26,.90),
-          rgba(127,179,255,.85),
-          rgba(255,212,0,.95)
+          rgba(155,231,255,.12),
+          rgba(183,168,255,.11),
+          rgba(118,255,209,.08),
+          rgba(255,210,122,.07),
+          rgba(155,231,255,.12)
         );
-      filter: drop-shadow(0 25px 60px rgba(0,0,0,.45));
-      transform: rotate(0deg);
+      -webkit-mask:
+        radial-gradient(circle at 50% 50%, transparent 54%, #000 56%, #000 75%, transparent 78%);
+              mask:
+        radial-gradient(circle at 50% 50%, transparent 54%, #000 56%, #000 75%, transparent 78%);
+      opacity:.9;
+    }
+
+    .ring{
+      position:absolute; inset:0;
+      border-radius:50%;
+      transform: rotate(var(--rot, 0deg));
+      transition: transform 160ms cubic-bezier(.2,.9,.2,1);
       will-change: transform;
     }
+    .dragging .ring{ transition:none; }
 
-    /* inner hole */
-    .donut::after{
-      content:"";
+    .center{
       position:absolute;
-      inset: 26%;
-      border-radius: 999px;
+      width: 44%;
+      height: 44%;
+      border-radius:50%;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%);
       background:
-        radial-gradient(180px 140px at 30% 25%, rgba(255,212,0,.12), transparent 55%),
-        radial-gradient(200px 170px at 90% 70%, rgba(127,179,255,.12), transparent 55%),
-        rgba(0,0,0,.55);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: inset 0 0 50px rgba(0,0,0,.6);
-    }
-
-    /* center text */
-    .centerText{
-      position:absolute;
-      inset: 26%;
+        radial-gradient(40% 40% at 35% 35%, rgba(255,255,255,.18), transparent 65%),
+        radial-gradient(40% 40% at 65% 70%, rgba(155,231,255,.14), transparent 70%),
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.06),
+        0 18px 50px rgba(0,0,0,.45);
       display:flex;
       align-items:center;
       justify-content:center;
+      padding: 12px;
       text-align:center;
-      padding: 18px;
-      z-index: 5;
       pointer-events:none;
+      z-index:4;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .centerText b{display:block;font-size:14px}
-    .centerText span{display:block;margin-top:6px;color:rgba(238,242,255,.70);font-size:12.5px}
 
-    /* Vibe pills around ring */
-    .vibes{
-      position:absolute;
-      inset:-10px;
-      z-index: 7;
-      transform: rotate(0deg);
-      will-change: transform;
-      pointer-events:auto;
+    .center .big{
+      font-weight: 800;
+      letter-spacing:.7px;
+      font-size: clamp(14px, 2.4vmin, 18px);
+      margin:0;
     }
-    .vibe{
+    .center .small{
+      margin: 7px 0 0;
+      color: rgba(234,240,255,.80);
+      font-size: 12px;
+      line-height: 1.25;
+    }
+
+    .selectorTick{
       position:absolute;
       left:50%;
-      top:50%;
-      transform: translate(-50%,-50%) rotate(var(--a)) translateY(-185px) rotate(calc(-1 * var(--a)));
-      transform-origin: center;
-      width: 126px;
+      top: -6px;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 20px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.16);
+      z-index:5;
       display:flex;
       align-items:center;
       justify-content:center;
       gap:8px;
-      padding: 10px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
       backdrop-filter: blur(10px);
-      box-shadow: 0 12px 40px rgba(0,0,0,.35);
-      cursor: pointer;
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-      font-weight: 900;
-      font-size: 12.5px;
-      color: rgba(238,242,255,.88);
+      -webkit-backdrop-filter: blur(10px);
     }
-    .vibe i{opacity:.95;font-style:normal}
-    .vibe:hover{
-      border-color: rgba(255,212,0,.35);
-      background: rgba(255,212,0,.10);
+    .selectorTick:before{
+      content:"";
+      width:10px;height:10px;border-radius:50%;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
     }
-    .vibe.active{
-      border-color: rgba(255,212,0,.55);
-      background: rgba(255,212,0,.14);
-      box-shadow: 0 0 0 1px rgba(255,212,0,.25), 0 18px 55px rgba(0,0,0,.45);
+    .selectorTick:after{
+      content:"";
+      width:10px;height:10px;border-radius:50%;
+      background: rgba(255,255,255,.10);
     }
 
-    /* ===== Premium preview card ===== */
-    .preview{
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      width: min(380px, 92vw);
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(10,12,18,.62);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 24px 90px rgba(0,0,0,.62);
+    .seg{
+      position:absolute;
+      left:50%; top:50%;
+      width: 44%;
+      height: 18%;
+      transform-origin: 0% 50%;
+      transform: rotate(var(--ang)) translateX(46%);
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      padding: 10px 12px;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      z-index:3;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
       overflow:hidden;
-      z-index: 999;
-      transform: translateY(14px);
-      opacity: 0;
+    }
+
+    .seg:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(220px 90px at 15% 20%, rgba(155,231,255,.12), transparent 60%),
+        radial-gradient(260px 110px at 85% 75%, rgba(183,168,255,.10), transparent 65%);
+      opacity:.9;
       pointer-events:none;
-      transition: opacity .18s ease, transform .18s ease;
     }
-    .preview.show{
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events:auto;
+
+    .seg:hover{
+      border-color: rgba(255,255,255,.22);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
-    .pvMedia{
-      position: relative;
-      height: 190px;
-      background: rgba(255,255,255,.03);
+
+    .seg.active{
+      border-color: rgba(155,231,255,.34);
+      box-shadow: 0 14px 40px rgba(0,0,0,.34);
     }
-    .pvMedia img,
-    .pvMedia video{
-      position:absolute; inset:0;
-      width:100%; height:100%;
+
+    .pill{
+      position:relative;
+      z-index:2;
+      width: 12px;
+      height: 12px;
+      border-radius:50%;
+      background: linear-gradient(180deg, rgba(155,231,255,.92), rgba(183,168,255,.82));
+      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
+      flex:0 0 auto;
+    }
+
+    .seg .label{
+      position:relative;
+      z-index:2;
+      font-weight: 750;
+      letter-spacing:.55px;
+      font-size: 12px;
+      line-height:1;
+      text-transform: uppercase;
+      white-space:nowrap;
+    }
+
+    .seg .sub{
+      position:relative;
+      z-index:2;
+      margin-left:auto;
+      font-size: 11px;
+      color: rgba(234,240,255,.78);
+      letter-spacing:.2px;
+      white-space:nowrap;
+      opacity:.95;
+    }
+
+    /* Preview panel */
+    .preview{
+      position:relative;
+      border-radius: var(--radius);
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      overflow:hidden;
+      min-height: 420px;
+      align-self:stretch;
+    }
+
+    @media (max-width: 980px){
+      .preview{ min-height: 360px; }
+    }
+
+    .preview:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(700px 240px at 20% 10%, rgba(155,231,255,.10), transparent 58%),
+        radial-gradient(700px 260px at 80% 18%, rgba(183,168,255,.10), transparent 60%),
+        radial-gradient(700px 320px at 50% 110%, rgba(118,255,209,.08), transparent 60%);
+      pointer-events:none;
+      opacity:.85;
+      z-index:1;
+    }
+
+    .mediaStage{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      display:grid;
+      place-items:center;
+    }
+
+    .mediaStage .img,
+    .mediaStage video{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
       object-fit: cover;
       transform: scale(1.02);
-      transition: transform 1.2s ease;
-      filter: saturate(1.06) contrast(1.06);
+      filter: contrast(1.04) saturate(1.03);
     }
-    .preview:hover .pvMedia img,
-    .preview:hover .pvMedia video{ transform: scale(1.08); }
 
-    /* hide video until ready */
-    .pvMedia video{ opacity: 0; }
-    .pvMedia video.ready{ opacity: 1; }
+    .mediaStage .img{
+      opacity:1;
+      transition: opacity 220ms ease;
+    }
 
-    .pvShade{
-      position:absolute; inset:0;
+    .mediaStage video{
+      opacity:0;
+      transition: opacity 320ms ease;
+    }
+
+    .mediaStage.ready video{ opacity:1; }
+    .mediaStage.ready .img{ opacity:0; }
+
+    .overlay{
+      position:absolute;
+      inset:0;
+      z-index:3;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.78)),
-        radial-gradient(700px 240px at 20% 10%, rgba(255,212,0,.16), transparent 55%);
+        radial-gradient(500px 280px at 25% 10%, rgba(0,0,0,.10), transparent 55%),
+        radial-gradient(600px 420px at 70% 40%, rgba(0,0,0,.22), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.52));
       pointer-events:none;
     }
-    .pvBody{ padding: 14px 14px 16px; }
-    .pvKicker{
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-      font-size: 12px;
-      font-weight: 900;
-      color: rgba(238,242,255,.88);
-      margin-bottom: 10px;
-    }
-    .pvTitle{ margin:0; font-size: 18px; letter-spacing: .2px; }
-    .pvDesc{ margin:6px 0 12px; color: rgba(238,242,255,.72); font-size: 13px; line-height: 1.35; }
 
-    .pvBtns{ display:flex; gap:10px; align-items:center; }
-    .pvBtn{
-      display:inline-flex; align-items:center; justify-content:center;
+    .previewTop{
+      position:relative;
+      z-index:4;
+      padding: 16px 16px 0;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .vTitle{
+      min-width:0;
+    }
+    .vTitle h3{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:.4px;
+      font-weight: 820;
+      text-shadow: 0 14px 40px rgba(0,0,0,.55);
+    }
+    .vTitle p{
+      margin: 6px 0 0;
+      color: rgba(234,240,255,.80);
+      font-size: 12.5px;
+      line-height:1.35;
+      text-shadow: 0 14px 40px rgba(0,0,0,.55);
+    }
+
+    .enterBtn{
+      position:relative;
+      z-index:4;
+      border-radius: 16px;
       padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      font-weight: 900;
-      font-size: 13px;
-      cursor:pointer;
-    }
-    .pvBtn.primary{
-      border-color: rgba(255,212,0,.38);
-      background: rgba(255,212,0,.14);
-    }
-
-    .pvClose{
-      position:absolute; top:10px; right:10px;
-      width:34px; height:34px;
-      border-radius: 12px;
-      border:1px solid rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
       background: rgba(0,0,0,.25);
       backdrop-filter: blur(10px);
-      display:flex; align-items:center; justify-content:center;
+      -webkit-backdrop-filter: blur(10px);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing:.25px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
       cursor:pointer;
-      z-index: 5;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    .enterBtn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.30); border-color: rgba(155,231,255,.24); }
+    .enterBtn:active{ transform: translateY(0px) scale(.99); }
+    .enterBtn .spark{
+      width:18px;height:18px;border-radius:10px;
+      background: linear-gradient(180deg, rgba(155,231,255,.90), rgba(183,168,255,.82));
+      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
     }
 
-    /* Mobile tweaks */
-    @media (hover: none){
-      .preview{ right: 10px; bottom: 10px; }
+    .previewBottom{
+      position:absolute;
+      left:0; right:0; bottom:0;
+      z-index:4;
+      padding: 14px 16px 16px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .micro{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      border-radius: 16px;
+      padding: 10px 12px;
+      max-width: 62%;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .micro .k{
+      font-size: 11px;
+      color: rgba(234,240,255,.75);
+      letter-spacing:.2px;
+    }
+    .micro .v{
+      margin-top: 5px;
+      font-size: 12.5px;
+      font-weight: 750;
+      letter-spacing:.25px;
+    }
+
+    .tip{
+      text-align:right;
+      font-size: 11px;
+      color: rgba(234,240,255,.72);
+      line-height:1.25;
+      text-shadow: 0 12px 32px rgba(0,0,0,.50);
+    }
+
+    /* Mobile tap helper */
+    .tapHint{
+      display:none;
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(234,240,255,.76);
+    }
+    @media (hover:none){
+      .tapHint{ display:block; }
+    }
+
+    /* Footer */
+    .foot{
+      margin-top: 6px;
+      color: rgba(234,240,255,.62);
+      font-size: 11px;
+      text-align:center;
+      letter-spacing:.2px;
     }
   </style>
 </head>
-
 <body>
-  <div class="top">
-    <div class="wrap">
-      <div class="row">
-        <div class="brand">
-          <div class="mark" aria-hidden="true"></div>
-          <div style="min-width:0">
-            <h1 class="title">Snack Packz</h1>
-            <p class="sub">Spin the snack • pick a vibe • click to enter</p>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div style="min-width:0">
+          <h1>Snack Packz</h1>
+          <p>Spin the ring. Pick your vibe. Order fast.</p>
+        </div>
+      </div>
+      <div class="hint">
+        <div class="chip"><span class="dot"></span> Drag • Wheel • Tap • Snap</div>
+        <a class="chip" id="waTop" href="#" rel="noopener">WhatsApp Order</a>
+      </div>
+    </div>
+
+    <div class="main">
+      <!-- Ring -->
+      <div class="ringZone">
+        <div class="ringCard" id="ringCard">
+          <div class="ringTop">
+            <div class="title">
+              <h2>Choose your vibe</h2>
+              <p>Hover or tap a vibe for a premium preview (image first, then video). Click to snap it instantly.</p>
+              <div class="tapHint">Mobile: tap once to preview, tap again to enter.</div>
+            </div>
+            <div class="ctaMini">
+              <button class="btn" id="resetBtn" type="button" title="Reset ring">
+                <span class="ic" aria-hidden="true"></span> Reset
+              </button>
+              <button class="btn" id="spinBtn" type="button" title="Quick spin">
+                <span class="ic" aria-hidden="true"></span> Quick spin
+              </button>
+            </div>
           </div>
+
+          <div class="donutWrap" id="donutWrap">
+            <div class="donut" id="donut">
+              <div class="selectorTick" aria-hidden="true"></div>
+
+              <div class="ring" id="ring" style="--rot: 0deg;">
+                <!-- segments injected by JS -->
+              </div>
+
+              <div class="center">
+                <div>
+                  <p class="big" id="centerBig">G Y M</p>
+                  <p class="small" id="centerSmall">Tap a vibe to preview. Drag the ring to switch fast.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="foot">Tip: click any vibe to snap it to the top instantly — no slow rotation.</div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="preview" id="preview">
+        <div class="mediaStage" id="mediaStage" aria-hidden="true">
+          <img class="img" id="prevImg" src="assets/gym.jpg" alt="" />
+          <video id="prevVid" muted playsinline loop preload="metadata"></video>
+        </div>
+        <div class="overlay" aria-hidden="true"></div>
+
+        <div class="previewTop">
+          <div class="vTitle">
+            <h3 id="prevTitle">GYM</h3>
+            <p id="prevDesc">High focus. Clean fuel. No distractions.</p>
+          </div>
+          <a class="enterBtn" id="enterBtn" href="gym.html">
+            <span class="spark" aria-hidden="true"></span>
+            Enter vibe
+          </a>
         </div>
 
-        <div class="actions">
-          <button class="pill small" id="soundBtn" type="button">🔈 Sound: Off</button>
-          <a class="pill primary" href="https://wa.me/447483849357?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">Order</a>
+        <div class="previewBottom">
+          <div class="micro">
+            <div class="k">Preview</div>
+            <div class="v" id="prevMeta">Image → Video fade (ready)</div>
+          </div>
+          <div class="tip" id="tipRight">
+            Drag to spin<br/>Wheel scroll works<br/>Tap twice on mobile
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <main class="stage">
-    <div class="stars" aria-hidden="true"></div>
-
-    <section class="grid">
-      <!-- HERO -->
-      <div class="hero">
-        <h1>A 3D snack hub for real-life packs.</h1>
-        <p>
-          Drag the donut or drag the menu ring. Hover a vibe to preview it. Click to enter.
-          Stock changes daily, the vibe stays elite.
-        </p>
-
-        <div class="chips">
-          <span class="chip">💛 Sticker inside</span>
-          <span class="chip">🎟️ Prize draw entry</span>
-          <span class="chip">🎲 RNG drops sometimes</span>
-          <span class="chip">⚠️ No energy drinks to under 16s</span>
-        </div>
-
-        <div class="hintrow">
-          <span class="hint">🟡 Drag = spin</span>
-          <span class="hint">🖱️ Wheel = scroll ring</span>
-          <span class="hint">👆 Tap = preview / enter</span>
-        </div>
-      </div>
-
-      <!-- RING -->
-      <div class="ringPanel">
-        <div class="donutWrap" id="donutWrap" aria-label="Snack ring menu">
-          <div class="donut" id="donut"></div>
-
-          <div class="centerText">
-            <div>
-              <b>Spin. Hover. Enter.</b>
-              <span>Futuristic menu. No dead sandwich energy.</span>
-            </div>
-          </div>
-
-          <div class="vibes" id="vibes">
-            <!-- Each vibe uses data- attributes (NO IDs needed) -->
-            <div class="vibe" style="--a:0deg"
-              data-kicker="🏋️ Gym"
-              data-title="Gym Packs"
-              data-desc="Starter • OG • Sweat Session • Afterburn."
-              data-img="assets/gym.jpg"
-              data-vid="assets/gym.mp4"
-              data-link="gym.html"
-            ><i>🏋️</i> Gym</div>
-
-            <div class="vibe" style="--a:60deg"
-              data-kicker="🧠 Lock-In"
-              data-title="Lock-In Packs"
-              data-desc="Revision fuel • all-nighter kit • focus mode."
-              data-img="assets/lockin.jpg"
-              data-vid="assets/lockin.mp4"
-              data-link="lock-in.html"
-            ><i>🧠</i> Lock-in</div>
-
-            <div class="vibe" style="--a:120deg"
-              data-kicker="🧰 Work"
-              data-title="Shift Packs"
-              data-desc="Cheaper than random shop runs. No dead meal deals."
-              data-img="assets/work.jpg"
-              data-vid="assets/work.mp4"
-              data-link="work.html"
-            ><i>🧰</i> Work</div>
-
-            <div class="vibe" style="--a:180deg"
-              data-kicker="🎮 Gaming"
-              data-title="Gaming Packs"
-              data-desc="Queue • clutch • late nights. Don’t tilt hungry."
-              data-img="assets/gaming.jpg"
-              data-vid="assets/gaming.mp4"
-              data-link="gaming.html"
-            ><i>🎮</i> Gaming</div>
-
-            <div class="vibe" style="--a:240deg"
-              data-kicker="🎲 Mystery"
-              data-title="RNG Drops"
-              data-desc="Lucky dip energy. Loot drop vibes. Could be elite."
-              data-img="assets/mystery.jpg"
-              data-vid="assets/mystery.mp4"
-              data-link="mystery.html"
-            ><i>🎲</i> Mystery</div>
-
-            <div class="vibe" style="--a:300deg"
-              data-kicker="🧼 Fresh"
-              data-title="Fresh Packs"
-              data-desc="Deo • wipes • mints • smell-good. Reset your day."
-              data-img="assets/fresh.jpg"
-              data-vid="assets/fresh.mp4"
-              data-link="fresh.html"
-            ><i>🧼</i> Fresh</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Premium preview card (single, reusable) -->
-  <aside class="preview" id="preview" aria-live="polite">
-    <div class="pvMedia">
-      <div class="pvClose" id="pvClose" title="Close">✕</div>
-      <img id="pvImg" alt="" />
-      <video id="pvVid" muted playsinline preload="metadata"></video>
-      <div class="pvShade" aria-hidden="true"></div>
-    </div>
-    <div class="pvBody">
-      <div class="pvKicker" id="pvKicker">✨ Preview</div>
-      <h3 class="pvTitle" id="pvTitle">Title</h3>
-      <p class="pvDesc" id="pvDesc">Description</p>
-      <div class="pvBtns">
-        <button class="pvBtn primary" id="pvEnter" type="button">Enter</button>
-        <button class="pvBtn" id="pvPin" type="button">Keep open</button>
-      </div>
-    </div>
-  </aside>
-
   <script>
-    // ===== Sound toggle (placeholder - your future SFX can hook into this)
-    let soundOn = false;
-    const soundBtn = document.getElementById('soundBtn');
-    soundBtn.addEventListener('click', () => {
-      soundOn = !soundOn;
-      soundBtn.textContent = soundOn ? "🔊 Sound: On" : "🔈 Sound: Off";
-    });
-
-    // ===== Preview system (no IDs on vibes needed)
-    const preview = document.getElementById('preview');
-    const pvImg = document.getElementById('pvImg');
-    const pvVid = document.getElementById('pvVid');
-    const pvKicker = document.getElementById('pvKicker');
-    const pvTitle = document.getElementById('pvTitle');
-    const pvDesc = document.getElementById('pvDesc');
-    const pvEnter = document.getElementById('pvEnter');
-    const pvPin = document.getElementById('pvPin');
-    const pvClose = document.getElementById('pvClose');
-
-    let pinned = false;
-    let currentLink = null;
-
-    function showPreviewFor(el){
-      const kicker = el.dataset.kicker || "✨ Preview";
-      const title  = el.dataset.title  || "Snack Packz";
-      const desc   = el.dataset.desc   || "";
-      const imgSrc = el.dataset.img    || "";
-      const vidSrc = el.dataset.vid    || "";
-      currentLink  = el.dataset.link   || null;
-
-      pvKicker.textContent = kicker;
-      pvTitle.textContent = title;
-      pvDesc.textContent = desc;
-
-      // Always set image immediately (fast)
-      pvImg.src = imgSrc;
-      pvImg.alt = title;
-
-      // Reset video
-      pvVid.classList.remove('ready');
-      pvVid.pause();
-      pvVid.removeAttribute('src');
-      pvVid.load();
-
-      if(vidSrc){
-        pvVid.src = vidSrc;
-
-        const markReady = () => {
-          pvVid.classList.add('ready');
-          // try play (only works muted)
-          pvVid.play().catch(()=>{});
-        };
-
-        pvVid.onloadeddata = markReady;
-        pvVid.oncanplay = markReady;
-        pvVid.onerror = () => {
-          pvVid.classList.remove('ready');
-        };
-        pvVid.load();
+    // ========= CONFIG =========
+    const WHATSAPP_NUMBER = "447483849357"; // no + for wa.me
+    const vibes = [
+      {
+        key: "gym",
+        label: "GYM",
+        sub: "FOCUS",
+        page: "gym.html",
+        img: "assets/gym.jpg",
+        vid: "assets/gym.mp4",
+        desc: "High focus. Clean fuel. No distractions.",
+        meta: "Heavy session snack packs."
+      },
+      {
+        key: "lockin",
+        label: "LOCK-IN",
+        sub: "GRIND",
+        page: "lock-in.html",
+        img: "assets/lockin.jpg",
+        vid: "assets/lockin.mp4",
+        desc: "Tunnel vision mode. Phone down. Get it done.",
+        meta: "Study / deep work packs."
+      },
+      {
+        key: "work",
+        label: "WORK",
+        sub: "DAY",
+        page: "work.html",
+        img: "assets/work.jpg",
+        vid: "assets/work.mp4",
+        desc: "Clean energy. Smooth day. No crash.",
+        meta: "Office-ready packs."
+      },
+      {
+        key: "gaming",
+        label: "GAMING",
+        sub: "NIGHT",
+        page: "gaming.html",
+        img: "assets/gaming.jpg",
+        vid: "assets/gaming.mp4",
+        desc: "Locked in. Fast hands. Zero tilt.",
+        meta: "Late-night packs."
+      },
+      {
+        key: "mystery",
+        label: "MYSTERY",
+        sub: "DROP",
+        page: "mystery.html",
+        img: "assets/mystery.jpg",
+        vid: "assets/mystery.mp4",
+        desc: "Random pull. Premium chaos (in a good way).",
+        meta: "Surprise packs."
+      },
+      {
+        key: "fresh",
+        label: "FRESH",
+        sub: "CLEAN",
+        page: "fresh.html",
+        img: "assets/fresh.jpg",
+        vid: "assets/fresh.mp4",
+        desc: "Light, clean, refreshing. Reset the day.",
+        meta: "Fresh & fruity packs."
       }
+    ];
 
-      preview.classList.add('show');
+    // ========= HELPERS =========
+    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+    const normDeg = (d) => ((d % 360) + 360) % 360;
+    function waLink(text){
+      const msg = encodeURIComponent(text);
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
     }
 
-    function hidePreview(){
-      if(pinned) return;
-      preview.classList.remove('show');
-      pvVid.pause();
-    }
+    // ========= DOM =========
+    const ringEl = document.getElementById("ring");
+    const donutWrap = document.getElementById("donutWrap");
+    const donut = document.getElementById("donut");
+    const ringCard = document.getElementById("ringCard");
+    const resetBtn = document.getElementById("resetBtn");
+    const spinBtn = document.getElementById("spinBtn");
 
-    document.querySelectorAll('.vibe').forEach(v => {
-      v.addEventListener('mouseenter', () => {
-        if(pinned) return;
-        showPreviewFor(v);
-        setActive(v);
-      });
-      v.addEventListener('mouseleave', () => {
-        // small delay so it doesn't flicker if you move fast
-        setTimeout(() => { hidePreview(); }, 120);
+    const mediaStage = document.getElementById("mediaStage");
+    const prevImg = document.getElementById("prevImg");
+    const prevVid = document.getElementById("prevVid");
+    const prevTitle = document.getElementById("prevTitle");
+    const prevDesc = document.getElementById("prevDesc");
+    const prevMeta = document.getElementById("prevMeta");
+    const enterBtn = document.getElementById("enterBtn");
+    const centerBig = document.getElementById("centerBig");
+    const centerSmall = document.getElementById("centerSmall");
+
+    const waTop = document.getElementById("waTop");
+    waTop.href = waLink("Hi Snack Packz — I want to place an order.");
+
+    // ========= BUILD RING =========
+    const step = 360 / vibes.length;
+    const topAngle = 270; // "selector" at the top. Our segments snap to this.
+    let activeIndex = 0;
+
+    function buildRing(){
+      ringEl.innerHTML = "";
+      vibes.forEach((v, i) => {
+        const seg = document.createElement("div");
+        seg.className = "seg";
+        seg.dataset.index = i;
+        seg.style.setProperty("--ang", `${i * step}deg`);
+        seg.innerHTML = `
+          <span class="pill" aria-hidden="true"></span>
+          <span class="label">${v.label}</span>
+          <span class="sub">${v.sub}</span>
+        `;
+        ringEl.appendChild(seg);
+
+        // Desktop hover preview
+        seg.addEventListener("mouseenter", () => {
+          if (window.matchMedia("(hover:hover)").matches) {
+            setActive(i, {snap:false, reason:"hover"});
+          }
+        });
       });
 
-      // Click = snap to it + open page
-      v.addEventListener('click', () => {
-        showPreviewFor(v);
-        pinned = false;
-        pvPin.textContent = "Keep open";
-        snapToVibe(v);
-        if(currentLink) window.location.href = currentLink;
-      });
-
-      // Mobile tap preview first, second tap enter
-      let tapped = false;
-      v.addEventListener('touchstart', (e) => {
-        if(!tapped){
+      ringEl.querySelectorAll(".seg").forEach(seg => {
+        seg.addEventListener("click", (e) => {
           e.preventDefault();
-          tapped = true;
-          showPreviewFor(v);
-          setActive(v);
-          snapToVibe(v);
-          setTimeout(()=> tapped = false, 900);
-        }
-      }, {passive:false});
-    });
+          const i = Number(seg.dataset.index);
+          // Mobile: first tap previews/snaps; second tap enters
+          if (window.matchMedia("(hover:none)").matches) {
+            if (activeIndex === i && seg.classList.contains("active")) {
+              window.location.href = vibes[i].page;
+              return;
+            }
+            setActive(i, {snap:true, reason:"tap"});
+            return;
+          }
+          // Desktop: snap on click
+          setActive(i, {snap:true, reason:"click"});
+        }, {passive:false});
 
-    pvEnter.addEventListener('click', () => {
-      if(currentLink) window.location.href = currentLink;
-    });
+        seg.addEventListener("dblclick", (e) => {
+          e.preventDefault();
+          const i = Number(seg.dataset.index);
+          window.location.href = vibes[i].page;
+        }, {passive:false});
+      });
+    }
 
-    pvPin.addEventListener('click', () => {
-      pinned = !pinned;
-      pvPin.textContent = pinned ? "Unpin" : "Keep open";
-      if(!pinned) hidePreview();
-    });
+    // ========= PREMIUM PREVIEW (image instantly → fade to video when ready) =========
+    let currentVideoToken = 0;
+    function loadPreview(v){
+      prevTitle.textContent = v.label;
+      prevDesc.textContent = v.desc;
+      prevMeta.textContent = "Image → Video fade";
+      enterBtn.href = v.page;
+      centerBig.textContent = v.label.replace("-", " ");
+      centerSmall.textContent = v.meta;
 
-    pvClose.addEventListener('click', () => {
-      pinned = false;
-      pvPin.textContent = "Keep open";
-      hidePreview();
-    });
+      // image shows instantly
+      mediaStage.classList.remove("ready");
+      prevImg.src = v.img;
 
-    // ===== Ring + donut spin (drag + wheel + snap)
-    const donutWrap = document.getElementById('donutWrap');
-    const donut = document.getElementById('donut');
-    const vibes = document.getElementById('vibes');
+      // video fade when ready (avoid flashing old video)
+      const token = ++currentVideoToken;
+      prevVid.pause();
+      prevVid.removeAttribute("src");
+      prevVid.load();
 
-    let rot = -20; // start angle
-    let dragging = false;
-    let startX = 0;
+      prevVid.src = v.vid;
+      // when video can play, fade in
+      const onReady = () => {
+        if (token !== currentVideoToken) return;
+        mediaStage.classList.add("ready");
+        prevMeta.textContent = "Video ready";
+        try { prevVid.play().catch(()=>{}); } catch(e){}
+        cleanup();
+      };
+      const onError = () => {
+        if (token !== currentVideoToken) return;
+        // Stay on image if video fails
+        mediaStage.classList.remove("ready");
+        prevMeta.textContent = "Video unavailable (image only)";
+        cleanup();
+      };
+      const cleanup = () => {
+        prevVid.removeEventListener("canplaythrough", onReady);
+        prevVid.removeEventListener("loadeddata", onReady);
+        prevVid.removeEventListener("error", onError);
+      };
+
+      // Some mobiles are picky: loadeddata often triggers sooner than canplaythrough
+      prevVid.addEventListener("loadeddata", onReady, {once:true});
+      prevVid.addEventListener("canplaythrough", onReady, {once:true});
+      prevVid.addEventListener("error", onError, {once:true});
+      prevVid.load();
+    }
+
+    // ========= ROTATION / SNAP =========
+    let rot = 0; // degrees
+    let isDragging = false;
+    let startAngle = 0;
     let startRot = 0;
+    let lastMoveT = 0;
+    let lastMoveA = 0;
+    let velocity = 0; // deg per ms
 
-    function applyRot(){
-      donut.style.transform = `rotate(${rot}deg)`;
-      vibes.style.transform = `rotate(${rot}deg)`;
-    }
-    applyRot();
-
-    // drag to rotate
-    donutWrap.addEventListener('pointerdown', (e) => {
-      dragging = true;
-      donutWrap.setPointerCapture(e.pointerId);
-      startX = e.clientX;
-      startRot = rot;
-    });
-    donutWrap.addEventListener('pointermove', (e) => {
-      if(!dragging) return;
-      const dx = e.clientX - startX;
-      rot = startRot + dx * 0.35;
-      applyRot();
-    });
-    donutWrap.addEventListener('pointerup', () => { dragging = false; });
-    donutWrap.addEventListener('pointercancel', () => { dragging = false; });
-
-    // wheel scroll rotates ring (THIS fixes your "wait ages" problem)
-    donutWrap.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      rot += (e.deltaY > 0 ? 18 : -18);
-      applyRot();
-    }, {passive:false});
-
-    // snap to clicked vibe quickly
-    function snapToVibe(el){
-      const a = parseFloat((el.style.getPropertyValue('--a') || "0").replace("deg","")) || 0;
-      // We want that vibe to face roughly right side (a target angle)
-      // Vibe uses rotate(var(--a)) then we rotate the whole vibes container by rot,
-      // so visible angle = a + rot. Target visible angle = ~20deg.
-      const targetVisible = 20;
-      const desiredRot = targetVisible - a;
-
-      animateTo(desiredRot, 260);
-      setActive(el);
+    function setRot(deg, {animate=true} = {}){
+      rot = deg;
+      ringEl.style.setProperty("--rot", `${rot}deg`);
+      ringCard.classList.toggle("dragging", !animate);
     }
 
-    function animateTo(target, ms){
-      const from = rot;
-      const start = performance.now();
-      function step(t){
-        const p = Math.min(1, (t - start) / ms);
-        const ease = 1 - Math.pow(1 - p, 3); // easeOutCubic
-        rot = from + (target - from) * ease;
-        applyRot();
-        if(p < 1) requestAnimationFrame(step);
+    function idxToAngle(i){
+      return i * step;
+    }
+
+    function angleToNearestIndex(currentRot){
+      // segment i is at angle (i*step + rot). We want that to be at topAngle.
+      // so: i*step + rot ≈ topAngle  =>  i ≈ (topAngle - rot)/step
+      const raw = (topAngle - normDeg(currentRot)) / step;
+      let i = Math.round(raw);
+      i = ((i % vibes.length) + vibes.length) % vibes.length;
+      return i;
+    }
+
+    function snapToIndex(i, {animate=true} = {}){
+      // Solve rot such that (i*step + rot) == topAngle (mod 360)
+      const targetRot = topAngle - idxToAngle(i);
+      setRot(targetRot, {animate});
+    }
+
+    function setActive(i, {snap=true, reason=""} = {}){
+      activeIndex = i;
+
+      ringEl.querySelectorAll(".seg").forEach((el) => el.classList.remove("active"));
+      const activeEl = ringEl.querySelector(`.seg[data-index="${i}"]`);
+      if (activeEl) activeEl.classList.add("active");
+
+      loadPreview(vibes[i]);
+
+      if (snap){
+        snapToIndex(i, {animate:true});
       }
-      requestAnimationFrame(step);
     }
 
-    function setActive(el){
-      document.querySelectorAll('.vibe').forEach(x => x.classList.remove('active'));
-      el.classList.add('active');
+    // ========= POINTER (DRAG) =========
+    function getPointerAngle(clientX, clientY){
+      const r = donut.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top + r.height/2;
+      const dx = clientX - cx;
+      const dy = clientY - cy;
+      // atan2 -> degrees
+      return (Math.atan2(dy, dx) * 180 / Math.PI);
     }
 
-    // Optional: start with Gym selected + preview (feels "alive")
-    const first = document.querySelector('.vibe');
-    if(first){
-      setActive(first);
-      showPreviewFor(first);
-      setTimeout(()=>{ if(!pinned) hidePreview(); }, 1200);
+    function onPointerDown(e){
+      isDragging = true;
+      donutWrap.setPointerCapture?.(e.pointerId);
+      ringCard.classList.add("dragging");
+
+      startAngle = getPointerAngle(e.clientX, e.clientY);
+      startRot = rot;
+
+      lastMoveT = performance.now();
+      lastMoveA = startAngle;
+      velocity = 0;
     }
+
+    function onPointerMove(e){
+      if (!isDragging) return;
+      const a = getPointerAngle(e.clientX, e.clientY);
+      const delta = a - startAngle;
+      setRot(startRot + delta, {animate:false});
+
+      const t = performance.now();
+      const dt = t - lastMoveT;
+      if (dt > 0){
+        // smooth velocity
+        const da = a - lastMoveA;
+        const v = da / dt;
+        velocity = velocity * 0.75 + v * 0.25;
+        lastMoveT = t;
+        lastMoveA = a;
+      }
+
+      // update active highlight live (fast)
+      const idx = angleToNearestIndex(rot);
+      if (idx !== activeIndex){
+        // don't snap while dragging, just update preview
+        activeIndex = idx;
+        ringEl.querySelectorAll(".seg").forEach((el) => el.classList.remove("active"));
+        const activeEl = ringEl.querySelector(`.seg[data-index="${idx}"]`);
+        if (activeEl) activeEl.classList.add("active");
+        loadPreview(vibes[idx]);
+      }
+    }
+
+    function onPointerUp(e){
+      if (!isDragging) return;
+      isDragging = false;
+      ringCard.classList.remove("dragging");
+
+      // quick inertial fling then snap immediately (no waiting)
+      // we apply a small velocity bump so it feels fast, then snap
+      const fling = clamp(velocity * 180, -90, 90); // deg-ish
+      setRot(rot + fling, {animate:true});
+
+      // snap after a tiny tick (still feels instant)
+      setTimeout(() => {
+        const idx = angleToNearestIndex(rot);
+        setActive(idx, {snap:true, reason:"dragEnd"});
+      }, 60);
+    }
+
+    // ========= WHEEL SCROLL =========
+    function onWheel(e){
+      // allow normal page scroll if user is not over donut area on small screens
+      e.preventDefault();
+      const delta = e.deltaY || e.wheelDelta || 0;
+      // fast scroll => bigger move
+      const amt = clamp(delta * 0.18, -24, 24);
+      setRot(rot + amt, {animate:false});
+
+      const idx = angleToNearestIndex(rot);
+      if (idx !== activeIndex){
+        activeIndex = idx;
+        ringEl.querySelectorAll(".seg").forEach((el) => el.classList.remove("active"));
+        const activeEl = ringEl.querySelector(`.seg[data-index="${idx}"]`);
+        if (activeEl) activeEl.classList.add("active");
+        loadPreview(vibes[idx]);
+      }
+
+      clearTimeout(onWheel._t);
+      onWheel._t = setTimeout(() => {
+        const idx2 = angleToNearestIndex(rot);
+        setActive(idx2, {snap:true, reason:"wheelEnd"});
+      }, 110);
+    }
+
+    // ========= BUTTONS =========
+    resetBtn.addEventListener("click", () => setActive(0, {snap:true, reason:"reset"}));
+    spinBtn.addEventListener("click", () => {
+      // quick spin feel, then snap
+      setRot(rot + 260, {animate:true});
+      setTimeout(() => {
+        const idx = angleToNearestIndex(rot);
+        setActive(idx, {snap:true, reason:"spinEnd"});
+      }, 170);
+    });
+
+    // ========= ENTER BUTTON (mobile: respects tap twice rule via segment tap) =========
+    // On desktop it just enters the currently active vibe
+    enterBtn.addEventListener("click", (e) => {
+      if (window.matchMedia("(hover:none)").matches){
+        // On mobile, treat Enter as enter (obviously)
+        return;
+      }
+    });
+
+    // ========= INIT =========
+    buildRing();
+    // start with vibe 0 snapped
+    snapToIndex(0, {animate:false});
+    setActive(0, {snap:false, reason:"init"});
+
+    // events
+    donutWrap.addEventListener("pointerdown", onPointerDown, {passive:true});
+    window.addEventListener("pointermove", onPointerMove, {passive:true});
+    window.addEventListener("pointerup", onPointerUp, {passive:true});
+    donutWrap.addEventListener("wheel", onWheel, {passive:false});
+
+    // If user taps outside segments but inside donut on mobile, just toggle "preview mode" feel by snapping to current
+    donutWrap.addEventListener("click", (e) => {
+      if (!window.matchMedia("(hover:none)").matches) return;
+      // ignore if segment was clicked (handled already)
+      if (e.target.closest(".seg")) return;
+      setActive(activeIndex, {snap:true, reason:"tapDonut"});
+    });
+
+    // Keep preview video from blasting audio
+    prevVid.muted = true;
+    prevVid.playsInline = true;
+    prevVid.loop = true;
   </script>
 </body>
 </html>
