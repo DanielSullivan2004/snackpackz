@@ -2347,6 +2347,322 @@
     warmPreviewCache();
   }
 
+      /* ============================================================
+     PART 9/10 — Mobile + A11y + Fallback (append-only)
+     - Tap targets + mobile affordances
+     - Reduced-motion that still feels premium
+     - Video play fallback (bg + dock)
+     - Keyboard + focus improvements
+     ============================================================ */
+
+  const a11y = {
+    coarse: matchMedia && matchMedia("(pointer: coarse)").matches,
+    reduced: motion.reduce,
+    videoOk: true,
+    dockVideoOk: true
+  };
+
+  function addMobileClass(){
+    const mobileLike = a11y.coarse || window.innerWidth < 820;
+    document.documentElement.classList.toggle("mobile", mobileLike);
+  }
+
+  function ensureHitTargets(){
+    // Make small controls easier on mobile without changing layout
+    if(!(a11y.coarse || window.innerWidth < 820)) return;
+
+    // pack dots: increase padding slightly via inline styles
+    orbitDots.forEach(d=>{
+      d.style.minHeight = "56px";
+      d.style.minWidth = "168px";
+    });
+
+    // nav pills: a bit taller
+    [soundToggle].forEach(el=>{
+      if(!el) return;
+      el.style.padding = "12px 14px";
+    });
+  }
+
+  function safePlay(videoEl){
+    if(!videoEl) return Promise.resolve(false);
+    return videoEl.play().then(()=>true).catch(()=>false);
+  }
+
+  async function verifyBackgroundVideo(){
+    if(!bgVideo) return;
+    // Some browsers block even muted play until gesture (rare but happens)
+    const ok = await safePlay(bgVideo);
+    if(!ok){
+      a11y.videoOk = false;
+      // fallback: freeze on first frame, keep cinema look via filters
+      bgVideo.pause();
+      bgVideo.removeAttribute("autoplay");
+      // If the element fails to decode at all, hide it
+      setTimeout(()=>{
+        if(bgVideo.readyState < 2){
+          bgVideo.style.display = "none";
+          // fallback background gradient still exists via .bg container
+          document.querySelector(".bg").style.background =
+            "radial-gradient(1200px 700px at 20% 15%, rgba(183,255,106,.06), rgba(0,0,0,.78) 60%, rgba(0,0,0,.92))";
+        }
+      }, 800);
+    }
+  }
+
+  async function verifyDockVideo(){
+    if(!dockVideo) return;
+    // Dock is always muted; should be allowed after gesture, but we handle no-support
+    const ok = await safePlay(dockVideo);
+    if(!ok){
+      a11y.dockVideoOk = false;
+      // Keep poster only, permanently
+      stopDockVideo();
+      setHUD("Image only");
+    } else {
+      dockVideo.pause(); // don’t force-play yet
+    }
+  }
+
+  function reducedMotionPolish(){
+    if(!a11y.reduced) return;
+
+    // Keep it premium: remove heavy parallax/rotation but keep crisp layout
+    cards.forEach(c=>{
+      c.style.transform = "translateZ(0)";
+      c.style.willChange = "auto";
+    });
+
+    if(bgVideo){
+      bgVideo.style.transform = "scale(1.03)";
+      bgVideo.style.filter = "contrast(1.10) saturate(1.10) brightness(.84)";
+    }
+
+    // Turn off FX entirely (Part 8 throttle already helps, but this is explicit)
+    try {
+      fxCtx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    } catch(_){}
+  }
+
+  function addKeyboardHints(){
+    // Make Enter/Space behaviour clearer without adding visible clutter
+    // Adds title attributes for desktop discoverability
+    orbitDots.forEach(d=>{
+      const key = d.dataset.pack;
+      const p = PACKS[key] || PACKS.lockin;
+      d.setAttribute("title", `Preview ${p.name} • Click to lock • Enter to open`);
+      d.setAttribute("role", "button");
+      d.setAttribute("tabindex", "0");
+    });
+
+    enterBtn?.setAttribute("title", "Open selected pack (Enter)");
+    previewEl?.setAttribute("title", "Pack preview: image then video");
+  }
+
+  function reinforceMobileBehaviour(){
+    // On mobile, we want the user to KNOW tap once previews
+    if(!(a11y.coarse || window.innerWidth < 820)) return;
+
+    const footLeft = document.getElementById("footLeft");
+    const footRight = document.getElementById("footRight");
+    if(footLeft) footLeft.textContent = "Mobile tip: tap a pack once to preview.";
+    if(footRight) footRight.textContent = "Tap the same pack again to enter.";
+  }
+
+  // Make focus rings not ugly: add a gentle outline only when keyboard is used
+  function focusVisiblePolish(){
+    let keyboardMode = false;
+    window.addEventListener("keydown", ()=>{ keyboardMode = true; }, {passive:true});
+    window.addEventListener("pointerdown", ()=>{ keyboardMode = false; }, {passive:true});
+
+    const style = document.createElement("style");
+    style.textContent = `
+      :focus { outline: none; }
+      .kb :focus-visible {
+        outline: 2px solid rgba(183,255,106,.55);
+        outline-offset: 3px;
+        border-radius: 14px;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // toggle class
+    setInterval(()=>{
+      document.documentElement.classList.toggle("kb", keyboardMode);
+    }, 250);
+  }
+
+  function initA11yMobile(){
+    addMobileClass();
+    ensureHitTargets();
+    addKeyboardHints();
+    reinforceMobileBehaviour();
+    focusVisiblePolish();
+    reducedMotionPolish();
+
+    // Verify video ability after first gesture (more reliable)
+    const verify = async () => {
+      await verifyBackgroundVideo();
+      // Dock video will be verified when user triggers previews anyway
+    };
+
+    // Run now and also after the first interaction
+    verify();
+    ["pointerdown","touchstart","keydown"].forEach(evt=>{
+      window.addEventListener(evt, verify, { once:true, passive:true });
+    });
+
+    window.addEventListener("resize", ()=>{
+      a11y.coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
+      addMobileClass();
+      ensureHitTargets();
+      reinforceMobileBehaviour();
+    }, {passive:true});
+  }
+
+      /* ============================================================
+     PART 10/10 — Final Polish (append-only)
+     - Cinematic intro settle
+     - Ultra-light film grain + vignette
+     - Premium copy + pack naming
+     - Confidence lock after selection
+     ============================================================ */
+
+  const finalPolish = {
+    introDone: false,
+    grainCanvas: null,
+    grainCtx: null,
+    grainStrength: 0.045
+  };
+
+  /* ---------- Cinematic intro settle ---------- */
+  function introSettle(){
+    // Prevent immediate chaos on load; let the scene “land”
+    let t = 0;
+    const dur = 1200;
+    const start = performance.now();
+
+    function step(now){
+      t = clamp((now - start) / dur, 0, 1);
+      const ease = t*t*(3-2*t); // smoothstep
+
+      // Gently ramp parallax + FX
+      motion.spx = lerp(0.5, motion.spx, ease);
+      motion.spy = lerp(0.5, motion.spy, ease);
+
+      if(bgVideo){
+        bgVideo.style.filter =
+          `contrast(${lerp(1.04,1.12,ease)}) saturate(${lerp(1.06,1.14,ease)}) brightness(${lerp(.90,.82,ease)})`;
+      }
+
+      if(t < 1){
+        requestAnimationFrame(step);
+      } else {
+        finalPolish.introDone = true;
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ---------- Film grain + vignette (canvas overlay) ---------- */
+  function initGrain(){
+    if(motion.reduce) return;
+
+    const c = document.createElement("canvas");
+    c.style.position = "fixed";
+    c.style.inset = "0";
+    c.style.pointerEvents = "none";
+    c.style.zIndex = "6";
+    c.style.mixBlendMode = "overlay";
+    document.body.appendChild(c);
+
+    finalPolish.grainCanvas = c;
+    finalPolish.grainCtx = c.getContext("2d");
+
+    function resize(){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      c.width  = Math.floor(window.innerWidth * dpr);
+      c.height = Math.floor(window.innerHeight * dpr);
+      c.style.width = "100%";
+      c.style.height = "100%";
+      finalPolish.grainCtx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    resize();
+    window.addEventListener("resize", resize, {passive:true});
+
+    function drawGrain(){
+      const ctx = finalPolish.grainCtx;
+      if(!ctx) return;
+
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+
+      // Grain
+      const img = ctx.createImageData(window.innerWidth, window.innerHeight);
+      const d = img.data;
+      for(let i=0;i<d.length;i+=4){
+        const n = (Math.random()*255)|0;
+        d[i] = d[i+1] = d[i+2] = n;
+        d[i+3] = Math.floor(finalPolish.grainStrength * 255);
+      }
+      ctx.putImageData(img,0,0);
+
+      // Vignette
+      const g = ctx.createRadialGradient(
+        window.innerWidth/2, window.innerHeight/2, Math.min(window.innerWidth,window.innerHeight)*0.25,
+        window.innerWidth/2, window.innerHeight/2, Math.max(window.innerWidth,window.innerHeight)*0.75
+      );
+      g.addColorStop(0,"rgba(0,0,0,0)");
+      g.addColorStop(1,"rgba(0,0,0,.35)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,window.innerWidth,window.innerHeight);
+
+      requestAnimationFrame(drawGrain);
+    }
+    requestAnimationFrame(drawGrain);
+  }
+
+  /* ---------- Premium copy polish ---------- */
+  function polishCopy(){
+    // Subtle copy refinements without changing structure
+    const map = {
+      fresh:  "Clean energy. Zero noise.",
+      gaming: "Locked focus. Long sessions.",
+      gym:    "Explosive drive. Controlled burn.",
+      work:   "Calm clarity. Get it done.",
+      lockin: "Tunnel vision. No distractions.",
+      mystery:"Unbox the unexpected."
+    };
+
+    Object.keys(PACKS).forEach(k=>{
+      if(map[k]) PACKS[k].tagline = map[k];
+    });
+  }
+
+  /* ---------- Confidence lock ---------- */
+  function confidenceLock(){
+    // After a pack is locked for a moment, reduce micro jitter
+    let lastLock = null;
+    setInterval(()=>{
+      if(lockedPack && lockedPack !== lastLock){
+        lastLock = lockedPack;
+        // After short delay, damp motion a bit
+        setTimeout(()=>{
+          if(lockedPack === lastLock){
+            motion.vx *= 0.25;
+            motion.vy *= 0.25;
+            orbit.velocity *= 0.35;
+          }
+        }, 420);
+      }
+    }, 200);
+  }
+
+  function initFinalPolish(){
+    polishCopy();
+    introSettle();
+    initGrain();
+    confidenceLock();
+  }
 
   /* ---------- Init Orbit ---------- */
 
@@ -2367,8 +2683,9 @@
 
       initMicro();
       initPerf();
+      initA11yMobile();
+      initFinalPolish();
 
-  
       // set default pack
       setPack("lockin");
   
