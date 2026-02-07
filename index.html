@@ -2066,6 +2066,126 @@
     updateOrbit(dt);
   };
 
+      /* ============================================================
+     PART 7/10 — Micro-interactions (append-only)
+     - Magnetic “real” buttons (stronger + smoother)
+     - Cinematic press ripple (subtle, not cheap)
+     - Focus glow (premium accessibility)
+     - Pack breathing + depth shimmer tied to motion
+     ============================================================ */
+
+  function addRipple(el){
+    if(!el) return;
+    el.style.position = el.style.position || "relative";
+    el.style.overflow = "hidden";
+
+    el.addEventListener("pointerdown", (e)=>{
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left);
+      const y = (e.clientY - r.top);
+      const size = Math.max(r.width, r.height) * 1.15;
+
+      const ripple = document.createElement("span");
+      ripple.style.position = "absolute";
+      ripple.style.left = (x - size/2) + "px";
+      ripple.style.top  = (y - size/2) + "px";
+      ripple.style.width = size + "px";
+      ripple.style.height = size + "px";
+      ripple.style.borderRadius = "999px";
+      ripple.style.pointerEvents = "none";
+      ripple.style.opacity = "0.0";
+      ripple.style.transform = "scale(0.65)";
+      ripple.style.filter = "blur(0.2px)";
+      ripple.style.background = "radial-gradient(circle at 30% 30%, rgba(255,255,255,.22), rgba(183,255,106,.14) 35%, rgba(0,0,0,0) 72%)";
+
+      el.appendChild(ripple);
+
+      ripple.animate([
+        { opacity: 0.0, transform: "scale(0.55)" },
+        { opacity: 0.38, transform: "scale(1.0)" },
+        { opacity: 0.0, transform: "scale(1.12)" }
+      ], { duration: 520, easing: "cubic-bezier(.16,1,.3,1)" }).onfinish = () => ripple.remove();
+    }, { passive:true });
+  }
+
+  function addFocusGlow(el){
+    if(!el) return;
+    el.addEventListener("focus", ()=>{
+      el.style.boxShadow = "0 0 0 1px rgba(255,255,255,.14), 0 18px 55px rgba(183,255,106,.10)";
+      el.style.borderColor = "rgba(255,255,255,.22)";
+    });
+    el.addEventListener("blur", ()=>{
+      el.style.boxShadow = "";
+      el.style.borderColor = "";
+    });
+  }
+
+  // Pack “breathing” + shimmer that follows the camera
+  function tickMicro(){
+    if(motion.reduce) return;
+
+    const t = performance.now() * 0.001;
+    const nx = (motion.spx - 0.5) * 2;
+    const ny = (motion.spy - 0.5) * 2;
+
+    // make front-most pack feel alive (uses zIndex set in Part 5)
+    let topDot = null;
+    let topZ = -Infinity;
+    orbitDots.forEach(d=>{
+      const z = Number(d.style.zIndex || 0);
+      if(z > topZ){ topZ = z; topDot = d; }
+    });
+
+    orbitDots.forEach(d=>{
+      const isTop = (d === topDot);
+      const breathe = 1 + (isTop ? (Math.sin(t*1.6) * 0.012) : (Math.sin(t*1.1 + topZ) * 0.006));
+
+      // subtle highlight sweep (not neon)
+      const sheen = clamp(0.06 + (nx*0.04) + (isTop ? 0.04 : 0.0), 0.03, 0.14);
+      d.style.background = `rgba(8,14,10,${0.26 + sheen})`;
+      d.style.borderColor = isTop ? "rgba(255,255,255,.22)" : "rgba(255,255,255,.14)";
+
+      // keep existing orbit transform and multiply a tiny breathe
+      const base = d.style.transform || "";
+      // only append if we haven't already appended
+      if(!base.includes(" scale(")){
+        // Part 5 already has scale; just add a tiny extra via CSS variable-ish trick
+        d.style.transform = base + ` scale(${breathe.toFixed(4)})`;
+      } else {
+        // If Part 5 already sets scale, we don't want to stack infinitely.
+        // So we reapply a gentle final scale via a shadow only.
+        d.style.boxShadow = isTop
+          ? "0 18px 45px rgba(0,0,0,.45), 0 0 0 1px rgba(183,255,106,.10)"
+          : "0 14px 35px rgba(0,0,0,.35)";
+      }
+    });
+
+    // Preview glass shimmer follows pointer
+    if(previewEl){
+      const px = nx * 10;
+      const py = ny * 8;
+      previewEl.style.boxShadow = `0 18px 60px rgba(0,0,0,.45), ${px}px ${py}px 55px rgba(183,255,106,.06)`;
+    }
+
+    requestAnimationFrame(tickMicro);
+  }
+
+  function initMicro(){
+    // Ripple + focus glow on key controls
+    [enterBtn, revealBtn, soundToggle].forEach(el=>{
+      addRipple(el);
+      addFocusGlow(el);
+    });
+
+    // Make pack dots feel “pressable”
+    orbitDots.forEach(d=>{
+      addFocusGlow(d);
+      addRipple(d);
+    });
+
+    requestAnimationFrame(tickMicro);
+  }
+
   /* ---------- Init Orbit ---------- */
 
   function initOrbit(){
@@ -2082,6 +2202,8 @@
       // Magnetic UI for the “expensive” feel
       magnet(enterBtn, 0.11);
       magnet(revealBtn, 0.10);
+
+      initMicro();
   
       // set default pack
       setPack("lockin");
