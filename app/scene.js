@@ -343,3 +343,61 @@ export function startScene(ids){
   bg.play().catch(()=>{});
   requestAnimationFrame(tick);
 }
+
+    const len = Math.hypot(mx, mz) || 1;
+    mx /= len; mz /= len;
+
+    // move in facing direction
+    const sin = Math.sin(cam.yaw);
+    const cos = Math.cos(cam.yaw);
+
+    cam.x += (mx * cos - mz * sin) * sp * dt * 0.01;
+    cam.z += (mx * sin + mz * cos) * sp * dt * 0.01;
+
+    // focus logic
+    updateFocus();
+
+    // highlight focused totem
+    totems.forEach((t, i)=>{
+      if(i === focusedIndex){
+        t.el.style.borderColor = "rgba(255,255,255,.32)";
+        dockTitle.textContent = t.p.name;
+        dockSub.textContent = t.p.tag;
+        stateChip.textContent = "Press E / USE";
+      } else {
+        t.el.style.borderColor = "rgba(255,255,255,.10)";
+      }
+    });
+
+    // FX (light)
+    fxFrame++;
+    if(fxFrame % quality.fxEvery === 0){
+      ctx.clearRect(0,0,innerWidth,innerHeight);
+      for(const m of motes){
+        m.p += dt*0.0006;
+        const x = (m.x + Math.sin(m.p)*14) % innerWidth;
+        const y = (m.y + Math.cos(m.p)*10) % innerHeight;
+        ctx.globalAlpha = 0.08 + m.z*0.2;
+        ctx.fillStyle = "rgba(255,255,255,.85)";
+        ctx.beginPath();
+        ctx.arc(x,y,m.r,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // FPS counter
+    frames++;
+    const now = performance.now();
+    if(now - fpsLast > 500){
+      const fps = Math.round(frames * 1000 / (now - fpsLast));
+      fpsChip.textContent = `FPS: ${fps}`;
+      frames = 0;
+      fpsLast = now;
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  bg.play().catch(()=>{});
+  requestAnimationFrame(tick);
+}
