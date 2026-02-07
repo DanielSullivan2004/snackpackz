@@ -12,13 +12,11 @@
       --mut:rgba(238,243,255,.72);
       --line:rgba(255,255,255,.12);
 
-      /* glass */
-      --glassA:rgba(10,12,24,.38);
+      --glassA:rgba(10,12,24,.40);
       --glassB:rgba(10,12,24,.22);
 
-      /* shadows */
       --shadow: 0 26px 120px rgba(0,0,0,.66);
-      --shadow2: 0 12px 50px rgba(0,0,0,.48);
+      --shadow2: 0 14px 70px rgba(0,0,0,.45);
       --r:22px;
 
       --accent:#A5F0FF;
@@ -45,38 +43,39 @@
         radial-gradient(900px 700px at 50% 92%, rgba(120,255,209,.10), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
-
-      /* crispness */
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: geometricPrecision;
     }
 
-    a{color:inherit;text-decoration:none}
-    button{font:inherit}
-
-    /* subtle grain overlay (expensive look, not tacky) */
+    /* lightweight “stars” (no canvas lag) */
     body:before{
       content:"";
       position:fixed; inset:0;
       pointer-events:none;
       z-index:1;
+      opacity:.55;
       background:
-        radial-gradient(1200px 600px at 50% 0%, rgba(255,255,255,.05), transparent 70%),
-        radial-gradient(900px 700px at 50% 100%, rgba(0,0,0,.35), transparent 60%);
-      opacity:.85;
-      mix-blend-mode: overlay;
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.55), transparent 60%),
+        radial-gradient(1px 1px at 20% 35%, rgba(255,255,255,.40), transparent 60%),
+        radial-gradient(1px 1px at 35% 18%, rgba(255,255,255,.48), transparent 60%),
+        radial-gradient(1px 1px at 46% 40%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(1px 1px at 58% 22%, rgba(255,255,255,.42), transparent 60%),
+        radial-gradient(1px 1px at 72% 34%, rgba(255,255,255,.38), transparent 60%),
+        radial-gradient(1px 1px at 84% 18%, rgba(255,255,255,.46), transparent 60%),
+        radial-gradient(1px 1px at 92% 44%, rgba(255,255,255,.30), transparent 60%),
+        radial-gradient(1px 1px at 14% 62%, rgba(255,255,255,.30), transparent 60%),
+        radial-gradient(1px 1px at 28% 74%, rgba(255,255,255,.42), transparent 60%),
+        radial-gradient(1px 1px at 52% 78%, rgba(255,255,255,.30), transparent 60%),
+        radial-gradient(1px 1px at 76% 72%, rgba(255,255,255,.40), transparent 60%),
+        radial-gradient(1px 1px at 90% 84%, rgba(255,255,255,.28), transparent 60%);
+      mix-blend-mode: screen;
+      filter: blur(.2px);
     }
-    body:after{
-      content:"";
-      position:fixed; inset:-40%;
-      pointer-events:none;
-      z-index:2;
-      opacity:.10;
-      background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-      transform: rotate(7deg);
-    }
+
+    a{color:inherit;text-decoration:none}
+    button{font:inherit}
+    button, a{-webkit-tap-highlight-color: transparent}
 
     /* ===== NAV ===== */
     .nav{
@@ -109,6 +108,7 @@
     }
     .navLinks a{padding:8px 10px;border-radius:999px;transition:background .12s ease}
     .navLinks a:hover{background:rgba(255,255,255,.06)}
+    @media (max-width:980px){ .navLinks{display:none} }
 
     .btn{
       border:1px solid rgba(255,255,255,.14);
@@ -120,7 +120,6 @@
       letter-spacing:.2px;
       display:inline-flex; gap:8px; align-items:center;
       user-select:none;
-      -webkit-tap-highlight-color: transparent;
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
       backdrop-filter: blur(12px) saturate(130%);
       -webkit-backdrop-filter: blur(12px) saturate(130%);
@@ -145,18 +144,16 @@
     @media (max-width:980px){
       body{overflow:auto}
       .scene{position:relative;grid-template-columns:1fr;padding-top:78px}
-      .navLinks{display:none}
     }
 
-    /* ===== LEFT HERO ===== */
+    /* ===== HERO LEFT ===== */
     .left{padding:clamp(12px,2vw,18px);display:flex;align-items:center;justify-content:center}
     .hero{
       width:var(--stageW);
       min-height:74vh;
       border-radius:var(--r);
       border:1px solid rgba(255,255,255,.12);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
+      background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
       backdrop-filter: blur(18px) saturate(140%);
       -webkit-backdrop-filter: blur(18px) saturate(140%);
       box-shadow: var(--shadow);
@@ -173,18 +170,7 @@
       opacity:.98;
       pointer-events:none;
     }
-    .hero:after{
-      content:"";
-      position:absolute; inset:0;
-      pointer-events:none;
-      background:
-        radial-gradient(850px 380px at 50% 6%, rgba(255,255,255,.055), transparent 60%),
-        radial-gradient(900px 640px at 50% 100%, rgba(0,0,0,.52), transparent 64%);
-      mix-blend-mode: overlay;
-      opacity:.70;
-    }
 
-    /* lines */
     .lines{
       position:absolute; inset:0;
       background:
@@ -229,7 +215,6 @@
       text-align:center;
       gap:10px;
       transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-      will-change: opacity, transform, filter;
     }
     .headline h2{
       margin:0;
@@ -248,14 +233,8 @@
       max-width: 72ch;
     }
     .ctaRow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
-    .ctaPrimary{
-      padding:11px 14px;
-      font-weight:950;
-      border-color:rgba(165,240,255,.20);
-      box-shadow: 0 18px 70px rgba(0,0,0,.40);
-    }
+    .ctaPrimary{padding:11px 14px;font-weight:950;border-color:rgba(165,240,255,.20);box-shadow: 0 18px 70px rgba(0,0,0,.40);}
 
-    /* stats */
     .stats{
       margin-top:auto;
       display:grid;
@@ -265,7 +244,6 @@
       width:100%;
       justify-self:center;
       transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-      will-change: opacity, transform, filter;
       padding-bottom: 12px;
       z-index:3;
     }
@@ -315,21 +293,13 @@
       width: var(--globe);
       height: var(--globe);
       perspective: 1200px;
-      touch-action:none;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       pointer-events:auto;
       z-index:2;
-    }
 
-    canvas#fx{
-      position:absolute;
-      inset:-35%;
-      width:170%;
-      height:170%;
-      z-index:0;
-      opacity:.82;
-      pointer-events:none;
+      /* CRITICAL for mobile: stops the page fighting with drag */
+      touch-action: none;
     }
 
     .orbit{
@@ -337,52 +307,14 @@
       inset:-12%;
       border-radius:50%;
       border:1px solid rgba(255,255,255,.12);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.06),
-        0 0 0 1px rgba(0,0,0,.25);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
       opacity:.90;
       z-index:1;
       pointer-events:none;
     }
 
-    .floats{
-      position:absolute;
-      inset:-10%;
-      z-index:3;
-      pointer-events:none;
-      opacity:1;
-      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-      filter: drop-shadow(0 18px 70px rgba(0,0,0,.50));
-    }
-    .floatIcon{
-      position:absolute;
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      display:grid; place-items:center;
-      box-shadow: 0 18px 80px rgba(0,0,0,.55);
-      opacity:.98;
-    }
-    .floatIcon:before{
-      content:"";
-      width:14px;height:14px;border-radius:50%;
-      background: linear-gradient(180deg, rgba(165,240,255,.92), rgba(183,168,255,.84));
-      box-shadow: 0 0 0 7px rgba(165,240,255,.095);
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .f1{left:12%; top:42%}
-    .f2{left:22%; top:28%}
-    .f3{left:36%; top:20%}
-    .f4{right:36%; top:20%}
-    .f5{right:22%; top:28%}
-    .f6{right:12%; top:42%}
-
     .globe{
-      position:absolute;
-      inset:0;
+      position:absolute; inset:0;
       border-radius:50%;
       z-index:2;
       cursor:pointer;
@@ -396,7 +328,6 @@
       box-shadow:
         0 70px 260px rgba(0,0,0,.74),
         inset 0 0 0 1px rgba(255,255,255,.08);
-      transform: translateZ(0);
     }
     .globe:before{
       content:"";
@@ -404,26 +335,49 @@
       inset:-18%;
       border-radius:50%;
       background:
-        radial-gradient(circle at 56% 50%, rgba(255,255,255,.07), transparent 60%),
         radial-gradient(circle at 40% 42%, rgba(165,240,255,.22), transparent 62%),
         radial-gradient(circle at 60% 58%, rgba(183,168,255,.15), transparent 62%);
       filter: blur(18px);
-      opacity:.95;
+      opacity:.92;
       mix-blend-mode: screen;
       pointer-events:none;
     }
-    .globe:after{
-      content:"";
+
+    /* reveal button (mobile helper, also works on desktop) */
+    .revealBtn{
       position:absolute;
-      inset:6%;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.04), transparent 62%),
-        conic-gradient(from 190deg, rgba(165,240,255,.05), rgba(183,168,255,.05), rgba(165,240,255,.05));
-      opacity:.55;
-      filter: blur(0px);
+      left:50%;
+      top:50%;
+      transform: translate(-50%,-50%);
+      z-index:9;
+      border-radius: 999px;
+      padding: 10px 14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      color: rgba(238,243,255,.92);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing:.25px;
+      display:flex; align-items:center; gap:10px;
+      box-shadow: var(--shadow2);
+      cursor:pointer;
+      transition: opacity 180ms ease, transform 180ms ease, filter 180ms ease;
+    }
+    .revealBtn:hover{transform:translate(-50%,-51%)}
+    .revealBtn:active{transform:translate(-50%,-50%) scale(.99)}
+    .revealBtn .spark{
+      width:18px;height:18px;border-radius:10px;
+      background: linear-gradient(180deg, rgba(165,240,255,.92), rgba(183,168,255,.86));
+      box-shadow: 0 0 0 7px rgba(165,240,255,.09);
+      border:1px solid rgba(255,255,255,.14);
+    }
+    .hero.engaged .revealBtn{
+      opacity:0;
+      transform: translate(-50%,-48%);
+      filter: blur(2px);
       pointer-events:none;
-      mask-image: radial-gradient(circle at 50% 55%, rgba(0,0,0,1), rgba(0,0,0,0) 68%);
     }
 
     /* OPTIONS */
@@ -453,25 +407,16 @@
       cursor:pointer;
       white-space:nowrap;
       user-select:none;
-      -webkit-tap-highlight-color: transparent;
       will-change: transform, opacity, filter;
       transform-style: preserve-3d;
     }
-    .opt:hover{
-      border-color:rgba(165,240,255,.34);
-      background: rgba(0,0,0,.28);
-      box-shadow: 0 18px 120px rgba(0,0,0,.72);
-    }
-    .opt.active{
-      border-color:rgba(165,240,255,.46);
-      background: rgba(0,0,0,.30);
-      box-shadow: 0 18px 140px rgba(0,0,0,.76);
-    }
+    .opt:hover{border-color:rgba(165,240,255,.34);background: rgba(0,0,0,.28)}
+    .opt.active{border-color:rgba(165,240,255,.46);background: rgba(0,0,0,.30)}
     .oDot{width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,var(--accent),var(--accent2));box-shadow:0 0 0 7px rgba(165,240,255,.09)}
     .oTxt{font-weight:950;font-size:12px;letter-spacing:.62px;text-transform:uppercase}
     .oSub{margin-left:auto;font-size:11px;color:rgba(238,243,255,.68);letter-spacing:.22px;text-transform:uppercase}
 
-    /* engage: fade headline/stats/pill + floats */
+    /* Engage: fade headline/stats/pill (only after reveal) */
     .hero.engaged .topPill,
     .hero.engaged .headline,
     .hero.engaged .stats{
@@ -480,7 +425,6 @@
       filter: blur(3px);
       pointer-events:none;
     }
-    .hero.engaged .floats{opacity:0; transform:scale(.985); filter: blur(2px)}
 
     /* ===== RIGHT PREVIEW ===== */
     .hud{
@@ -509,11 +453,8 @@
     .hudMedia img,.hudMedia video{
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;
-
-      /* “ultra” feel without destroying content */
       transform: scale(1.02);
       filter: contrast(1.10) saturate(1.06) brightness(1.02);
-      image-rendering: auto;
     }
     .hudMedia img{opacity:1;transition:opacity 220ms ease}
     .hudMedia video{opacity:0;transition:opacity 320ms ease}
@@ -548,10 +489,8 @@
       display:inline-flex;align-items:center;gap:10px;
       cursor:pointer;white-space:nowrap;
       box-shadow: 0 18px 70px rgba(0,0,0,.45);
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
     }
-    .enter:hover{transform:translateY(-1px);background:rgba(0,0,0,.30);border-color:rgba(255,255,255,.24)}
-    .spark{
+    .enter .spark{
       width:18px;height:18px;border-radius:10px;
       background: linear-gradient(180deg, rgba(165,240,255,.92), rgba(183,168,255,.86));
       box-shadow: 0 0 0 7px rgba(165,240,255,.09);
@@ -613,7 +552,7 @@
 
           <div class="headline">
             <h2>Redefining Snack Packs with a 3D Spin Selector</h2>
-            <p>Hover the globe to reveal the vibes. Spin fast. Preview loads clean (image → video). Enter to order.</p>
+            <p>Reveal the vibes. Spin fast. Preview loads clean (image → video). Enter to order.</p>
             <div class="ctaRow">
               <a class="btn ctaPrimary" href="#" onclick="document.getElementById('spin3d').scrollIntoView({behavior:'smooth'}); return false;">Discover more</a>
               <a class="btn" id="waCta" href="#" rel="noopener">Order on WhatsApp</a>
@@ -627,25 +566,18 @@
           </div>
         </div>
 
-        <!-- centre scene -->
-        <div class="centre" aria-hidden="false">
+        <div class="centre">
           <div class="beam" aria-hidden="true"></div>
 
           <div class="spin3d" id="spin3d">
-            <canvas id="fx" aria-hidden="true"></canvas>
-
             <div class="orbit" aria-hidden="true"></div>
 
-            <div class="floats" id="floats" aria-hidden="true">
-              <div class="floatIcon f1"></div>
-              <div class="floatIcon f2"></div>
-              <div class="floatIcon f3"></div>
-              <div class="floatIcon f4"></div>
-              <div class="floatIcon f5"></div>
-              <div class="floatIcon f6"></div>
-            </div>
-
             <div class="globe" id="globe" role="button" aria-label="Reveal vibes"></div>
+
+            <button class="revealBtn" id="revealBtn" type="button">
+              <span class="spark" aria-hidden="true"></span>
+              Reveal vibes
+            </button>
 
             <div class="opts" id="opts" aria-label="Vibe options"></div>
           </div>
@@ -679,7 +611,7 @@
             <div class="v" id="hudMeta">Image → Video</div>
           </div>
           <div class="hudTip">
-            Hover globe to reveal<br/>Drag to spin • Scroll to flick<br/>Mobile: tap globe then tap vibe twice
+            Tap “Reveal vibes”<br/>Drag to spin • Scroll to flick<br/>Tap vibe twice to enter
           </div>
         </div>
       </div>
@@ -707,6 +639,7 @@
     const spin3d  = document.getElementById("spin3d");
     const globe   = document.getElementById("globe");
     const optsEl  = document.getElementById("opts");
+    const revealBtn = document.getElementById("revealBtn");
 
     const hudMedia = document.getElementById("hudMedia");
     const hudImg   = document.getElementById("hudImg");
@@ -771,13 +704,15 @@
         `;
 
         opt.addEventListener("mouseenter", ()=>{
-          if (window.matchMedia("(hover:hover)").matches){
-            setActive(i, false);
-          }
+          // hover preview only if revealed (prevents random changes)
+          if (!hero.classList.contains("engaged")) return;
+          if (window.matchMedia("(hover:hover)").matches) setActive(i, false);
         });
 
         opt.addEventListener("click", (e)=>{
           e.preventDefault();
+          if (!hero.classList.contains("engaged")) setEngaged(true);
+
           const idx = Number(opt.dataset.index);
 
           // mobile: tap once preview, second tap enter
@@ -789,8 +724,9 @@
             setActive(idx, true);
             return;
           }
+
           setActive(idx, true);
-        }, {passive:false});
+        });
 
         optsEl.appendChild(opt);
       }
@@ -810,7 +746,7 @@
       return i;
     }
 
-    /* Spin engine */
+    /* Spin engine (stable) */
     let rot = 0;
     let vel = 0;
     let dragging = false;
@@ -832,11 +768,13 @@
     }
 
     function layout3D(){
+      if (!hero.classList.contains("engaged")) return; // no layout spam when hidden
+
       const rect = spin3d.getBoundingClientRect();
       const base = Math.min(rect.width, rect.height);
 
       const radius = base * 0.62;
-      const depth  = base * 0.24;
+      const depth  = base * 0.22;
 
       const items = optsEl.querySelectorAll(".opt");
       for(let i=0;i<items.length;i++){
@@ -862,6 +800,7 @@
     function onWheel(e){
       if (!hero.classList.contains("engaged")) return;
       e.preventDefault();
+
       const delta = e.deltaY || 0;
       const add = clamp(delta * 0.18, -42, 42);
       rot += add;
@@ -873,6 +812,7 @@
         updateActiveClass();
         loadPreview(vibes[idx]);
       }
+
       clearTimeout(onWheel._t);
       onWheel._t = setTimeout(()=> setActive(nearestIndex(rot), true), 120);
     }
@@ -890,15 +830,19 @@
     let lastT = 0;
 
     function onDown(e){
-      if (!hero.classList.contains("engaged")) return;
+      if (!hero.classList.contains("engaged")) setEngaged(true);
+
       dragging = true;
       pointerId = e.pointerId;
       spin3d.setPointerCapture?.(pointerId);
+
       lastAng = angleFromEvent(e);
       lastT = performance.now();
     }
+
     function onMove(e){
       if (!dragging || e.pointerId !== pointerId) return;
+
       const a = angleFromEvent(e);
       let da = a - lastAng;
       if (da > 180) da -= 360;
@@ -921,108 +865,40 @@
         loadPreview(vibes[idx]);
       }
     }
+
     function onUp(e){
       if (!dragging || e.pointerId !== pointerId) return;
       dragging = false;
       pointerId = null;
-      setTimeout(()=> setActive(nearestIndex(rot), true), 80);
+      setTimeout(()=> setActive(nearestIndex(rot), true), 60);
     }
 
-    /* Engage behaviour */
+    /* Reveal behaviour (robust) */
     function setEngaged(on){
       hero.classList.toggle("engaged", on);
-      if (on) layout3D();
+      if (on){
+        // force immediate correct layout when revealed
+        requestAnimationFrame(layout3D);
+      }
     }
+
+    // Desktop: hover OR click works
     spin3d.addEventListener("mouseenter", ()=>{
       if (window.matchMedia("(hover:hover)").matches) setEngaged(true);
     });
-    hero.addEventListener("mouseleave", ()=>{
-      if (window.matchMedia("(hover:hover)").matches) setEngaged(false);
-    });
-    globe.addEventListener("click", ()=>{
-      if (window.matchMedia("(hover:none)").matches){
-        setEngaged(!hero.classList.contains("engaged"));
-      }
-    });
 
+    // Click/tap to reveal
+    globe.addEventListener("click", ()=> setEngaged(true));
+    revealBtn.addEventListener("click", ()=> setEngaged(true));
+
+    // Drag + scroll
     spin3d.addEventListener("pointerdown", onDown, {passive:true});
-    window.addEventListener("pointermove", onMove, {passive:true});
-    window.addEventListener("pointerup", onUp, {passive:true});
+    spin3d.addEventListener("pointermove", onMove, {passive:true});
+    spin3d.addEventListener("pointerup", onUp, {passive:true});
+    spin3d.addEventListener("pointercancel", onUp, {passive:true});
     spin3d.addEventListener("wheel", onWheel, {passive:false});
 
-    /* ===== Ultra-crisp FX canvas (hi-DPI) ===== */
-    const fx = document.getElementById("fx");
-    const fctx = fx.getContext("2d", { alpha:true });
-    const parts = [];
-    let mx=0, my=0;
-
-    function fitFx(){
-      const rect = fx.getBoundingClientRect();
-      const dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1)); // higher than before
-      fx.width = Math.round(rect.width * dpr);
-      fx.height = Math.round(rect.height * dpr);
-      fctx.setTransform(1,0,0,1,0,0);
-      fctx.scale(dpr, dpr);
-    }
-
-    function seedParts(){
-      parts.length = 0;
-      const n = 170;
-      for(let i=0;i<n;i++){
-        parts.push({
-          x: Math.random(),
-          y: Math.random(),
-          r: 0.7 + Math.random()*1.8,
-          a: 0.06 + Math.random()*0.22,
-          vx:(Math.random()-0.5)*0.00055,
-          vy:(Math.random()-0.5)*0.00055
-        });
-      }
-    }
-
-    function drawFx(){
-      const w = fx.getBoundingClientRect().width;
-      const h = fx.getBoundingClientRect().height;
-      fctx.clearRect(0,0,w,h);
-
-      const gx = w*(0.50 + mx*0.06);
-      const gy = h*(0.50 + my*0.06);
-
-      // “bloom” gradient
-      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.62);
-      g.addColorStop(0, "rgba(165,240,255,0.12)");
-      g.addColorStop(0.42, "rgba(183,168,255,0.08)");
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      fctx.fillStyle = g;
-      fctx.fillRect(0,0,w,h);
-
-      // stars/particles
-      for(const p of parts){
-        p.x += p.vx; p.y += p.vy;
-        if (p.x<0) p.x=1; if (p.x>1) p.x=0;
-        if (p.y<0) p.y=1; if (p.y>1) p.y=0;
-
-        const x = p.x*w;
-        const y = p.y*h;
-
-        fctx.fillStyle = `rgba(238,243,255,${p.a})`;
-        fctx.beginPath();
-        fctx.arc(x,y,p.r,0,Math.PI*2);
-        fctx.fill();
-      }
-
-      requestAnimationFrame(drawFx);
-    }
-
-    window.addEventListener("mousemove", (e)=>{
-      const r = spin3d.getBoundingClientRect();
-      const cx = r.left + r.width/2;
-      const cy = r.top + r.height/2;
-      mx = clamp((e.clientX - cx)/(r.width/2), -1, 1);
-      my = clamp((e.clientY - cy)/(r.height/2), -1, 1);
-    });
-
-    /* Main loop */
+    /* Main loop (only animates when revealed) */
     let last = performance.now();
     function loop(now){
       const dt = Math.min(0.05, (now-last)/1000);
@@ -1030,14 +906,14 @@
 
       if (hero.classList.contains("engaged") && !dragging){
         rot += vel * dt;
-        vel *= Math.exp(-3.0 * dt);
+        vel *= Math.exp(-3.1 * dt);
 
         if (Math.abs(vel) < 18){
           const idx = nearestIndex(rot);
-          const target = -idx * 360/N;
+          const target = -idx * step;
           let diff = target - rot;
           diff = ((diff + 540) % 360) - 180;
-          rot += diff * Math.min(1, dt*8);
+          rot += diff * Math.min(1, dt*9);
 
           if (idx !== activeIndex){
             activeIndex = idx;
@@ -1045,8 +921,9 @@
             loadPreview(vibes[idx]);
           }
         }
+        layout3D();
       }
-      layout3D();
+
       requestAnimationFrame(loop);
     }
 
@@ -1055,16 +932,12 @@
     setActive(0, true);
     loadPreview(vibes[0]);
 
-    fitFx();
-    seedParts();
-    drawFx();
-    layout3D();
+    // Don’t auto-engage (stops “random movement” on load), but do layout once ready
+    requestAnimationFrame(()=>{ /* nothing */ });
     requestAnimationFrame(loop);
 
     window.addEventListener("resize", ()=>{
-      fitFx();
-      seedParts();
-      layout3D();
+      if (hero.classList.contains("engaged")) requestAnimationFrame(layout3D);
     });
   </script>
 </body>
