@@ -12,8 +12,7 @@
       --mut:rgba(238,243,255,.72);
       --line:rgba(255,255,255,.12);
       --glass:rgba(12,16,32,.46);
-      --glass2:rgba(12,16,32,.28);
-      --shadow: 0 24px 110px rgba(0,0,0,.60);
+      --shadow: 0 24px 120px rgba(0,0,0,.62);
       --r:22px;
 
       --accent:#A5F0FF;
@@ -23,8 +22,8 @@
       --bg1:#06081A;
 
       --hudW:min(36vw, 520px);
-      --stageW:min(1050px, 100%);
-      --sphereSize:min(52vmin, 520px);
+      --stageW:min(1100px, 100%);
+      --sphereSize:min(52vmin, 560px);
     }
 
     *{ box-sizing:border-box; }
@@ -34,15 +33,14 @@
       color:var(--txt);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1400px 900px at 20% 15%, rgba(167,120,255,.14), transparent 60%),
-        radial-gradient(1200px 900px at 78% 18%, rgba(72,220,255,.12), transparent 60%),
+        radial-gradient(1400px 900px at 20% 15%, rgba(167,120,255,.16), transparent 60%),
+        radial-gradient(1200px 900px at 78% 18%, rgba(72,220,255,.13), transparent 60%),
         radial-gradient(900px 700px at 50% 90%, rgba(120,255,209,.08), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
     }
     a{ color:inherit; text-decoration:none; }
     button{ font:inherit; }
-    .hide{ opacity:0; pointer-events:none; transform: translateY(8px); }
 
     /* ===== NAV ===== */
     .nav{
@@ -86,7 +84,6 @@
       overflow:hidden;
       text-overflow:ellipsis;
     }
-
     .navLinks{
       display:flex;
       gap:18px;
@@ -163,14 +160,14 @@
       box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
-      min-height: 72vh;
+      min-height: 74vh;
     }
     .heroCard:before{
       content:"";
       position:absolute; inset:-1px;
       background:
-        radial-gradient(800px 420px at 50% 22%, rgba(165,240,255,.12), transparent 62%),
-        radial-gradient(900px 600px at 60% 70%, rgba(183,168,255,.10), transparent 62%),
+        radial-gradient(900px 480px at 50% 22%, rgba(165,240,255,.14), transparent 62%),
+        radial-gradient(1100px 700px at 60% 70%, rgba(183,168,255,.12), transparent 62%),
         radial-gradient(900px 700px at 40% 110%, rgba(120,255,209,.07), transparent 62%);
       opacity:.95;
       pointer-events:none;
@@ -186,13 +183,14 @@
       gap: 18px;
     }
 
-    /* big headline area that fades when sphere engaged */
+    /* ===== HEADLINE (must disappear on hover/focus) ===== */
     .headline{
       display:grid;
       gap:10px;
       justify-items:center;
       text-align:center;
-      transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
+      will-change: opacity, transform, filter;
     }
     .kicker{
       display:inline-flex;
@@ -210,21 +208,20 @@
     .kicker .dot{ width:8px;height:8px; }
     .headline h2{
       margin:0;
-      font-size: clamp(34px, 4.6vw, 56px);
+      font-size: clamp(34px, 4.7vw, 58px);
       line-height:1.03;
       font-weight: 980;
       letter-spacing: -0.8px;
       text-shadow: 0 30px 70px rgba(0,0,0,.55);
-      max-width: 18ch;
+      max-width: 20ch;
     }
     .headline p{
       margin:0;
       color: rgba(238,243,255,.74);
       font-size: 13px;
       line-height: 1.45;
-      max-width: 62ch;
+      max-width: 66ch;
     }
-
     .ctaRow{
       display:flex;
       gap:12px;
@@ -238,60 +235,79 @@
       border-color: rgba(165,240,255,.18);
     }
 
-    /* centre stage */
+    /* engaged state: headline fades OUT completely */
+    .heroCard.engaged .headline{
+      opacity:0;
+      transform: translateY(-10px);
+      filter: blur(3px);
+      pointer-events:none;
+    }
+
+    /* ===== CENTREPIECE ===== */
     .centreStage{
       position:relative;
       display:grid;
       place-items:center;
-      min-height: 420px;
+      min-height: 520px;
     }
 
-    /* 3D sphere */
-    .sphereWrap{
+    /* subtle vertical beam */
+    .beam{
+      position:absolute;
+      z-index:0;
+      width: 22%;
+      height: 160%;
+      top: -30%;
+      left: 39%;
+      background: linear-gradient(180deg, rgba(165,240,255,0), rgba(165,240,255,.20), rgba(183,168,255,.14), rgba(0,0,0,0));
+      filter: blur(12px);
+      opacity:.75;
+      pointer-events:none;
+    }
+
+    /* 3D container */
+    .spin3d{
       width: var(--sphereSize);
       height: var(--sphereSize);
       position:relative;
       display:grid;
       place-items:center;
       touch-action:none;
-      -webkit-tap-highlight-color: transparent;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      perspective: 1000px;
     }
 
-    /* background particle canvas */
     canvas#fx{
       position:absolute;
-      inset:-30%;
-      width:160%;
-      height:160%;
+      inset:-35%;
+      width:170%;
+      height:170%;
       z-index:0;
       opacity:.85;
       pointer-events:none;
-      filter: blur(0.2px);
     }
 
+    /* Sphere */
     .sphere{
       position:relative;
       width: 100%;
       height: 100%;
       border-radius: 50%;
       z-index:2;
-
       background:
-        radial-gradient(circle at 36% 30%, rgba(255,255,255,.18), rgba(255,255,255,0) 34%),
-        radial-gradient(circle at 60% 46%, rgba(165,240,255,.10), rgba(165,240,255,0) 46%),
-        radial-gradient(circle at 50% 62%, rgba(183,168,255,.08), rgba(183,168,255,0) 55%),
-        radial-gradient(circle at 50% 55%, rgba(0,0,0,.08), rgba(0,0,0,.55)),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.30));
-      border: 1px solid rgba(255,255,255,.14);
+        radial-gradient(circle at 35% 28%, rgba(255,255,255,.22), rgba(255,255,255,0) 34%),
+        radial-gradient(circle at 60% 46%, rgba(165,240,255,.12), rgba(165,240,255,0) 46%),
+        radial-gradient(circle at 50% 62%, rgba(183,168,255,.10), rgba(183,168,255,0) 55%),
+        radial-gradient(circle at 50% 55%, rgba(0,0,0,.10), rgba(0,0,0,.62)),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.34));
+      border: 1px solid rgba(255,255,255,.16);
       box-shadow:
-        0 40px 130px rgba(0,0,0,.65),
+        0 40px 140px rgba(0,0,0,.68),
         inset 0 0 0 1px rgba(255,255,255,.07);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
       transform: translateZ(0);
+      cursor:pointer;
     }
-
     .sphere:before{
       content:"";
       position:absolute;
@@ -299,7 +315,7 @@
       border-radius:50%;
       background:
         radial-gradient(circle at 55% 50%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(circle at 40% 42%, rgba(165,240,255,.14), transparent 62%),
+        radial-gradient(circle at 40% 42%, rgba(165,240,255,.16), transparent 62%),
         radial-gradient(circle at 60% 58%, rgba(183,168,255,.12), transparent 62%);
       filter: blur(18px);
       opacity:.9;
@@ -307,62 +323,42 @@
       mix-blend-mode: screen;
     }
 
-    /* subtle vertical beam like your screenshot */
-    .beam{
-      position:absolute;
-      z-index:1;
-      width: 24%;
-      height: 140%;
-      top: -20%;
-      left: 38%;
-      background: linear-gradient(180deg, rgba(165,240,255,0), rgba(165,240,255,.18), rgba(183,168,255,.14), rgba(0,0,0,0));
-      filter: blur(10px);
-      opacity:.75;
-      pointer-events:none;
-    }
-
-    /* ring / wheel */
-    .ring{
+    /* Outer ring (subtle) */
+    .ringLine{
       position:absolute;
       inset:-16%;
       border-radius:50%;
-      z-index:3;
+      z-index:1;
       pointer-events:none;
-    }
-    .ring:before{
-      content:"";
-      position:absolute;
-      inset: 6%;
-      border-radius:50%;
       border: 1px solid rgba(255,255,255,.10);
       box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
       background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), rgba(0,0,0,0) 55%),
-        radial-gradient(circle at 50% 50%, rgba(0,0,0,.10), rgba(0,0,0,0) 62%);
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), rgba(0,0,0,0) 58%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,.10), rgba(0,0,0,0) 66%);
+      opacity:.9;
     }
 
-    /* vibe options (hidden until engaged) */
-    .options{
+    /* Options: hidden until engaged */
+    .opts{
       position:absolute;
-      inset:-18%;
-      border-radius:50%;
-      z-index:4;
+      inset:-20%;
+      z-index:5;
       pointer-events:auto;
       opacity:0;
-      transform: scale(.985);
-      filter: blur(.2px);
-      transition: opacity 240ms ease, transform 240ms ease;
+      transform: scale(.988);
+      transition: opacity 180ms ease, transform 180ms ease;
+      transform-style: preserve-3d;
     }
-    .engaged .options{
+    .heroCard.engaged .opts{
       opacity:1;
       transform: scale(1);
     }
 
     .opt{
       position:absolute;
-      left:50%; top:50%;
-      height:36px;
-      transform-origin: 0% 50%;
+      left:50%;
+      top:50%;
+      height: 38px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.24);
@@ -372,18 +368,17 @@
       align-items:center;
       gap:10px;
       padding: 0 12px;
-      cursor:pointer;
       box-shadow: 0 18px 70px rgba(0,0,0,.55);
-      transition: border-color .12s ease, background .12s ease, box-shadow .12s ease, transform .12s ease;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
-      pointer-events:auto;
-      white-space:nowrap;
+      cursor:pointer;
+      transform-style: preserve-3d;
+      will-change: transform, opacity, filter;
     }
     .opt:hover{
-      border-color: rgba(165,240,255,.28);
+      border-color: rgba(165,240,255,.30);
       background: rgba(0,0,0,.30);
-      box-shadow: 0 18px 80px rgba(0,0,0,.70);
+      box-shadow: 0 18px 90px rgba(0,0,0,.72);
     }
     .opt.active{
       border-color: rgba(165,240,255,.36);
@@ -398,30 +393,21 @@
     .oTxt{ font-weight:950; font-size:12px; letter-spacing:.55px; text-transform:uppercase; }
     .oSub{ margin-left:auto; font-size:11px; color:rgba(238,243,255,.66); letter-spacing:.2px; text-transform:uppercase; }
 
-    /* sphere hint */
-    .sphereHint{
+    .hint{
       position:absolute;
-      bottom: -44px;
+      bottom: -46px;
       left: 50%;
       transform: translateX(-50%);
       font-size: 11px;
       color: rgba(238,243,255,.62);
       text-align:center;
       line-height:1.25;
-      max-width: 46ch;
+      max-width: 52ch;
       pointer-events:none;
       opacity:.95;
     }
 
-    /* headline hides when engaged */
-    .engaged .headline{
-      opacity:0;
-      transform: translateY(-10px);
-      filter: blur(2px);
-      pointer-events:none;
-    }
-
-    /* bottom stats tiles */
+    /* bottom stats */
     .stats{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
@@ -439,7 +425,7 @@
       -webkit-backdrop-filter: blur(12px);
       padding: 14px 14px;
     }
-    .stat .n{ font-size: 26px; font-weight: 980; letter-spacing:-.3px; }
+    .stat .n{ font-size: 24px; font-weight: 980; letter-spacing:-.3px; }
     .stat .t{ margin-top:6px; font-size: 12px; color: rgba(238,243,255,.70); }
 
     /* ===== RIGHT PREVIEW ===== */
@@ -553,10 +539,8 @@
       text-shadow: 0 18px 50px rgba(0,0,0,.65);
     }
 
-    /* small helper */
-    .mobileOnly{ display:none; }
     @media (hover:none){
-      .mobileOnly{ display:block; }
+      .hint{ max-width: 56ch; }
     }
   </style>
 </head>
@@ -585,46 +569,44 @@
     </div>
   </div>
 
-  <div class="scene" id="scene">
+  <div class="scene">
     <!-- LEFT HERO -->
     <div class="left">
       <div class="heroCard" id="heroCard">
         <div class="heroInner">
 
           <div class="headline" id="headline">
-            <div class="kicker"><span class="dot"></span> Spin-to-select • Premium previews • Fast order</div>
-            <h2>Redefining Snack Packs with a 3D Spin Selector.</h2>
-            <p>Hover the sphere to reveal the vibes. Spin to choose. Preview loads clean (image → video). Then enter and order.</p>
+            <div class="kicker"><span class="dot"></span> Hover centrepiece to reveal the wheel</div>
+            <h2>Snack Packs, but premium — picked with a 3D spin selector.</h2>
+            <p>Hover the centre sphere to reveal the options. Spin fast. Preview loads clean (image → video). Enter to order.</p>
             <div class="ctaRow">
-              <a class="btn ctaPrimary" href="#" onclick="document.getElementById('sphereWrap').scrollIntoView({behavior:'smooth'}); return false;">Discover</a>
+              <a class="btn ctaPrimary" href="#" onclick="document.getElementById('sphere').scrollIntoView({behavior:'smooth'}); return false;">Discover</a>
               <a class="btn" id="waCta" href="#" rel="noopener">Order on WhatsApp</a>
-            </div>
-            <div class="mobileOnly" style="margin-top:10px; font-size:11px; color:rgba(238,243,255,.62);">
-              Mobile: tap the sphere once to reveal options.
             </div>
           </div>
 
           <div class="centreStage">
             <div class="beam" aria-hidden="true"></div>
 
-            <div class="sphereWrap" id="sphereWrap" aria-label="3D selector">
+            <div class="spin3d" id="spin3d" aria-label="3D selector">
               <canvas id="fx" width="900" height="900" aria-hidden="true"></canvas>
 
+              <div class="ringLine" aria-hidden="true"></div>
               <div class="sphere" id="sphere" role="button" aria-label="Reveal vibes"></div>
-              <div class="ring" aria-hidden="true"></div>
 
-              <div class="options" id="options" aria-label="Vibe options"></div>
+              <div class="opts" id="opts" aria-label="Vibe options"></div>
 
-              <div class="sphereHint" id="sphereHint">
-                Hover the sphere to reveal options. Drag to spin. Scroll to flick.
+              <div class="hint" id="hint">
+                Desktop: hover the sphere to reveal options. Drag to spin. Scroll to flick.<br>
+                Mobile: tap the sphere once to reveal. Tap an option twice to enter.
               </div>
             </div>
           </div>
 
           <div class="stats">
-            <div class="stat"><div class="n">Fast</div><div class="t">No slow rotation. Snap selection instantly.</div></div>
-            <div class="stat"><div class="n">Premium</div><div class="t">Image loads instantly → video fades in when ready.</div></div>
-            <div class="stat"><div class="n">Simple</div><div class="t">Pick a vibe. Enter. WhatsApp order in one tap.</div></div>
+            <div class="stat"><div class="n">Fast</div><div class="t">Drag + scroll. No slow “waiting” rotation.</div></div>
+            <div class="stat"><div class="n">Clean</div><div class="t">Headline disappears so the wheel feels intentional.</div></div>
+            <div class="stat"><div class="n">Premium</div><div class="t">Image instantly → video fades in when ready.</div></div>
           </div>
 
         </div>
@@ -657,7 +639,7 @@
             <div class="v" id="hudMeta">Image → Video</div>
           </div>
           <div class="hudTip">
-            Hover sphere to reveal<br/>Drag to spin<br/>Tap twice on mobile
+            Hover centre to reveal<br/>Drag to spin<br/>Tap twice on mobile
           </div>
         </div>
       </div>
@@ -666,7 +648,7 @@
 
   <script>
     // ===== Config =====
-    const WHATSAPP_NUMBER = "447483849357"; // wa.me format (no +)
+    const WHATSAPP_NUMBER = "447483849357";
 
     const vibes = [
       { key:"gym",     label:"GYM",     sub:"FOCUS", page:"gym.html",     img:"assets/gym.jpg",     vid:"assets/gym.mp4",     desc:"High focus. Clean fuel. No distractions." },
@@ -684,11 +666,10 @@
     document.getElementById("waCta").href = wa("Hi Snack Packz — I want to place an order.");
 
     // ===== DOM =====
-    const heroCard  = document.getElementById("heroCard");
-    const headline  = document.getElementById("headline");
-    const sphereWrap= document.getElementById("sphereWrap");
-    const sphere    = document.getElementById("sphere");
-    const optionsEl = document.getElementById("options");
+    const heroCard = document.getElementById("heroCard");
+    const spin3d   = document.getElementById("spin3d");
+    const sphere   = document.getElementById("sphere");
+    const optsEl   = document.getElementById("opts");
 
     const hudMedia = document.getElementById("hudMedia");
     const hudImg   = document.getElementById("hudImg");
@@ -733,19 +714,17 @@
       hudVid.load();
     }
 
-    // ===== Options ring build =====
+    // ===== Build options =====
     const N = vibes.length;
+    let activeIndex = 0;
+
     function buildOptions(){
-      optionsEl.innerHTML = "";
-      const radiusPct = 54; // distance from centre
+      optsEl.innerHTML = "";
       for(let i=0;i<N;i++){
         const opt = document.createElement("div");
         opt.className = "opt";
         opt.dataset.index = String(i);
-        opt.style.width = (vibes[i].label.length > 6 ? 158 : 138) + "px";
-
-        const deg = (i*(360/N)) - 90;
-        opt.style.transform = `rotate(${deg}deg) translateX(${radiusPct}%)`;
+        opt.style.width = (vibes[i].label.length > 6 ? 164 : 144) + "px";
 
         opt.innerHTML = `
           <span class="oDot" aria-hidden="true"></span>
@@ -776,30 +755,32 @@
           setActive(idx, true);
         }, {passive:false});
 
-        optionsEl.appendChild(opt);
+        optsEl.appendChild(opt);
       }
       updateActiveClass();
     }
 
     function updateActiveClass(){
-      optionsEl.querySelectorAll(".opt").forEach(el=>el.classList.remove("active"));
-      const el = optionsEl.querySelector(`.opt[data-index="${activeIndex}"]`);
+      optsEl.querySelectorAll(".opt").forEach(el=>el.classList.remove("active"));
+      const el = optsEl.querySelector(`.opt[data-index="${activeIndex}"]`);
       if (el) el.classList.add("active");
     }
 
-    // ===== Interaction: ring spin =====
-    const step = 360/N;
+    function setActive(i, snap=true){
+      activeIndex = i;
+      updateActiveClass();
+      loadPreview(vibes[i]);
+      if (snap) snapToIndex(i);
+    }
 
-    let rot = 0;     // degrees
-    let vel = 0;     // deg/sec
+    // ===== 3D wheel math (this is the important fix) =====
+    // We render options around the sphere using translate3d + perspective.
+    let rot = 0;         // degrees
+    let vel = 0;         // deg/sec
     let dragging = false;
     let pointerId = null;
-    let lastAng = 0;
-    let lastT = 0;
 
-    let activeIndex = 0;
-    let engaged = false; // sphere reveal mode
-
+    const step = 360 / N;
     const normDeg = d => ((d%360)+360)%360;
 
     function nearestIndex(){
@@ -817,38 +798,78 @@
       vel = 0;
     }
 
-    function setActive(i, snap=true){
-      activeIndex = i;
-      updateActiveClass();
-      loadPreview(vibes[i]);
-      if (snap) snapToIndex(i);
+    function layout3D(){
+      const rect = spin3d.getBoundingClientRect();
+      const radius = Math.min(rect.width, rect.height) * 0.58; // big, centred, not tiny
+      const depth  = Math.min(rect.width, rect.height) * 0.22;
+
+      const items = optsEl.querySelectorAll(".opt");
+      for(let i=0;i<items.length;i++){
+        const base = i*step;
+        const a = (base + rot) * Math.PI/180;
+
+        // circle around centre
+        const x = Math.cos(a) * radius;
+        const y = Math.sin(a) * radius;
+
+        // depth gives real 3d: front pops, back recedes
+        const z = (Math.cos(a) * depth);
+
+        // scale/opacity based on z (front is brighter and bigger)
+        const z01 = (z/depth + 1)/2; // 0..1
+        const scale = 0.82 + z01*0.34; // 0.82..1.16
+        const alpha = 0.35 + z01*0.65; // 0.35..1.0
+        const blur  = (1 - z01) * 0.8;
+
+        items[i].style.transform =
+          `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) scale(${scale})`;
+        items[i].style.opacity = alpha.toFixed(3);
+        items[i].style.filter = `blur(${blur.toFixed(2)}px)`;
+        items[i].style.zIndex = String(10 + Math.round(z01*90));
+      }
+    }
+
+    function onWheel(e){
+      if (!heroCard.classList.contains("engaged")) return;
+      e.preventDefault();
+      const delta = e.deltaY || 0;
+      const add = clamp(delta * 0.16, -35, 35);
+      rot += add;
+      vel += add * 6;
+
+      const idx = nearestIndex();
+      if (idx !== activeIndex){
+        activeIndex = idx;
+        updateActiveClass();
+        loadPreview(vibes[idx]);
+      }
+      clearTimeout(onWheel._t);
+      onWheel._t = setTimeout(()=> setActive(nearestIndex(), true), 120);
     }
 
     function angleFromEvent(e){
-      const rect = sphereWrap.getBoundingClientRect();
-      const cx = rect.left + rect.width/2;
-      const cy = rect.top + rect.height/2;
+      const r = spin3d.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top + r.height/2;
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
       return Math.atan2(dy, dx) * 180 / Math.PI;
     }
 
-    function applyRotation(){
-      optionsEl.style.transform = `rotate(${rot}deg)`;
-    }
+    let lastAng = 0;
+    let lastT = 0;
 
     function onDown(e){
-      if (!engaged) return;
+      if (!heroCard.classList.contains("engaged")) return;
       dragging = true;
       pointerId = e.pointerId;
-      sphereWrap.setPointerCapture?.(pointerId);
+      spin3d.setPointerCapture?.(pointerId);
       lastAng = angleFromEvent(e);
       lastT = performance.now();
     }
 
     function onMove(e){
       if (!dragging || e.pointerId !== pointerId) return;
-
       const a = angleFromEvent(e);
       let da = a - lastAng;
       if (da > 180) da -= 360;
@@ -864,8 +885,6 @@
       lastAng = a;
       lastT = now;
 
-      applyRotation();
-
       const idx = nearestIndex();
       if (idx !== activeIndex){
         activeIndex = idx;
@@ -878,101 +897,58 @@
       if (!dragging || e.pointerId !== pointerId) return;
       dragging = false;
       pointerId = null;
-      setTimeout(()=> setActive(nearestIndex(), true), 70);
+      setTimeout(()=> setActive(nearestIndex(), true), 80);
     }
 
-    function onWheel(e){
-      if (!engaged) return;
-      e.preventDefault();
-      const delta = e.deltaY || 0;
-      const add = clamp(delta * 0.16, -35, 35);
-      rot += add;
-      vel += add * 6;
-      applyRotation();
-
-      const idx = nearestIndex();
-      if (idx !== activeIndex){
-        activeIndex = idx;
-        updateActiveClass();
-        loadPreview(vibes[idx]);
-      }
-
-      clearTimeout(onWheel._t);
-      onWheel._t = setTimeout(()=> setActive(nearestIndex(), true), 110);
-    }
-
-    function loop(){
-      if (engaged && !dragging){
-        rot += vel * (1/60);
-        vel *= 0.94;
-
-        if (Math.abs(vel) < 18){
-          const idx = nearestIndex();
-          const target = -idx * step;
-          let diff = target - rot;
-          diff = ((diff + 540) % 360) - 180;
-          rot += diff * 0.10;
-
-          if (idx !== activeIndex){
-            activeIndex = idx;
-            updateActiveClass();
-            loadPreview(vibes[idx]);
-          }
-        }
-        applyRotation();
-      }
-      requestAnimationFrame(loop);
-    }
-
-    // ===== Engage behaviour =====
+    // ===== Engage behaviour (THIS is what you asked) =====
     function setEngaged(on){
-      engaged = on;
-      heroCard.classList.toggle("engaged", engaged);
+      heroCard.classList.toggle("engaged", on);
+      if (on) layout3D();
     }
 
-    // desktop hover to reveal
-    sphereWrap.addEventListener("mouseenter", ()=>{
+    // Desktop: hover sphere → engaged
+    spin3d.addEventListener("mouseenter", ()=>{
       if (window.matchMedia("(hover:hover)").matches) setEngaged(true);
     });
     heroCard.addEventListener("mouseleave", ()=>{
       if (window.matchMedia("(hover:hover)").matches) setEngaged(false);
     });
 
-    // mobile tap to reveal
+    // Mobile: tap sphere toggles engaged
     sphere.addEventListener("click", ()=>{
       if (window.matchMedia("(hover:none)").matches){
-        setEngaged(!engaged);
+        setEngaged(!heroCard.classList.contains("engaged"));
       }
     });
 
-    // pointer controls
-    sphereWrap.addEventListener("pointerdown", onDown, {passive:true});
+    // controls
+    spin3d.addEventListener("pointerdown", onDown, {passive:true});
     window.addEventListener("pointermove", onMove, {passive:true});
     window.addEventListener("pointerup", onUp, {passive:true});
-    sphereWrap.addEventListener("wheel", onWheel, {passive:false});
+    spin3d.addEventListener("wheel", onWheel, {passive:false});
 
-    // ===== FX canvas (particles + subtle parallax glow) =====
+    // ===== FX canvas (subtle premium particles, not tacky) =====
     const fx = document.getElementById("fx");
     const fctx = fx.getContext("2d");
-    let px = 0, py = 0;
+    const parts = [];
+    let mx=0, my=0;
 
     function fitFx(){
       const rect = fx.getBoundingClientRect();
       const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      fx.width  = Math.round(rect.width * dpr);
+      fx.width = Math.round(rect.width * dpr);
       fx.height = Math.round(rect.height * dpr);
     }
 
-    const parts = [];
     function seedParts(){
       parts.length = 0;
-      const n = 110;
+      const n = 120;
       for(let i=0;i<n;i++){
         parts.push({
           x: Math.random(),
           y: Math.random(),
-          r: 0.6 + Math.random()*1.6,
-          a: 0.10 + Math.random()*0.26,
+          r: 0.7 + Math.random()*1.7,
+          a: 0.10 + Math.random()*0.22,
           vx:(Math.random()-0.5)*0.0006,
           vy:(Math.random()-0.5)*0.0006
         });
@@ -983,17 +959,15 @@
       const w = fx.width, h = fx.height;
       fctx.clearRect(0,0,w,h);
 
-      // soft glow field
-      const gx = w*(0.50 + px*0.06);
-      const gy = h*(0.50 + py*0.06);
-      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.48);
+      const gx = w*(0.50 + mx*0.06);
+      const gy = h*(0.50 + my*0.06);
+      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.52);
       g.addColorStop(0, "rgba(165,240,255,0.12)");
-      g.addColorStop(0.45, "rgba(183,168,255,0.07)");
+      g.addColorStop(0.45, "rgba(183,168,255,0.08)");
       g.addColorStop(1, "rgba(0,0,0,0)");
       fctx.fillStyle = g;
       fctx.fillRect(0,0,w,h);
 
-      // particles
       for(const p of parts){
         p.x += p.vx; p.y += p.vy;
         if (p.x<0) p.x=1; if (p.x>1) p.x=0;
@@ -1012,27 +986,58 @@
     }
 
     window.addEventListener("mousemove", (e)=>{
-      const r = sphereWrap.getBoundingClientRect();
+      const r = spin3d.getBoundingClientRect();
       const cx = r.left + r.width/2;
       const cy = r.top + r.height/2;
-      px = clamp((e.clientX - cx)/(r.width/2), -1, 1);
-      py = clamp((e.clientY - cy)/(r.height/2), -1, 1);
+      mx = clamp((e.clientX - cx)/(r.width/2), -1, 1);
+      my = clamp((e.clientY - cy)/(r.height/2), -1, 1);
     });
+
+    // ===== Main loop =====
+    let last = performance.now();
+    function loop(now){
+      const dt = Math.min(0.05, (now-last)/1000);
+      last = now;
+
+      if (heroCard.classList.contains("engaged") && !dragging){
+        rot += vel * dt;
+        vel *= Math.exp(-3.0 * dt);
+
+        if (Math.abs(vel) < 18){
+          const idx = nearestIndex();
+          const target = -idx * step;
+          let diff = target - rot;
+          diff = ((diff + 540) % 360) - 180;
+          rot += diff * Math.min(1, dt*8);
+
+          if (idx !== activeIndex){
+            activeIndex = idx;
+            updateActiveClass();
+            loadPreview(vibes[idx]);
+          }
+        }
+      }
+
+      layout3D();
+      requestAnimationFrame(loop);
+    }
 
     // ===== Init =====
     buildOptions();
     setActive(0, true);
     loadPreview(vibes[0]);
-    applyRotation();
 
     fitFx();
     seedParts();
     drawFx();
-    loop();
+
+    layout3D();
+    requestAnimationFrame(loop);
 
     window.addEventListener("resize", ()=>{
       fitFx();
       seedParts();
+      layout3D();
     });
   </script>
 </body>
