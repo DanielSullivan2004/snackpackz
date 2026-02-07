@@ -1,16 +1,261 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snack Packz</title>
-  <meta name="theme-color" content="#050705" />
-  <link rel="stylesheet" href="app/style.css" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Snack Packz — Forest</title>
+  <meta name="theme-color" content="#050705"/>
+
+  <style>
+    :root{
+      --fg:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.72);
+      --dim:rgba(255,255,255,.50);
+      --accent:rgba(205,255,140,.92);
+      --ease:cubic-bezier(.16,1,.3,1);
+      --shadow: 0 30px 110px rgba(0,0,0,.70);
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      overflow:hidden;
+      background:#050705;
+      color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    /* world */
+    #world{ position:fixed; inset:0; z-index:-5; background:#020302; }
+    #bg{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      transform: scale(1.10);
+      filter: contrast(1.12) saturate(1.12) brightness(.78);
+      will-change: transform;
+    }
+    #fx{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+    #grade{
+      position:absolute; inset:-1px; pointer-events:none;
+      background:
+        radial-gradient(1200px 700px at 18% 10%, rgba(0,0,0,.15), rgba(0,0,0,.70) 58%, rgba(0,0,0,.88) 100%),
+        radial-gradient(900px 600px at 78% 18%, rgba(205,255,140,.06), rgba(0,0,0,0) 60%),
+        linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.18) 40%, rgba(0,0,0,.55));
+    }
+
+    /* topbar */
+    #topbar{
+      position:fixed; left:18px; right:18px; top:16px;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 14px;
+      border-radius:999px;
+      background: rgba(0,0,0,.26);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      z-index:20;
+    }
+    .brand{ display:flex; gap:10px; align-items:center; user-select:none; }
+    .seed{
+      width:10px; height:10px; border-radius:999px;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.18) 35%, var(--accent) 72%, rgba(0,0,0,0));
+      box-shadow: 0 0 0 7px rgba(205,255,140,.08);
+    }
+    .brand b{ font-weight:900; letter-spacing:.2px; }
+    .brand small{ display:block; color:var(--dim); font-weight:650; margin-top:2px; }
+
+    .controls{ display:flex; gap:10px; align-items:center; }
+    .pill{
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.24);
+      color: var(--fg);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-weight:850;
+      cursor:pointer;
+      text-decoration:none;
+      user-select:none;
+      transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+    }
+    .pill:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.20);
+    }
+    .pill.cta{
+      background: rgba(255,255,255,.90);
+      color:#070a08;
+      border-color: rgba(255,255,255,.30);
+    }
+
+    /* hint */
+    #hint{
+      position:fixed; left:50%; transform:translateX(-50%);
+      top: 94px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(12px);
+      display:flex; gap:10px; align-items:center;
+      user-select:none;
+      z-index:20;
+    }
+    #hint .k{ font-weight:950; }
+    #hint .s{ color:var(--muted); font-weight:750; }
+
+    /* dock */
+    #dock{
+      position:fixed; left:18px; right:18px; bottom:16px;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:12px 14px;
+      border-radius:999px;
+      background: rgba(0,0,0,.26);
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+      user-select:none;
+      z-index:20;
+    }
+    .chips{ display:flex; gap:10px; }
+    .chip{
+      padding:9px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      color: rgba(255,255,255,.76);
+      font-weight:850;
+      font-size:12px;
+    }
+
+    /* crosshair */
+    #crosshair{
+      position:fixed; left:50%; top:50%;
+      width:10px; height:10px;
+      transform:translate(-50%,-50%);
+      border-radius:999px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 0 0 10px rgba(255,255,255,.05);
+      mix-blend-mode: screen;
+      pointer-events:none;
+      z-index:30;
+    }
+
+    /* totems layer */
+    #totems{ position:fixed; inset:0; z-index:15; }
+    .totem{
+      position:absolute;
+      width:260px; height:360px;
+      border-radius:28px;
+      overflow:hidden;
+      cursor:pointer;
+      user-select:none;
+      background:
+        radial-gradient(600px 420px at 30% 20%, rgba(205,255,140,.10), transparent 60%),
+        radial-gradient(600px 420px at 70% 20%, rgba(255,220,150,.06), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.20));
+      border: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 40px 120px rgba(0,0,0,.72);
+      will-change: transform, opacity;
+      transition: border-color .2s var(--ease), filter .2s var(--ease);
+    }
+    .totem:hover{ border-color: rgba(255,255,255,.18); filter:saturate(1.04); }
+
+    .cap{
+      position:absolute; left:16px; right:16px; top:14px;
+      display:flex; justify-content:space-between; gap:10px;
+      z-index:3;
+    }
+    .name{ font-weight:950; letter-spacing:.8px; text-transform:uppercase; font-size:13px; }
+    .tag{ color:rgba(255,255,255,.72); font-weight:750; font-size:12px; margin-top:6px; line-height:1.2; max-width:20ch; }
+    .orb{
+      width:10px; height:10px; border-radius:999px; margin-top:2px;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.18) 35%, var(--accent) 72%, rgba(0,0,0,0));
+      box-shadow: 0 0 0 7px rgba(205,255,140,.08);
+    }
+
+    .window{
+      position:absolute; left:14px; right:14px; top:78px;
+      height:210px;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.35);
+    }
+    .window img, .window video{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+    }
+    .window video{ opacity:0; transition: opacity .35s var(--ease); }
+    .window img{ opacity:1; transition: opacity .35s var(--ease); }
+
+    .foot{
+      position:absolute; left:14px; right:14px; bottom:14px;
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      z-index:3;
+    }
+    .hint2{ color:rgba(255,255,255,.74); font-weight:850; font-size:12px; }
+    .enter{
+      padding:10px 12px; border-radius:999px;
+      background: rgba(255,255,255,.90);
+      color:#070a08;
+      border:1px solid rgba(255,255,255,.25);
+      font-weight:950;
+    }
+
+    /* mobile controls */
+    #mobileUI{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:18px;
+      display:none;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:14px;
+      z-index:40;
+      pointer-events:none;
+    }
+    #joy{
+      width:140px; height:140px;
+      border-radius:999px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      position:relative;
+      pointer-events:auto;
+      touch-action:none;
+    }
+    #joyKnob{
+      width:56px; height:56px;
+      border-radius:999px;
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%);
+      background: rgba(255,255,255,.86);
+      box-shadow: 0 18px 70px rgba(255,255,255,.12);
+    }
+    #useBtn{
+      pointer-events:auto;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.90);
+      color:#070a08;
+      font-weight:950;
+      border-radius: 18px;
+      padding:16px 18px;
+      min-width: 110px;
+    }
+    @media (pointer:coarse), (max-width: 820px){
+      #mobileUI{ display:flex; }
+    }
+  </style>
 </head>
+
 <body>
   <div id="world" aria-hidden="true">
     <video id="bg" autoplay muted playsinline loop preload="auto">
-      <source src="assets/forest.mp4" type="video/mp4" />
+      <source src="assets/forest.mp4" type="video/mp4"/>
     </video>
     <canvas id="fx"></canvas>
     <div id="grade"></div>
@@ -21,10 +266,9 @@
       <span class="seed"></span>
       <div>
         <b>Snack Packz</b>
-        <small>First-person forest. Walk up. Lock in.</small>
+        <small>Click to lock. WASD. E to enter.</small>
       </div>
     </div>
-
     <div class="controls">
       <button id="soundBtn" class="pill" type="button" aria-pressed="false">Sound: Off</button>
       <button id="qualityBtn" class="pill" type="button" aria-pressed="true">Quality: Ultra</button>
@@ -32,38 +276,405 @@
     </div>
   </header>
 
-  <main id="stage">
-    <div id="hint">
-      <div class="k">Click to lock</div>
-      <div class="s">WASD to move • Mouse to look • E to enter</div>
+  <div id="hint">
+    <div class="k">Click to lock</div>
+    <div class="s">WASD to move • Mouse to look • E to enter</div>
+  </div>
+
+  <div id="totems"></div>
+
+  <footer id="dock">
+    <div>
+      <b id="dockTitle">Forest Portal</b><br/>
+      <small id="dockSub" style="color:rgba(255,255,255,.72);font-weight:700;">Walk towards a totem.</small>
     </div>
-
-    <div id="totems"></div>
-
-    <footer id="dock">
-      <div class="compass">
-        <div class="dot"></div>
-        <div class="txt">
-          <b id="dockTitle">Forest Portal</b>
-          <small id="dockSub">Walk up to a totem to interact.</small>
-        </div>
-      </div>
-      <div class="chips">
-        <span class="chip" id="fpsChip">FPS: --</span>
-        <span class="chip" id="stateChip">Click to lock</span>
-      </div>
-    </footer>
-  </main>
+    <div class="chips">
+      <span class="chip" id="fpsChip">FPS: --</span>
+      <span class="chip" id="stateChip">Click to lock</span>
+    </div>
+  </footer>
 
   <div id="crosshair" aria-hidden="true"></div>
 
   <div id="mobileUI" aria-hidden="true">
-    <div id="joy">
-      <div id="joyKnob"></div>
-    </div>
+    <div id="joy"><div id="joyKnob"></div></div>
     <button id="useBtn" type="button">USE</button>
   </div>
 
-  <script type="module" src="app/main.js"></script>
+  <script>
+    // ---- Packs
+    const PACKS = [
+      { key:"fresh",  name:"FRESH",  tag:"Clean energy. Zero noise.",        page:"fresh.html",   poster:"assets/fresh.jpg",   video:"assets/fresh.mp4" },
+      { key:"gaming", name:"GAMING", tag:"Locked focus. Long sessions.",      page:"gaming.html",  poster:"assets/gaming.jpg",  video:"assets/gaming.mp4" },
+      { key:"gym",    name:"GYM",    tag:"Explosive drive. Controlled burn.", page:"gym.html",     poster:"assets/gym.jpg",     video:"assets/gym.mp4" },
+      { key:"work",   name:"WORK",   tag:"Calm clarity. Get it done.",        page:"work.html",    poster:"assets/work.jpg",    video:"assets/work.mp4" },
+      { key:"lockin", name:"LOCK-IN",tag:"Tunnel vision. No distractions.",   page:"lock-in.html", poster:"assets/lockin.jpg",  video:"assets/lockin.mp4" }
+    ];
+
+    const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
+    const reduce = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobile = coarse || innerWidth < 820;
+
+    // ---- DOM
+    const bg = document.getElementById("bg");
+    const fx = document.getElementById("fx");
+    const ctx = fx.getContext("2d");
+    const totemsHost = document.getElementById("totems");
+    const soundBtn = document.getElementById("soundBtn");
+    const qualityBtn = document.getElementById("qualityBtn");
+    const fpsChip = document.getElementById("fpsChip");
+    const stateChip = document.getElementById("stateChip");
+    const dockTitle = document.getElementById("dockTitle");
+    const dockSub = document.getElementById("dockSub");
+
+    const joy = document.getElementById("joy");
+    const joyKnob = document.getElementById("joyKnob");
+    const useBtn = document.getElementById("useBtn");
+    document.getElementById("mobileUI").style.display = mobile ? "flex" : "none";
+
+    // ---- Quality
+    const quality = {
+      ultra: !mobile && !reduce,
+      fxEvery: (!mobile && !reduce) ? 1 : 3,
+      motes: (!mobile && !reduce) ? 44 : 16
+    };
+
+    // ---- Resize
+    let DPR = Math.min(devicePixelRatio || 1, 2);
+    function resize(){
+      DPR = Math.min(devicePixelRatio || 1, 2);
+      fx.width = Math.floor(innerWidth * DPR);
+      fx.height = Math.floor(innerHeight * DPR);
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+    }
+    addEventListener("resize", resize, {passive:true});
+    resize();
+
+    // ---- Player / camera
+    const cam = { x:0, z:0, yaw:0, pitch:-0.06, vyaw:0, vpitch:0, speed:3.2 };
+    const world = {
+      totems: [
+        {x:-4.6,z:-10.8},{x:4.9,z:-10.3},{x:-2.7,z:-16.4},{x:2.6,z:-15.9},{x:0.1,z:-13.2}
+      ]
+    };
+
+    // ---- Pointer lock
+    let locked = false;
+    function tryLock(){ if(!mobile) document.body.requestPointerLock?.(); }
+    document.addEventListener("pointerlockchange", ()=>{
+      locked = (document.pointerLockElement === document.body);
+      stateChip.textContent = locked ? "WASD • E" : "Click to lock";
+    });
+    addEventListener("mousemove", (e)=>{
+      if(!locked) return;
+      cam.vyaw += (e.movementX||0) * 0.0022;
+      cam.vpitch += (e.movementY||0) * 0.0018;
+    }, {passive:true});
+
+    // Don’t steal clicks from topbar/dock
+    addEventListener("click", (e)=>{
+      const t = e.target;
+      if(t && t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#mobileUI"))) return;
+      if(!locked && !mobile) tryLock();
+    });
+
+    // ---- Keyboard
+    const keys = {w:false,a:false,s:false,d:false,shift:false};
+    addEventListener("keydown",(e)=>{
+      const k = e.key.toLowerCase();
+      if(k==="w") keys.w=true;
+      if(k==="a") keys.a=true;
+      if(k==="s") keys.s=true;
+      if(k==="d") keys.d=true;
+      if(k==="shift") keys.shift=true;
+      if(k==="e") tryUse();
+    });
+    addEventListener("keyup",(e)=>{
+      const k = e.key.toLowerCase();
+      if(k==="w") keys.w=false;
+      if(k==="a") keys.a=false;
+      if(k==="s") keys.s=false;
+      if(k==="d") keys.d=false;
+      if(k==="shift") keys.shift=false;
+    });
+
+    // ---- Mobile joystick + swipe look
+    const joyState = {active:false,id:null,cx:0,cy:0,dx:0,dy:0};
+    if(joy){
+      joy.addEventListener("pointerdown",(e)=>{
+        joyState.active=true; joyState.id=e.pointerId;
+        joy.setPointerCapture(e.pointerId);
+        const r=joy.getBoundingClientRect();
+        joyState.cx=r.left+r.width/2; joyState.cy=r.top+r.height/2;
+      });
+      joy.addEventListener("pointermove",(e)=>{
+        if(!joyState.active || e.pointerId!==joyState.id) return;
+        const max=46;
+        let dx=e.clientX-joyState.cx, dy=e.clientY-joyState.cy;
+        const len=Math.hypot(dx,dy)||1;
+        if(len>max){ dx=dx/len*max; dy=dy/len*max; }
+        joyState.dx=dx/max; joyState.dy=dy/max;
+        joyKnob.style.transform=`translate(${dx}px,${dy}px) translate(-50%,-50%)`;
+      });
+      const end=()=>{
+        joyState.active=false; joyState.dx=0; joyState.dy=0;
+        joyKnob.style.transform="translate(-50%,-50%)";
+      };
+      joy.addEventListener("pointerup",end);
+      joy.addEventListener("pointercancel",end);
+    }
+
+    let look = {on:false,x:0,y:0};
+    addEventListener("pointerdown",(e)=>{
+      if(!mobile) return;
+      if(e.target===joy || e.target===joyKnob || e.target===useBtn) return;
+      look.on=true; look.x=e.clientX; look.y=e.clientY;
+    },{passive:true});
+    addEventListener("pointermove",(e)=>{
+      if(!mobile || !look.on) return;
+      const dx=e.clientX-look.x, dy=e.clientY-look.y;
+      look.x=e.clientX; look.y=e.clientY;
+      cam.vyaw += dx*0.0030;
+      cam.vpitch += dy*0.0022;
+    },{passive:true});
+    addEventListener("pointerup",()=>{ look.on=false; },{passive:true});
+    useBtn.addEventListener("click", tryUse);
+
+    // ---- Build totems
+    const totems = [];
+    function makeTotem(p,i){
+      const el=document.createElement("div");
+      el.className="totem";
+      el.innerHTML = `
+        <div class="cap">
+          <div>
+            <div class="name">${p.name}</div>
+            <div class="tag">${p.tag}</div>
+          </div>
+          <div class="orb"></div>
+        </div>
+        <div class="window">
+          <img src="${p.poster}" alt="${p.name} preview">
+          <video muted playsinline loop preload="metadata"></video>
+        </div>
+        <div class="foot">
+          <div class="hint2">Walk up + E</div>
+          <div class="enter">Enter</div>
+        </div>
+      `;
+      const img=el.querySelector("img");
+      const vid=el.querySelector("video");
+      let hovered=false, timer=null;
+
+      async function prime(){
+        if(vid.dataset.ready==="1") return true;
+        vid.src=p.video; vid.dataset.ready="1";
+        try{ await vid.play(); vid.pause(); vid.currentTime=0; return true; }
+        catch{ return false; }
+      }
+      function showPoster(){ vid.style.opacity="0"; img.style.opacity="1"; try{vid.pause();}catch{} }
+      function showVideo(){ vid.style.opacity="1"; img.style.opacity="0"; try{vid.play().catch(()=>{});}catch{} }
+
+      el.addEventListener("mouseenter",()=>{
+        hovered=true; showPoster();
+        timer=setTimeout(async ()=>{
+          if(!hovered) return;
+          const ok=await prime();
+          if(ok && hovered) showVideo();
+        },140);
+      });
+      el.addEventListener("mouseleave",()=>{
+        hovered=false; if(timer) clearTimeout(timer);
+        showPoster();
+      });
+
+      el.addEventListener("click",()=>{
+        const dist = getDist(i);
+        if(dist<2.3) location.href=p.page;
+        else if(!locked && !mobile) tryLock();
+      });
+
+      const wp=world.totems[i];
+      totems.push({el,p,wx:wp.x,wz:wp.z,wob:Math.random()*10});
+      totemsHost.appendChild(el);
+    }
+    PACKS.forEach(makeTotem);
+
+    function getDist(i){
+      const t=totems[i];
+      return Math.hypot(t.wx-cam.x, t.wz-cam.z);
+    }
+
+    // ---- Projection
+    const F = 820;
+    function project(wx,wz){
+      const dx=wx-cam.x;
+      const dz=wz-cam.z;
+      const c=Math.cos(-cam.yaw), s=Math.sin(-cam.yaw);
+      const rx=dx*c - dz*s;
+      const rz=dx*s + dz*c;
+      return {x:rx,z:rz};
+    }
+
+    let focused=-1;
+    function updateFocus(){
+      focused=-1;
+      let best=Infinity;
+      for(let i=0;i<totems.length;i++){
+        const rel=project(totems[i].wx, totems[i].wz);
+        if(rel.z > -0.8) continue;
+        const dist=Math.hypot(rel.x, rel.z);
+        const centre=Math.abs(rel.x);
+        const score=centre + dist*0.10;
+        if(score<best){ best=score; focused=i; }
+      }
+    }
+
+    function tryUse(){
+      if(focused<0) return;
+      const dist=getDist(focused);
+      if(dist<2.3) location.href=totems[focused].p.page;
+      else stateChip.textContent = `Too far (${dist.toFixed(1)}m)`;
+    }
+
+    // ---- FX motes
+    let seed=1337;
+    const rnd=()=> (seed=(seed*16807)%2147483647)/2147483647;
+    let motes=[];
+    function seedMotes(){
+      motes=[];
+      for(let i=0;i<quality.motes;i++){
+        motes.push({x:rnd()*innerWidth,y:rnd()*innerHeight,z:0.15+rnd()*0.85,r:1+rnd()*2.6,p:rnd()*1000});
+      }
+    }
+    seedMotes();
+
+    // ---- Controls
+    soundBtn.addEventListener("click",()=>{
+      const on = soundBtn.getAttribute("aria-pressed")!=="true";
+      soundBtn.setAttribute("aria-pressed", String(on));
+      soundBtn.textContent = `Sound: ${on ? "On" : "Off"}`;
+      bg.muted = !on;
+      bg.play().catch(()=>{});
+    });
+
+    qualityBtn.addEventListener("click",()=>{
+      quality.ultra = !quality.ultra;
+      quality.fxEvery = quality.ultra ? 1 : 3;
+      quality.motes = quality.ultra ? 44 : 16;
+      qualityBtn.setAttribute("aria-pressed", String(quality.ultra));
+      qualityBtn.textContent = `Quality: ${quality.ultra ? "Ultra" : "Lite"}`;
+      seedMotes();
+    });
+
+    // ---- Loop
+    let last=performance.now(), frames=0, fpsLast=performance.now(), fxFrame=0;
+
+    function tick(t){
+      const dt=Math.min(40, t-last);
+      last=t;
+
+      cam.yaw += cam.vyaw;
+      cam.pitch += cam.vpitch;
+      cam.vyaw *= 0.78;
+      cam.vpitch *= 0.78;
+      cam.pitch = Math.max(-0.35, Math.min(0.20, cam.pitch));
+
+      // movement
+      let mx=0, mz=0;
+      const sp = cam.speed * (keys.shift ? 1.65 : 1.0);
+
+      if(keys.w) mz -= 1;
+      if(keys.s) mz += 1;
+      if(keys.a) mx -= 1;
+      if(keys.d) mx += 1;
+
+      if(mobile){
+        mx += joyState.dx;
+        mz += joyState.dy;
+      }
+
+      const len = Math.hypot(mx,mz) || 1;
+      mx/=len; mz/=len;
+
+      const sin=Math.sin(cam.yaw), cos=Math.cos(cam.yaw);
+      cam.x += (mx*cos - mz*sin) * sp * dt * 0.010;
+      cam.z += (mx*sin + mz*cos) * sp * dt * 0.010;
+
+      // bg drift
+      const bx = Math.sin(cam.yaw) * 18;
+      const by = cam.pitch * 40;
+      bg.style.transform = `translate(${bx}px,${by}px) scale(${quality.ultra?1.10:1.07})`;
+
+      // focus + draw totems
+      updateFocus();
+
+      const cx=innerWidth*0.5, cy=innerHeight*0.52;
+      for(let i=0;i<totems.length;i++){
+        const o=totems[i];
+        const rel=project(o.wx, o.wz);
+
+        if(rel.z > -0.8){
+          o.el.style.opacity="0";
+          o.el.style.pointerEvents="none";
+          continue;
+        }
+
+        const inv=1/(-rel.z);
+        const sx = cx + rel.x*inv*F;
+        const sy = cy + cam.pitch*120;
+
+        const scale = Math.max(0.40, Math.min(1.35, inv*2.2));
+        const alpha = Math.max(0.12, Math.min(1.0, inv*1.2));
+        const wob = Math.sin(t*0.0012 + o.wob) * 6;
+
+        o.el.style.opacity=String(alpha);
+        o.el.style.pointerEvents="auto";
+        o.el.style.zIndex=String(Math.floor(scale*1000));
+
+        // IMPORTANT: single-line transform (no module weirdness)
+        o.el.style.transform =
+          `translate(${(sx-130).toFixed(2)}px,${(sy-210+wob).toFixed(2)}px) scale(${scale.toFixed(4)})`;
+
+        if(i===focused){
+          o.el.style.borderColor="rgba(255,255,255,.34)";
+          dockTitle.textContent=o.p.name;
+          const d=getDist(i);
+          dockSub.textContent = d<2.3 ? "Press E / USE to enter" : `Walk closer (${d.toFixed(1)}m)`;
+          stateChip.textContent = d<2.3 ? "Interact: E / USE" : "Move closer";
+        }else{
+          o.el.style.borderColor="rgba(255,255,255,.10)";
+        }
+      }
+
+      // FX
+      fxFrame++;
+      if(!reduce && (fxFrame % quality.fxEvery === 0)){
+        ctx.clearRect(0,0,innerWidth,innerHeight);
+        ctx.globalCompositeOperation="screen";
+        for(const m of motes){
+          m.p += dt*0.0006;
+          const x = (m.x + Math.sin(m.p)*14 + Math.sin(cam.yaw)*80*(1-m.z)) % innerWidth;
+          const y = (m.y + Math.cos(m.p)*10 + cam.pitch*60*(1-m.z)) % innerHeight;
+          ctx.globalAlpha = 0.05 + m.z*0.18;
+          ctx.fillStyle="rgba(255,255,255,.90)";
+          ctx.beginPath(); ctx.arc(x,y,m.r,0,Math.PI*2); ctx.fill();
+        }
+      }
+
+      // FPS
+      frames++;
+      const now=performance.now();
+      if(now-fpsLast>500){
+        fpsChip.textContent=`FPS: ${Math.round(frames*1000/(now-fpsLast))}`;
+        frames=0; fpsLast=now;
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    bg.play().catch(()=>{});
+    requestAnimationFrame(tick);
+  </script>
 </body>
 </html>
