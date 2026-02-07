@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="app/style.css" />
 </head>
 <body>
-  <!-- Background (your forest video stays, but the UI is totally different) -->
   <div id="world" aria-hidden="true">
     <video id="bg" autoplay muted playsinline loop preload="auto">
       <source src="assets/forest.mp4" type="video/mp4" />
@@ -17,13 +16,12 @@
     <div id="grade"></div>
   </div>
 
-  <!-- Diegetic UI (NOT cards) -->
   <header id="topbar">
     <div class="brand">
       <span class="seed"></span>
       <div>
         <b>Snack Packz</b>
-        <small>Step into the forest. Choose your totem.</small>
+        <small>First-person forest. Walk up. Lock in.</small>
       </div>
     </div>
 
@@ -34,11 +32,10 @@
     </div>
   </header>
 
-  <!-- Totems live here -->
   <main id="stage">
     <div id="hint">
-      <div class="k">Move your mouse</div>
-      <div class="s">Hover a totem to preview. Click to enter.</div>
+      <div class="k">Click to lock</div>
+      <div class="s">WASD to move • Mouse to look • E to enter</div>
     </div>
 
     <div id="totems"></div>
@@ -48,16 +45,24 @@
         <div class="dot"></div>
         <div class="txt">
           <b id="dockTitle">Forest Portal</b>
-          <small id="dockSub">Pick a totem. Preview inside it. Enter.</small>
+          <small id="dockSub">Walk up to a totem to interact.</small>
         </div>
       </div>
-
       <div class="chips">
         <span class="chip" id="fpsChip">FPS: --</span>
-        <span class="chip" id="stateChip">Idle</span>
+        <span class="chip" id="stateChip">Click to lock</span>
       </div>
     </footer>
   </main>
+
+  <div id="crosshair" aria-hidden="true"></div>
+
+  <div id="mobileUI" aria-hidden="true">
+    <div id="joy">
+      <div id="joyKnob"></div>
+    </div>
+    <button id="useBtn" type="button">USE</button>
+  </div>
 
   <script type="module" src="app/main.js"></script>
 </body>
