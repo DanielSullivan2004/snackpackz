@@ -1,27 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Snack Packz — Vibes</title>
-  <meta name="theme-color" content="#070A12" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Snack Packz — Wheel Select</title>
+  <meta name="theme-color" content="#050710"/>
   <style>
     :root{
-      --bg:#050710;
-      --bg2:#070A12;
+      --bg0:#040611;
+      --bg1:#070A12;
       --txt:#EAF0FF;
       --mut:#9AA6C7;
       --line:rgba(255,255,255,.10);
-      --glass:rgba(12,16,30,.56);
+      --glass:rgba(12,16,30,.55);
       --glass2:rgba(12,16,30,.38);
       --shadow:0 18px 60px rgba(0,0,0,.55);
-      --radius:22px;
-      --ringSize:min(72vmin, 520px);
-      --previewW:min(46vw, 560px);
+      --r:22px;
+
       --accent:#9BE7FF;
       --accent2:#B7A8FF;
       --good:#76FFD1;
       --warn:#FFD27A;
+      --hot:#FF6A3D;
+
+      --wheelSize:min(70vmin, 560px);
+      --hudW:min(44vw, 560px);
     }
 
     *{ box-sizing:border-box; }
@@ -31,516 +34,547 @@
       color:var(--txt);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1000px 600px at 15% 10%, rgba(155,231,255,.12), transparent 55%),
-        radial-gradient(900px 700px at 80% 25%, rgba(183,168,255,.10), transparent 60%),
-        radial-gradient(1000px 900px at 50% 110%, rgba(118,255,209,.06), transparent 55%),
-        linear-gradient(180deg, var(--bg), var(--bg2));
-      overflow-x:hidden;
+        radial-gradient(1200px 700px at 18% 12%, rgba(155,231,255,.12), transparent 60%),
+        radial-gradient(1000px 800px at 82% 25%, rgba(183,168,255,.10), transparent 62%),
+        radial-gradient(900px 900px at 55% 110%, rgba(118,255,209,.06), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow:hidden;
     }
 
     a{ color:inherit; text-decoration:none; }
+    button{ font:inherit; }
 
-    .wrap{
-      min-height:100%;
-      padding: clamp(14px, 2.5vw, 28px);
-      padding-bottom: 34px;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-    }
-
-    /* Top bar */
+    /* ====== TOP BAR ====== */
     .topbar{
+      position:fixed;
+      left:0; right:0; top:0;
+      z-index:20;
+      padding: 14px 16px;
       display:flex;
-      align-items:center;
       justify-content:space-between;
-      gap:16px;
-      padding: 12px 14px;
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border-radius: 16px;
-      box-shadow: 0 10px 40px rgba(0,0,0,.28);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      align-items:center;
+      gap:14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.18));
+      border-bottom:1px solid rgba(255,255,255,.08);
     }
 
     .brand{
-      display:flex;
-      align-items:center;
-      gap:12px;
-      min-width: 0;
+      display:flex; align-items:center; gap:12px; min-width:0;
     }
     .logo{
-      width:38px;height:38px;border-radius:14px;
+      width:40px;height:40px;border-radius:14px;
       background:
         radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
         radial-gradient(18px 18px at 70% 65%, rgba(155,231,255,.22), transparent 65%),
         linear-gradient(135deg, rgba(155,231,255,.25), rgba(183,168,255,.20));
       border:1px solid rgba(255,255,255,.16);
       box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      flex:0 0 auto;
     }
-    .brand h1{
+    .brandText{ min-width:0; }
+    .brandText h1{
       margin:0;
       font-size: 15px;
       letter-spacing:.5px;
-      font-weight: 700;
-      line-height: 1.1;
+      font-weight: 850;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .brand p{
-      margin:0;
+    .brandText p{
+      margin:4px 0 0;
       font-size: 12px;
-      color:var(--mut);
-      letter-spacing:.2px;
+      color:rgba(234,240,255,.70);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
 
-    .hint{
+    .rightChips{
       display:flex;
       gap:10px;
       align-items:center;
-      justify-content:flex-end;
       flex-wrap:wrap;
+      justify-content:flex-end;
     }
-    .chip{
-      font-size:12px;
-      color: rgba(234,240,255,.86);
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
+    .chip, .btn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: rgba(234,240,255,.90);
       border-radius: 999px;
-      padding: 7px 10px;
-      display:flex;
-      align-items:center;
+      padding: 9px 12px;
+      font-size: 12px;
+      letter-spacing:.2px;
+      display:inline-flex;
       gap:8px;
+      align-items:center;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
+    .chip:hover, .btn:hover{
+      transform: translateY(-1px);
+      background: rgba(0,0,0,.28);
+      border-color: rgba(255,255,255,.20);
+    }
+    .chip:active, .btn:active{ transform: translateY(0px) scale(.99); }
     .dot{
       width:7px;height:7px;border-radius:50%;
       background: linear-gradient(180deg, var(--accent), var(--accent2));
       box-shadow: 0 0 0 4px rgba(155,231,255,.10);
     }
 
-    /* Main layout */
-    .main{
-      flex:1;
+    /* ====== SCENE LAYOUT ====== */
+    .scene{
+      position:absolute;
+      inset:0;
+      padding-top: 72px;
       display:grid;
-      grid-template-columns: 1fr var(--previewW);
-      gap: clamp(14px, 2.2vw, 22px);
-      align-items:center;
+      grid-template-columns: 1fr var(--hudW);
+      gap: clamp(12px, 2.2vw, 22px);
+      align-items:stretch;
     }
-
     @media (max-width: 980px){
-      .main{
+      body{ overflow:auto; }
+      .scene{
+        position:relative;
+        padding-top: 76px;
         grid-template-columns: 1fr;
-        align-items:start;
+        overflow:auto;
       }
     }
 
-    /* Ring zone */
-    .ringZone{
-      position:relative;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding: clamp(10px, 1.5vw, 14px);
-    }
-
-    .ringCard{
-      width: min(100%, 720px);
-      border-radius: var(--radius);
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: clamp(14px, 2.2vw, 18px);
-      position:relative;
-      overflow:hidden;
-    }
-
-    .ringCard:before{
-      content:"";
-      position:absolute; inset:-1px;
-      background:
-        radial-gradient(600px 250px at 20% 10%, rgba(155,231,255,.10), transparent 55%),
-        radial-gradient(650px 280px at 85% 25%, rgba(183,168,255,.10), transparent 60%),
-        radial-gradient(700px 320px at 45% 110%, rgba(118,255,209,.06), transparent 60%);
+    /* ====== CAR BACKGROUND (layered) ====== */
+    .carLayer{
+      position:absolute;
+      inset:0;
+      z-index:1;
       pointer-events:none;
+      opacity:1;
+    }
+    .carGlow{
+      position:absolute;
+      inset:-1px;
+      background:
+        radial-gradient(1200px 700px at 30% 30%, rgba(155,231,255,.10), transparent 60%),
+        radial-gradient(1100px 700px at 70% 30%, rgba(183,168,255,.09), transparent 62%),
+        radial-gradient(900px 900px at 55% 110%, rgba(255,106,61,.06), transparent 60%);
+      filter: blur(0px);
       opacity:.9;
     }
-
-    .ringTop{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:14px;
-      position:relative;
-      z-index:2;
-      margin-bottom: 10px;
-    }
-
-    .ringTop .title{
-      min-width:0;
-    }
-    .ringTop h2{
-      margin:0;
-      font-size: 16px;
-      letter-spacing:.4px;
-      font-weight: 750;
-    }
-    .ringTop p{
-      margin:5px 0 0;
-      font-size: 12.5px;
-      color: var(--mut);
-      line-height: 1.35;
-    }
-
-    .ctaMini{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
-      color: rgba(234,240,255,.92);
-      border-radius: 14px;
-      padding: 9px 11px;
-      font-size: 12px;
-      letter-spacing:.2px;
-      display:inline-flex;
-      gap:8px;
-      align-items:center;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.28); border-color: rgba(255,255,255,.20); }
-    .btn:active{ transform: translateY(0px) scale(.99); }
-    .btn .ic{
-      width:18px;height:18px;border-radius:9px;
-      background: linear-gradient(180deg, rgba(155,231,255,.30), rgba(183,168,255,.22));
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow: 0 8px 20px rgba(0,0,0,.22);
-    }
-
-    /* Donut itself */
-    .donutWrap{
-      position:relative;
-      display:grid;
-      place-items:center;
-      height: calc(var(--ringSize) + 70px);
-      margin-top: 4px;
-      z-index:2;
-      touch-action: none; /* we handle pan ourselves */
-    }
-
-    .donut{
-      width: var(--ringSize);
-      height: var(--ringSize);
-      position:relative;
-      border-radius:50%;
-      filter: drop-shadow(0 18px 40px rgba(0,0,0,.55));
-    }
-
-    .donut:before{
-      /* Outer glow ring */
-      content:"";
-      position:absolute; inset:-10px;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(155,231,255,.10), transparent 55%),
-        conic-gradient(from 0deg,
-          rgba(155,231,255,.12),
-          rgba(183,168,255,.11),
-          rgba(118,255,209,.08),
-          rgba(255,210,122,.07),
-          rgba(155,231,255,.12)
-        );
-      -webkit-mask:
-        radial-gradient(circle at 50% 50%, transparent 54%, #000 56%, #000 75%, transparent 78%);
-              mask:
-        radial-gradient(circle at 50% 50%, transparent 54%, #000 56%, #000 75%, transparent 78%);
-      opacity:.9;
-    }
-
-    .ring{
-      position:absolute; inset:0;
-      border-radius:50%;
-      transform: rotate(var(--rot, 0deg));
-      transition: transform 160ms cubic-bezier(.2,.9,.2,1);
-      will-change: transform;
-    }
-    .dragging .ring{ transition:none; }
-
-    .center{
+    .carSVG{
       position:absolute;
-      width: 44%;
-      height: 44%;
-      border-radius:50%;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%);
-      background:
-        radial-gradient(40% 40% at 35% 35%, rgba(255,255,255,.18), transparent 65%),
-        radial-gradient(40% 40% at 65% 70%, rgba(155,231,255,.14), transparent 70%),
-        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.45));
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.06),
-        0 18px 50px rgba(0,0,0,.45);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 12px;
-      text-align:center;
-      pointer-events:none;
-      z-index:4;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      left:0; right:0;
+      bottom:-40px;
+      height: 68vh;
+      opacity:.75;
+      filter: drop-shadow(0 25px 60px rgba(0,0,0,.75));
+      transform: translateZ(0);
     }
 
-    .center .big{
-      font-weight: 800;
-      letter-spacing:.7px;
-      font-size: clamp(14px, 2.4vmin, 18px);
-      margin:0;
-    }
-    .center .small{
-      margin: 7px 0 0;
-      color: rgba(234,240,255,.80);
-      font-size: 12px;
-      line-height: 1.25;
-    }
-
-    .selectorTick{
-      position:absolute;
-      left:50%;
-      top: -6px;
-      transform: translateX(-50%);
-      width: 44px;
-      height: 20px;
-      border-radius: 999px;
-      background: rgba(0,0,0,.22);
-      border:1px solid rgba(255,255,255,.16);
+    /* ====== LEFT: WHEEL SELECT ====== */
+    .leftPane{
+      position:relative;
       z-index:5;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:8px;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-    .selectorTick:before{
-      content:"";
-      width:10px;height:10px;border-radius:50%;
-      background: linear-gradient(180deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
-    }
-    .selectorTick:after{
-      content:"";
-      width:10px;height:10px;border-radius:50%;
-      background: rgba(255,255,255,.10);
+      padding: clamp(10px, 2vw, 18px);
     }
 
-    .seg{
-      position:absolute;
-      left:50%; top:50%;
-      width: 44%;
-      height: 18%;
-      transform-origin: 0% 50%;
-      transform: rotate(var(--ang)) translateX(46%);
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.14);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      display:flex;
-      align-items:center;
-      justify-content:flex-start;
-      padding: 10px 12px;
-      gap:10px;
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      z-index:3;
-      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
-      overflow:hidden;
-    }
-
-    .seg:before{
-      content:"";
-      position:absolute; inset:-1px;
-      background:
-        radial-gradient(220px 90px at 15% 20%, rgba(155,231,255,.12), transparent 60%),
-        radial-gradient(260px 110px at 85% 75%, rgba(183,168,255,.10), transparent 65%);
-      opacity:.9;
-      pointer-events:none;
-    }
-
-    .seg:hover{
-      border-color: rgba(255,255,255,.22);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-
-    .seg.active{
-      border-color: rgba(155,231,255,.34);
-      box-shadow: 0 14px 40px rgba(0,0,0,.34);
-    }
-
-    .pill{
-      position:relative;
-      z-index:2;
-      width: 12px;
-      height: 12px;
-      border-radius:50%;
-      background: linear-gradient(180deg, rgba(155,231,255,.92), rgba(183,168,255,.82));
-      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
-      flex:0 0 auto;
-    }
-
-    .seg .label{
-      position:relative;
-      z-index:2;
-      font-weight: 750;
-      letter-spacing:.55px;
-      font-size: 12px;
-      line-height:1;
-      text-transform: uppercase;
-      white-space:nowrap;
-    }
-
-    .seg .sub{
-      position:relative;
-      z-index:2;
-      margin-left:auto;
-      font-size: 11px;
-      color: rgba(234,240,255,.78);
-      letter-spacing:.2px;
-      white-space:nowrap;
-      opacity:.95;
-    }
-
-    /* Preview panel */
-    .preview{
-      position:relative;
-      border-radius: var(--radius);
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    .wheelCard{
+      width: min(100%, 860px);
+      border-radius: var(--r);
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       box-shadow: var(--shadow);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       overflow:hidden;
-      min-height: 420px;
-      align-self:stretch;
+      position:relative;
     }
-
-    @media (max-width: 980px){
-      .preview{ min-height: 360px; }
-    }
-
-    .preview:before{
+    .wheelCard:before{
       content:"";
       position:absolute; inset:-1px;
       background:
-        radial-gradient(700px 240px at 20% 10%, rgba(155,231,255,.10), transparent 58%),
-        radial-gradient(700px 260px at 80% 18%, rgba(183,168,255,.10), transparent 60%),
-        radial-gradient(700px 320px at 50% 110%, rgba(118,255,209,.08), transparent 60%);
+        radial-gradient(900px 350px at 20% 10%, rgba(155,231,255,.10), transparent 60%),
+        radial-gradient(900px 350px at 80% 20%, rgba(183,168,255,.10), transparent 62%),
+        radial-gradient(900px 450px at 50% 110%, rgba(118,255,209,.07), transparent 62%);
+      opacity:.9;
       pointer-events:none;
-      opacity:.85;
-      z-index:1;
     }
 
-    .mediaStage{
+    .wheelHeader{
+      position:relative;
+      z-index:2;
+      padding: 16px 16px 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:14px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .wheelHeader h2{
+      margin:0;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing:.5px;
+    }
+    .wheelHeader p{
+      margin:6px 0 0;
+      font-size: 12.5px;
+      color: rgba(234,240,255,.70);
+      line-height:1.35;
+    }
+    .miniBtns{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
+
+    .wheelArea{
+      position:relative;
+      z-index:2;
+      display:grid;
+      grid-template-columns: 1fr 160px;
+      gap: 14px;
+      padding: 14px 14px 16px;
+      align-items:center;
+    }
+    @media (max-width: 820px){
+      .wheelArea{
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .wheelStage{
+      position:relative;
+      display:grid;
+      place-items:center;
+      padding: 10px;
+      min-height: calc(var(--wheelSize) + 20px);
+      touch-action: none;
+      user-select:none;
+    }
+
+    canvas#wheelCanvas{
+      width: var(--wheelSize);
+      height: var(--wheelSize);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.08), transparent 45%),
+        radial-gradient(circle at 65% 70%, rgba(155,231,255,.08), transparent 52%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,.35), rgba(0,0,0,.65));
+      box-shadow:
+        0 30px 90px rgba(0,0,0,.70),
+        inset 0 0 0 1px rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      transform: translateZ(0);
+    }
+
+    /* marker ring (click targets) */
+    .markers{
+      position:absolute;
+      inset:0;
+      width: var(--wheelSize);
+      height: var(--wheelSize);
+      pointer-events:auto;
+    }
+    .marker{
+      position:absolute;
+      left:50%; top:50%;
+      width: 120px;
+      height: 34px;
+      transform-origin: 0% 50%;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 0 12px;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+      box-shadow: 0 16px 50px rgba(0,0,0,.40);
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .marker .mDot{
+      width:10px;height:10px;border-radius:50%;
+      background: linear-gradient(180deg, var(--accent), var(--accent2));
+      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
+      flex:0 0 auto;
+    }
+    .marker .mTxt{
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing:.55px;
+      text-transform: uppercase;
+      white-space:nowrap;
+    }
+    .marker .mSub{
+      margin-left:auto;
+      font-size: 11px;
+      color: rgba(234,240,255,.68);
+      letter-spacing:.2px;
+      white-space:nowrap;
+    }
+    .marker:hover{
+      border-color: rgba(255,255,255,.20);
+      background: rgba(0,0,0,.28);
+    }
+    .marker.active{
+      border-color: rgba(155,231,255,.30);
+      box-shadow: 0 18px 60px rgba(0,0,0,.55);
+    }
+
+    /* ====== THERMOSTAT ====== */
+    .thermo{
+      align-self:stretch;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .thermo h3{
+      margin:0;
+      font-size: 12px;
+      letter-spacing:.3px;
+      color: rgba(234,240,255,.80);
+      font-weight: 900;
+    }
+    .thermo .readout{
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing:.6px;
+      line-height:1;
+    }
+    .thermo .sub{
+      margin-top: -6px;
+      font-size: 12px;
+      color: rgba(234,240,255,.65);
+      line-height:1.3;
+    }
+
+    .sliderWrap{
+      position:relative;
+      flex:1;
+      min-height: 220px;
+      display:grid;
+      place-items:center;
+      padding: 10px 0;
+    }
+    input[type="range"]{
+      -webkit-appearance: none;
+      appearance: none;
+      width: 240px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(155,231,255,.65), rgba(183,168,255,.55), rgba(255,106,61,.55));
+      outline:none;
+      transform: rotate(-90deg);
+      box-shadow: 0 10px 28px rgba(0,0,0,.35);
+    }
+    input[type="range"]::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      appearance:none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), rgba(255,255,255,.08)), linear-gradient(180deg, rgba(155,231,255,.95), rgba(183,168,255,.85));
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow: 0 0 0 8px rgba(155,231,255,.10), 0 16px 40px rgba(0,0,0,.45);
+      cursor:pointer;
+    }
+    input[type="range"]::-moz-range-thumb{
+      width: 22px; height: 22px; border:none; border-radius:50%;
+      background: linear-gradient(180deg, rgba(155,231,255,.95), rgba(183,168,255,.85));
+      box-shadow: 0 0 0 8px rgba(155,231,255,.10), 0 16px 40px rgba(0,0,0,.45);
+      cursor:pointer;
+    }
+
+    .thermoFooter{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .smallBtn{
+      flex:1;
+      justify-content:center;
+      border-radius: 14px;
+      padding: 9px 10px;
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing:.25px;
+    }
+
+    /* ====== FLAME VFX ====== */
+    .vfx{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:10;
+      opacity:0;
+      transition: opacity .18s ease;
+      mix-blend-mode: screen;
+    }
+    .vfx.on{ opacity:1; }
+    .vfx .flame{
+      position:absolute;
+      left:50%; top:50%;
+      width: 36%;
+      height: 36%;
+      transform: translate(-50%,-50%);
+      filter: blur(0px);
+      opacity:.95;
+    }
+    .vfx .flame:before,
+    .vfx .flame:after{
+      content:"";
+      position:absolute;
+      inset:-10%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 60%, rgba(255,106,61,.50), transparent 60%),
+        radial-gradient(circle at 45% 40%, rgba(255,210,122,.35), transparent 60%),
+        radial-gradient(circle at 55% 30%, rgba(255,255,255,.22), transparent 60%);
+      transform: rotate(0deg);
+      animation: flameSpin 420ms linear infinite;
+      opacity:.9;
+    }
+    .vfx .flame:after{
+      inset:-18%;
+      opacity:.55;
+      filter: blur(6px);
+      animation-duration: 320ms;
+    }
+    @keyframes flameSpin{
+      from{ transform: rotate(0deg) scale(1.0); }
+      to{ transform: rotate(360deg) scale(1.0); }
+    }
+
+    .speedLines{
+      position:absolute;
+      inset:0;
+      opacity:.0;
+      transition: opacity .18s ease;
+      pointer-events:none;
+    }
+    .speedLines.on{ opacity:.65; }
+    .speedLines:before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        repeating-conic-gradient(from 0deg,
+          rgba(155,231,255,.0) 0deg 6deg,
+          rgba(155,231,255,.10) 6deg 6.6deg
+        );
+      -webkit-mask: radial-gradient(circle at 50% 50%, transparent 38%, #000 42%, #000 74%, transparent 78%);
+              mask: radial-gradient(circle at 50% 50%, transparent 38%, #000 42%, #000 74%, transparent 78%);
+      filter: blur(0px);
+    }
+
+    /* ====== RIGHT: HUD PREVIEW ====== */
+    .hud{
+      position:relative;
+      z-index:6;
+      border-left:1px solid rgba(255,255,255,.06);
+      padding: clamp(10px, 2vw, 16px);
+      display:flex;
+      align-items:stretch;
+    }
+    @media (max-width: 980px){
+      .hud{ border-left:none; }
+    }
+
+    .hudCard{
+      width:100%;
+      border-radius: var(--r);
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position:relative;
+      min-height: 420px;
+    }
+    @media (max-width: 980px){
+      .hudCard{ min-height: 360px; }
+    }
+
+    .hudMedia{
       position:absolute;
       inset:0;
       z-index:2;
-      display:grid;
-      place-items:center;
     }
-
-    .mediaStage .img,
-    .mediaStage video{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
+    .hudMedia img, .hudMedia video{
+      position:absolute; inset:0;
+      width:100%; height:100%;
       object-fit: cover;
       transform: scale(1.02);
-      filter: contrast(1.04) saturate(1.03);
+      filter: contrast(1.05) saturate(1.03);
     }
+    .hudMedia img{ opacity:1; transition: opacity 220ms ease; }
+    .hudMedia video{ opacity:0; transition: opacity 320ms ease; }
+    .hudMedia.ready video{ opacity:1; }
+    .hudMedia.ready img{ opacity:0; }
 
-    .mediaStage .img{
-      opacity:1;
-      transition: opacity 220ms ease;
-    }
-
-    .mediaStage video{
-      opacity:0;
-      transition: opacity 320ms ease;
-    }
-
-    .mediaStage.ready video{ opacity:1; }
-    .mediaStage.ready .img{ opacity:0; }
-
-    .overlay{
+    .hudShade{
       position:absolute;
       inset:0;
       z-index:3;
       background:
-        radial-gradient(500px 280px at 25% 10%, rgba(0,0,0,.10), transparent 55%),
-        radial-gradient(600px 420px at 70% 40%, rgba(0,0,0,.22), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.52));
+        radial-gradient(700px 380px at 20% 10%, rgba(0,0,0,.12), transparent 60%),
+        radial-gradient(800px 520px at 70% 35%, rgba(0,0,0,.26), transparent 65%),
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.66));
       pointer-events:none;
     }
 
-    .previewTop{
+    .hudTop{
       position:relative;
-      z-index:4;
+      z-index:5;
       padding: 16px 16px 0;
       display:flex;
-      align-items:flex-start;
       justify-content:space-between;
       gap:12px;
+      align-items:flex-start;
     }
-
-    .vTitle{
-      min-width:0;
-    }
-    .vTitle h3{
+    .hudTitle h3{
       margin:0;
       font-size: 18px;
-      letter-spacing:.4px;
-      font-weight: 820;
-      text-shadow: 0 14px 40px rgba(0,0,0,.55);
+      font-weight: 950;
+      letter-spacing:.5px;
+      text-shadow: 0 18px 50px rgba(0,0,0,.65);
     }
-    .vTitle p{
+    .hudTitle p{
       margin: 6px 0 0;
-      color: rgba(234,240,255,.80);
       font-size: 12.5px;
+      color: rgba(234,240,255,.78);
       line-height:1.35;
-      text-shadow: 0 14px 40px rgba(0,0,0,.55);
+      text-shadow: 0 18px 50px rgba(0,0,0,.65);
+      max-width: 46ch;
     }
 
-    .enterBtn{
-      position:relative;
-      z-index:4;
+    .enter{
       border-radius: 16px;
       padding: 10px 12px;
       border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.25);
+      background: rgba(0,0,0,.26);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 900;
       letter-spacing:.25px;
       display:inline-flex;
       align-items:center;
@@ -549,27 +583,28 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      white-space:nowrap;
     }
-    .enterBtn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.30); border-color: rgba(155,231,255,.24); }
-    .enterBtn:active{ transform: translateY(0px) scale(.99); }
-    .enterBtn .spark{
+    .enter:hover{ transform: translateY(-1px); background: rgba(0,0,0,.32); border-color: rgba(155,231,255,.22); }
+    .enter:active{ transform: translateY(0px) scale(.99); }
+    .spark{
       width:18px;height:18px;border-radius:10px;
       background: linear-gradient(180deg, rgba(155,231,255,.90), rgba(183,168,255,.82));
       box-shadow: 0 0 0 6px rgba(155,231,255,.10);
+      border:1px solid rgba(255,255,255,.12);
     }
 
-    .previewBottom{
+    .hudBottom{
       position:absolute;
       left:0; right:0; bottom:0;
-      z-index:4;
+      z-index:6;
       padding: 14px 16px 16px;
       display:flex;
-      align-items:flex-end;
       justify-content:space-between;
       gap:12px;
+      align-items:flex-end;
     }
-
-    .micro{
+    .hudStat{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.20);
       border-radius: 16px;
@@ -578,130 +613,213 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
-    .micro .k{
+    .hudStat .k{
       font-size: 11px;
-      color: rgba(234,240,255,.75);
+      color: rgba(234,240,255,.70);
       letter-spacing:.2px;
     }
-    .micro .v{
+    .hudStat .v{
       margin-top: 5px;
       font-size: 12.5px;
-      font-weight: 750;
+      font-weight: 900;
       letter-spacing:.25px;
     }
-
-    .tip{
+    .hudTip{
       text-align:right;
       font-size: 11px;
-      color: rgba(234,240,255,.72);
+      color: rgba(234,240,255,.70);
       line-height:1.25;
-      text-shadow: 0 12px 32px rgba(0,0,0,.50);
+      text-shadow: 0 18px 50px rgba(0,0,0,.65);
     }
 
-    /* Mobile tap helper */
     .tapHint{
       display:none;
       margin-top: 10px;
       font-size: 12px;
-      color: rgba(234,240,255,.76);
+      color: rgba(234,240,255,.72);
     }
     @media (hover:none){
       .tapHint{ display:block; }
     }
 
-    /* Footer */
     .foot{
-      margin-top: 6px;
-      color: rgba(234,240,255,.62);
+      position:relative;
+      z-index:2;
+      padding: 10px 16px 14px;
+      border-top:1px solid rgba(255,255,255,.06);
       font-size: 11px;
-      text-align:center;
-      letter-spacing:.2px;
+      color: rgba(234,240,255,.60);
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div style="min-width:0">
-          <h1>Snack Packz</h1>
-          <p>Spin the ring. Pick your vibe. Order fast.</p>
-        </div>
+
+  <!-- Background car + lighting -->
+  <div class="carLayer" aria-hidden="true">
+    <div class="carGlow"></div>
+
+    <!-- Stylised sports car silhouette (no external assets) -->
+    <svg class="carSVG" viewBox="0 0 1400 700" preserveAspectRatio="xMidYMax meet">
+      <defs>
+        <linearGradient id="carBody" x1="0" x2="1">
+          <stop offset="0" stop-color="rgba(255,255,255,.10)"/>
+          <stop offset=".35" stop-color="rgba(155,231,255,.10)"/>
+          <stop offset=".65" stop-color="rgba(183,168,255,.10)"/>
+          <stop offset="1" stop-color="rgba(255,255,255,.10)"/>
+        </linearGradient>
+        <linearGradient id="glass" x1="0" x2="1">
+          <stop offset="0" stop-color="rgba(155,231,255,.10)"/>
+          <stop offset="1" stop-color="rgba(183,168,255,.08)"/>
+        </linearGradient>
+        <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="6" result="blur"/>
+          <feColorMatrix in="blur" type="matrix"
+            values="1 0 0 0 0
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 0.55 0" result="glow"/>
+          <feMerge>
+            <feMergeNode in="glow"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      <!-- road -->
+      <path d="M0 620 C 300 540, 1100 540, 1400 620 L1400 700 L0 700 Z"
+            fill="rgba(0,0,0,.35)"/>
+
+      <!-- car body -->
+      <path filter="url(#softGlow)"
+        d="M210 520
+           C240 450, 340 380, 520 370
+           C620 250, 760 230, 920 260
+           C1020 280, 1100 330, 1180 420
+           C1260 430, 1300 470, 1310 520
+           C1315 545, 1290 570, 1240 575
+           L320 575
+           C250 575, 205 555, 210 520 Z"
+        fill="url(#carBody)"
+        stroke="rgba(255,255,255,.10)"
+        stroke-width="2"/>
+
+      <!-- windows -->
+      <path
+        d="M565 380
+           C620 305, 720 275, 840 285
+           C910 292, 975 320, 1030 380
+           L930 380
+           C885 335, 830 315, 770 310
+           C690 305, 630 330, 590 380 Z"
+        fill="url(#glass)"
+        stroke="rgba(255,255,255,.10)"
+        stroke-width="2"/>
+
+      <!-- headlight -->
+      <path d="M1180 450 C1215 450, 1240 465, 1245 485 C1220 495, 1195 498, 1168 495 Z"
+            fill="rgba(255,255,255,.12)" stroke="rgba(155,231,255,.18)" stroke-width="2"/>
+      <path d="M1175 478 C1205 478, 1225 485, 1235 495"
+            stroke="rgba(155,231,255,.35)" stroke-width="3" fill="none"/>
+
+      <!-- subtle speed lines -->
+      <g opacity=".25">
+        <path d="M80 420 L340 360" stroke="rgba(155,231,255,.10)" stroke-width="3"/>
+        <path d="M60 480 L360 410" stroke="rgba(183,168,255,.10)" stroke-width="3"/>
+        <path d="M40 540 L380 470" stroke="rgba(155,231,255,.10)" stroke-width="3"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo"></div>
+      <div class="brandText">
+        <h1>Snack Packz</h1>
+        <p>Pick a vibe like a game. Spin the wheel. Order fast.</p>
       </div>
-      <div class="hint">
-        <div class="chip"><span class="dot"></span> Drag • Wheel • Tap • Snap</div>
-        <a class="chip" id="waTop" href="#" rel="noopener">WhatsApp Order</a>
+    </div>
+    <div class="rightChips">
+      <div class="chip"><span class="dot"></span> Drag • Scroll • Snap</div>
+      <a class="chip" id="waTop" href="#" rel="noopener">WhatsApp Order</a>
+    </div>
+  </div>
+
+  <div class="scene">
+    <!-- Left: Wheel -->
+    <div class="leftPane">
+      <div class="wheelCard" id="wheelCard">
+        <div class="wheelHeader">
+          <div>
+            <h2>Wheel Select</h2>
+            <p>Real 3D wheel feel. Image preview instantly, then video fades in when ready.</p>
+            <div class="tapHint">Mobile: tap a marker once to preview, tap again to enter.</div>
+          </div>
+          <div class="miniBtns">
+            <button class="btn" id="resetBtn" type="button">Reset</button>
+            <button class="btn" id="spinBtn" type="button">Boost</button>
+          </div>
+        </div>
+
+        <div class="wheelArea">
+          <div class="wheelStage" id="wheelStage">
+            <canvas id="wheelCanvas" width="800" height="800" aria-label="wheel"></canvas>
+
+            <div class="speedLines" id="speedLines" aria-hidden="true"></div>
+            <div class="vfx" id="vfx" aria-hidden="true">
+              <div class="flame"></div>
+            </div>
+
+            <div class="markers" id="markers" aria-label="markers"></div>
+          </div>
+
+          <div class="thermo">
+            <h3>THERMOSTAT</h3>
+            <div class="readout" id="thermoReadout">35%</div>
+            <div class="sub">Controls spin sensitivity + auto drift.</div>
+
+            <div class="sliderWrap">
+              <input id="thermo" type="range" min="0" max="100" value="35" />
+            </div>
+
+            <div class="thermoFooter">
+              <button class="btn smallBtn" id="brakeBtn" type="button">Brake</button>
+              <button class="btn smallBtn" id="autoBtn" type="button">Auto</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="foot">Tip: click/tap a marker to snap instantly. No slow rotation. No wobble.</div>
       </div>
     </div>
 
-    <div class="main">
-      <!-- Ring -->
-      <div class="ringZone">
-        <div class="ringCard" id="ringCard">
-          <div class="ringTop">
-            <div class="title">
-              <h2>Choose your vibe</h2>
-              <p>Hover or tap a vibe for a premium preview (image first, then video). Click to snap it instantly.</p>
-              <div class="tapHint">Mobile: tap once to preview, tap again to enter.</div>
-            </div>
-            <div class="ctaMini">
-              <button class="btn" id="resetBtn" type="button" title="Reset ring">
-                <span class="ic" aria-hidden="true"></span> Reset
-              </button>
-              <button class="btn" id="spinBtn" type="button" title="Quick spin">
-                <span class="ic" aria-hidden="true"></span> Quick spin
-              </button>
-            </div>
-          </div>
-
-          <div class="donutWrap" id="donutWrap">
-            <div class="donut" id="donut">
-              <div class="selectorTick" aria-hidden="true"></div>
-
-              <div class="ring" id="ring" style="--rot: 0deg;">
-                <!-- segments injected by JS -->
-              </div>
-
-              <div class="center">
-                <div>
-                  <p class="big" id="centerBig">G Y M</p>
-                  <p class="small" id="centerSmall">Tap a vibe to preview. Drag the ring to switch fast.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="foot">Tip: click any vibe to snap it to the top instantly — no slow rotation.</div>
+    <!-- Right: HUD preview -->
+    <div class="hud">
+      <div class="hudCard">
+        <div class="hudMedia" id="hudMedia" aria-hidden="true">
+          <img id="hudImg" src="assets/gym.jpg" alt="" />
+          <video id="hudVid" muted playsinline loop preload="metadata"></video>
         </div>
-      </div>
+        <div class="hudShade" aria-hidden="true"></div>
 
-      <!-- Preview -->
-      <div class="preview" id="preview">
-        <div class="mediaStage" id="mediaStage" aria-hidden="true">
-          <img class="img" id="prevImg" src="assets/gym.jpg" alt="" />
-          <video id="prevVid" muted playsinline loop preload="metadata"></video>
-        </div>
-        <div class="overlay" aria-hidden="true"></div>
-
-        <div class="previewTop">
-          <div class="vTitle">
-            <h3 id="prevTitle">GYM</h3>
-            <p id="prevDesc">High focus. Clean fuel. No distractions.</p>
+        <div class="hudTop">
+          <div class="hudTitle">
+            <h3 id="hudTitle">GYM</h3>
+            <p id="hudDesc">High focus. Clean fuel. No distractions.</p>
           </div>
-          <a class="enterBtn" id="enterBtn" href="gym.html">
+          <a class="enter" id="enterBtn" href="gym.html">
             <span class="spark" aria-hidden="true"></span>
-            Enter vibe
+            Enter
           </a>
         </div>
 
-        <div class="previewBottom">
-          <div class="micro">
+        <div class="hudBottom">
+          <div class="hudStat">
             <div class="k">Preview</div>
-            <div class="v" id="prevMeta">Image → Video fade (ready)</div>
+            <div class="v" id="hudMeta">Image → Video</div>
           </div>
-          <div class="tip" id="tipRight">
-            Drag to spin<br/>Wheel scroll works<br/>Tap twice on mobile
+          <div class="hudTip" id="hudTip">
+            Drag wheel<br/>Scroll to flick<br/>Tap twice on mobile
           </div>
         </div>
       </div>
@@ -710,387 +828,553 @@
 
   <script>
     // ========= CONFIG =========
-    const WHATSAPP_NUMBER = "447483849357"; // no + for wa.me
+    const WHATSAPP_NUMBER = "447483849357"; // no + in wa.me
     const vibes = [
-      {
-        key: "gym",
-        label: "GYM",
-        sub: "FOCUS",
-        page: "gym.html",
-        img: "assets/gym.jpg",
-        vid: "assets/gym.mp4",
-        desc: "High focus. Clean fuel. No distractions.",
-        meta: "Heavy session snack packs."
-      },
-      {
-        key: "lockin",
-        label: "LOCK-IN",
-        sub: "GRIND",
-        page: "lock-in.html",
-        img: "assets/lockin.jpg",
-        vid: "assets/lockin.mp4",
-        desc: "Tunnel vision mode. Phone down. Get it done.",
-        meta: "Study / deep work packs."
-      },
-      {
-        key: "work",
-        label: "WORK",
-        sub: "DAY",
-        page: "work.html",
-        img: "assets/work.jpg",
-        vid: "assets/work.mp4",
-        desc: "Clean energy. Smooth day. No crash.",
-        meta: "Office-ready packs."
-      },
-      {
-        key: "gaming",
-        label: "GAMING",
-        sub: "NIGHT",
-        page: "gaming.html",
-        img: "assets/gaming.jpg",
-        vid: "assets/gaming.mp4",
-        desc: "Locked in. Fast hands. Zero tilt.",
-        meta: "Late-night packs."
-      },
-      {
-        key: "mystery",
-        label: "MYSTERY",
-        sub: "DROP",
-        page: "mystery.html",
-        img: "assets/mystery.jpg",
-        vid: "assets/mystery.mp4",
-        desc: "Random pull. Premium chaos (in a good way).",
-        meta: "Surprise packs."
-      },
-      {
-        key: "fresh",
-        label: "FRESH",
-        sub: "CLEAN",
-        page: "fresh.html",
-        img: "assets/fresh.jpg",
-        vid: "assets/fresh.mp4",
-        desc: "Light, clean, refreshing. Reset the day.",
-        meta: "Fresh & fruity packs."
-      }
+      { key:"gym",     label:"GYM",     sub:"FOCUS", page:"gym.html",     img:"assets/gym.jpg",     vid:"assets/gym.mp4",     desc:"High focus. Clean fuel. No distractions.", meta:"Heavy session snack packs." },
+      { key:"lockin",  label:"LOCK-IN", sub:"GRIND", page:"lock-in.html", img:"assets/lockin.jpg",  vid:"assets/lockin.mp4",  desc:"Tunnel vision mode. Phone down. Get it done.", meta:"Study / deep work packs." },
+      { key:"work",    label:"WORK",    sub:"DAY",   page:"work.html",    img:"assets/work.jpg",    vid:"assets/work.mp4",    desc:"Clean energy. Smooth day. No crash.", meta:"Office-ready packs." },
+      { key:"gaming",  label:"GAMING",  sub:"NIGHT", page:"gaming.html",  img:"assets/gaming.jpg",  vid:"assets/gaming.mp4",  desc:"Locked in. Fast hands. Zero tilt.", meta:"Late-night packs." },
+      { key:"mystery", label:"MYSTERY", sub:"DROP",  page:"mystery.html", img:"assets/mystery.jpg", vid:"assets/mystery.mp4", desc:"Random pull. Premium chaos (in a good way).", meta:"Surprise packs." },
+      { key:"fresh",   label:"FRESH",   sub:"CLEAN", page:"fresh.html",   img:"assets/fresh.jpg",   vid:"assets/fresh.mp4",   desc:"Light, clean, refreshing. Reset the day.", meta:"Fresh & fruity packs." },
     ];
 
-    // ========= HELPERS =========
-    const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-    const normDeg = (d) => ((d % 360) + 360) % 360;
+    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+    const norm = (a)=>((a% (Math.PI*2)) + (Math.PI*2))%(Math.PI*2);
+
     function waLink(text){
-      const msg = encodeURIComponent(text);
-      return `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     }
 
     // ========= DOM =========
-    const ringEl = document.getElementById("ring");
-    const donutWrap = document.getElementById("donutWrap");
-    const donut = document.getElementById("donut");
-    const ringCard = document.getElementById("ringCard");
-    const resetBtn = document.getElementById("resetBtn");
-    const spinBtn = document.getElementById("spinBtn");
-
-    const mediaStage = document.getElementById("mediaStage");
-    const prevImg = document.getElementById("prevImg");
-    const prevVid = document.getElementById("prevVid");
-    const prevTitle = document.getElementById("prevTitle");
-    const prevDesc = document.getElementById("prevDesc");
-    const prevMeta = document.getElementById("prevMeta");
-    const enterBtn = document.getElementById("enterBtn");
-    const centerBig = document.getElementById("centerBig");
-    const centerSmall = document.getElementById("centerSmall");
-
     const waTop = document.getElementById("waTop");
     waTop.href = waLink("Hi Snack Packz — I want to place an order.");
 
-    // ========= BUILD RING =========
-    const step = 360 / vibes.length;
-    const topAngle = 270; // "selector" at the top. Our segments snap to this.
+    const wheelStage = document.getElementById("wheelStage");
+    const canvas = document.getElementById("wheelCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const markers = document.getElementById("markers");
+    const resetBtn = document.getElementById("resetBtn");
+    const spinBtn = document.getElementById("spinBtn");
+    const brakeBtn = document.getElementById("brakeBtn");
+    const autoBtn = document.getElementById("autoBtn");
+
+    const thermo = document.getElementById("thermo");
+    const thermoReadout = document.getElementById("thermoReadout");
+
+    const hudMedia = document.getElementById("hudMedia");
+    const hudImg = document.getElementById("hudImg");
+    const hudVid = document.getElementById("hudVid");
+    const hudTitle = document.getElementById("hudTitle");
+    const hudDesc = document.getElementById("hudDesc");
+    const hudMeta = document.getElementById("hudMeta");
+    const enterBtn = document.getElementById("enterBtn");
+
+    const vfx = document.getElementById("vfx");
+    const speedLines = document.getElementById("speedLines");
+
+    // ========= STATE =========
+    const N = vibes.length;
+    const step = (Math.PI * 2) / N;
+
+    // wheel angle in radians (0 means marker 0 at the top)
+    let angle = 0;
+    let velocity = 0;           // radians per second
+    let isDragging = false;
+    let pointerId = null;
+    let lastT = 0;
+    let lastA = 0;
+
     let activeIndex = 0;
 
-    function buildRing(){
-      ringEl.innerHTML = "";
-      vibes.forEach((v, i) => {
-        const seg = document.createElement("div");
-        seg.className = "seg";
-        seg.dataset.index = i;
-        seg.style.setProperty("--ang", `${i * step}deg`);
-        seg.innerHTML = `
-          <span class="pill" aria-hidden="true"></span>
-          <span class="label">${v.label}</span>
-          <span class="sub">${v.sub}</span>
-        `;
-        ringEl.appendChild(seg);
-
-        // Desktop hover preview
-        seg.addEventListener("mouseenter", () => {
-          if (window.matchMedia("(hover:hover)").matches) {
-            setActive(i, {snap:false, reason:"hover"});
-          }
-        });
-      });
-
-      ringEl.querySelectorAll(".seg").forEach(seg => {
-        seg.addEventListener("click", (e) => {
-          e.preventDefault();
-          const i = Number(seg.dataset.index);
-          // Mobile: first tap previews/snaps; second tap enters
-          if (window.matchMedia("(hover:none)").matches) {
-            if (activeIndex === i && seg.classList.contains("active")) {
-              window.location.href = vibes[i].page;
-              return;
-            }
-            setActive(i, {snap:true, reason:"tap"});
-            return;
-          }
-          // Desktop: snap on click
-          setActive(i, {snap:true, reason:"click"});
-        }, {passive:false});
-
-        seg.addEventListener("dblclick", (e) => {
-          e.preventDefault();
-          const i = Number(seg.dataset.index);
-          window.location.href = vibes[i].page;
-        }, {passive:false});
-      });
-    }
+    // thermostat influences "feel"
+    let thermoVal = Number(thermo.value) / 100; // 0..1
+    let autoSpin = false;
 
     // ========= PREMIUM PREVIEW (image instantly → fade to video when ready) =========
-    let currentVideoToken = 0;
+    let videoToken = 0;
     function loadPreview(v){
-      prevTitle.textContent = v.label;
-      prevDesc.textContent = v.desc;
-      prevMeta.textContent = "Image → Video fade";
+      hudTitle.textContent = v.label;
+      hudDesc.textContent = v.desc;
+      hudMeta.textContent = "Image → Video";
       enterBtn.href = v.page;
-      centerBig.textContent = v.label.replace("-", " ");
-      centerSmall.textContent = v.meta;
 
-      // image shows instantly
-      mediaStage.classList.remove("ready");
-      prevImg.src = v.img;
+      hudMedia.classList.remove("ready");
+      hudImg.src = v.img;
 
-      // video fade when ready (avoid flashing old video)
-      const token = ++currentVideoToken;
-      prevVid.pause();
-      prevVid.removeAttribute("src");
-      prevVid.load();
+      const token = ++videoToken;
+      try{ hudVid.pause(); }catch(e){}
+      hudVid.removeAttribute("src");
+      hudVid.load();
 
-      prevVid.src = v.vid;
-      // when video can play, fade in
+      hudVid.src = v.vid;
+
       const onReady = () => {
-        if (token !== currentVideoToken) return;
-        mediaStage.classList.add("ready");
-        prevMeta.textContent = "Video ready";
-        try { prevVid.play().catch(()=>{}); } catch(e){}
-        cleanup();
+        if (token !== videoToken) return;
+        hudMedia.classList.add("ready");
+        hudMeta.textContent = "Video ready";
+        try{ hudVid.play().catch(()=>{}); }catch(e){}
       };
       const onError = () => {
-        if (token !== currentVideoToken) return;
-        // Stay on image if video fails
-        mediaStage.classList.remove("ready");
-        prevMeta.textContent = "Video unavailable (image only)";
-        cleanup();
-      };
-      const cleanup = () => {
-        prevVid.removeEventListener("canplaythrough", onReady);
-        prevVid.removeEventListener("loadeddata", onReady);
-        prevVid.removeEventListener("error", onError);
+        if (token !== videoToken) return;
+        hudMedia.classList.remove("ready");
+        hudMeta.textContent = "Video unavailable (image only)";
       };
 
-      // Some mobiles are picky: loadeddata often triggers sooner than canplaythrough
-      prevVid.addEventListener("loadeddata", onReady, {once:true});
-      prevVid.addEventListener("canplaythrough", onReady, {once:true});
-      prevVid.addEventListener("error", onError, {once:true});
-      prevVid.load();
+      hudVid.addEventListener("loadeddata", onReady, {once:true});
+      hudVid.addEventListener("canplaythrough", onReady, {once:true});
+      hudVid.addEventListener("error", onError, {once:true});
+      hudVid.load();
     }
 
-    // ========= ROTATION / SNAP =========
-    let rot = 0; // degrees
-    let isDragging = false;
-    let startAngle = 0;
-    let startRot = 0;
-    let lastMoveT = 0;
-    let lastMoveA = 0;
-    let velocity = 0; // deg per ms
-
-    function setRot(deg, {animate=true} = {}){
-      rot = deg;
-      ringEl.style.setProperty("--rot", `${rot}deg`);
-      ringCard.classList.toggle("dragging", !animate);
+    // ========= INDEX <-> ANGLE MATH =========
+    // We define "top" = -PI/2 in canvas, but we'll treat our snapping as:
+    // index i should align at top when angle = -i*step (mod 2pi)
+    function targetAngleForIndex(i){
+      return -i * step;
     }
 
-    function idxToAngle(i){
-      return i * step;
+    function nearestIndexFromAngle(a){
+      // a approx = -i*step -> i approx = -a/step
+      let raw = Math.round((-a) / step);
+      raw = ((raw % N) + N) % N;
+      return raw;
     }
 
-    function angleToNearestIndex(currentRot){
-      // segment i is at angle (i*step + rot). We want that to be at topAngle.
-      // so: i*step + rot ≈ topAngle  =>  i ≈ (topAngle - rot)/step
-      const raw = (topAngle - normDeg(currentRot)) / step;
-      let i = Math.round(raw);
-      i = ((i % vibes.length) + vibes.length) % vibes.length;
-      return i;
+    function snapToIndex(i){
+      const target = targetAngleForIndex(i);
+      // shortest path
+      const cur = norm(angle);
+      const targ = norm(target);
+      let diff = targ - cur;
+      if (diff > Math.PI) diff -= Math.PI*2;
+      if (diff < -Math.PI) diff += Math.PI*2;
+
+      // snap instantly but still feels smooth:
+      angle += diff;
+      velocity = 0;
     }
 
-    function snapToIndex(i, {animate=true} = {}){
-      // Solve rot such that (i*step + rot) == topAngle (mod 360)
-      const targetRot = topAngle - idxToAngle(i);
-      setRot(targetRot, {animate});
-    }
-
-    function setActive(i, {snap=true, reason=""} = {}){
+    function setActive(i, {snap=true}={}){
       activeIndex = i;
-
-      ringEl.querySelectorAll(".seg").forEach((el) => el.classList.remove("active"));
-      const activeEl = ringEl.querySelector(`.seg[data-index="${i}"]`);
-      if (activeEl) activeEl.classList.add("active");
-
+      updateMarkerActive();
       loadPreview(vibes[i]);
-
-      if (snap){
-        snapToIndex(i, {animate:true});
-      }
+      if (snap) snapToIndex(i);
     }
 
-    // ========= POINTER (DRAG) =========
-    function getPointerAngle(clientX, clientY){
-      const r = donut.getBoundingClientRect();
-      const cx = r.left + r.width/2;
-      const cy = r.top + r.height/2;
-      const dx = clientX - cx;
-      const dy = clientY - cy;
-      // atan2 -> degrees
-      return (Math.atan2(dy, dx) * 180 / Math.PI);
+    // ========= MARKERS (CLICK/TAP SNAP) =========
+    function buildMarkers(){
+      markers.innerHTML = "";
+      const R = 0.46; // radius factor for marker placement
+      for (let i=0; i<N; i++){
+        const m = document.createElement("div");
+        m.className = "marker";
+        m.dataset.index = String(i);
+        m.innerHTML = `
+          <span class="mDot" aria-hidden="true"></span>
+          <span class="mTxt">${vibes[i].label}</span>
+          <span class="mSub">${vibes[i].sub}</span>
+        `;
+
+        // place around the wheel using CSS transforms
+        const deg = (i * (360/N)) - 90; // -90 puts index 0 at top visually
+        m.style.transform = `rotate(${deg}deg) translateX(${R*100}%)`;
+        m.style.width = (vibes[i].label.length > 6 ? "140px" : "120px");
+
+        // mobile: tap once preview, second tap enter
+        m.addEventListener("click", (e)=>{
+          e.preventDefault();
+          const idx = Number(m.dataset.index);
+          if (window.matchMedia("(hover:none)").matches){
+            if (activeIndex === idx && m.classList.contains("active")){
+              window.location.href = vibes[idx].page;
+              return;
+            }
+            setActive(idx, {snap:true});
+            return;
+          }
+          // desktop click snaps
+          setActive(idx, {snap:true});
+        }, {passive:false});
+
+        // desktop hover previews
+        m.addEventListener("mouseenter", ()=>{
+          if (window.matchMedia("(hover:hover)").matches){
+            setActive(i, {snap:false});
+          }
+        });
+
+        markers.appendChild(m);
+      }
+      updateMarkerActive();
+    }
+
+    function updateMarkerActive(){
+      markers.querySelectorAll(".marker").forEach(el=>el.classList.remove("active"));
+      const el = markers.querySelector(`.marker[data-index="${activeIndex}"]`);
+      if (el) el.classList.add("active");
+    }
+
+    // ========= INPUT: DRAG + WHEEL =========
+    function pointerAngleFromEvent(e){
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.left + rect.width/2;
+      const cy = rect.top + rect.height/2;
+      const dx = e.clientX - cx;
+      const dy = e.clientY - cy;
+      return Math.atan2(dy, dx); // radians
     }
 
     function onPointerDown(e){
       isDragging = true;
-      donutWrap.setPointerCapture?.(e.pointerId);
-      ringCard.classList.add("dragging");
+      pointerId = e.pointerId;
+      wheelStage.setPointerCapture?.(pointerId);
 
-      startAngle = getPointerAngle(e.clientX, e.clientY);
-      startRot = rot;
-
-      lastMoveT = performance.now();
-      lastMoveA = startAngle;
-      velocity = 0;
+      const a = pointerAngleFromEvent(e);
+      lastA = a;
+      lastT = performance.now();
     }
 
     function onPointerMove(e){
-      if (!isDragging) return;
-      const a = getPointerAngle(e.clientX, e.clientY);
-      const delta = a - startAngle;
-      setRot(startRot + delta, {animate:false});
+      if (!isDragging || e.pointerId !== pointerId) return;
+
+      const a = pointerAngleFromEvent(e);
+      let da = a - lastA;
+      // wrap around
+      if (da > Math.PI) da -= Math.PI*2;
+      if (da < -Math.PI) da += Math.PI*2;
+
+      angle += da;
 
       const t = performance.now();
-      const dt = t - lastMoveT;
-      if (dt > 0){
-        // smooth velocity
-        const da = a - lastMoveA;
-        const v = da / dt;
-        velocity = velocity * 0.75 + v * 0.25;
-        lastMoveT = t;
-        lastMoveA = a;
-      }
+      const dt = Math.max(1, t - lastT);
+      // velocity in rad/sec
+      const v = (da / dt) * 1000;
+      velocity = velocity*0.75 + v*0.25;
 
-      // update active highlight live (fast)
-      const idx = angleToNearestIndex(rot);
+      lastA = a;
+      lastT = t;
+
+      const idx = nearestIndexFromAngle(angle);
       if (idx !== activeIndex){
-        // don't snap while dragging, just update preview
         activeIndex = idx;
-        ringEl.querySelectorAll(".seg").forEach((el) => el.classList.remove("active"));
-        const activeEl = ringEl.querySelector(`.seg[data-index="${idx}"]`);
-        if (activeEl) activeEl.classList.add("active");
+        updateMarkerActive();
         loadPreview(vibes[idx]);
       }
     }
 
     function onPointerUp(e){
-      if (!isDragging) return;
+      if (!isDragging || e.pointerId !== pointerId) return;
       isDragging = false;
-      ringCard.classList.remove("dragging");
+      pointerId = null;
 
-      // quick inertial fling then snap immediately (no waiting)
-      // we apply a small velocity bump so it feels fast, then snap
-      const fling = clamp(velocity * 180, -90, 90); // deg-ish
-      setRot(rot + fling, {animate:true});
+      // add a bit of "thermo" influence so it feels responsive
+      const sens = 0.6 + thermoVal*1.2;
+      velocity *= sens;
 
-      // snap after a tiny tick (still feels instant)
-      setTimeout(() => {
-        const idx = angleToNearestIndex(rot);
-        setActive(idx, {snap:true, reason:"dragEnd"});
-      }, 60);
+      // snap quickly after a short moment, so it feels game-like
+      setTimeout(()=>{
+        const idx = nearestIndexFromAngle(angle);
+        setActive(idx, {snap:true});
+      }, 70);
     }
 
-    // ========= WHEEL SCROLL =========
     function onWheel(e){
-      // allow normal page scroll if user is not over donut area on small screens
       e.preventDefault();
-      const delta = e.deltaY || e.wheelDelta || 0;
-      // fast scroll => bigger move
-      const amt = clamp(delta * 0.18, -24, 24);
-      setRot(rot + amt, {animate:false});
+      const delta = e.deltaY || 0;
 
-      const idx = angleToNearestIndex(rot);
+      // higher thermostat => more aggressive scroll response
+      const power = 0.0009 + thermoVal*0.0022; // rad per wheel unit
+      angle += delta * power;
+
+      // small velocity kick
+      velocity += delta * power * 2.2;
+
+      const idx = nearestIndexFromAngle(angle);
       if (idx !== activeIndex){
         activeIndex = idx;
-        ringEl.querySelectorAll(".seg").forEach((el) => el.classList.remove("active"));
-        const activeEl = ringEl.querySelector(`.seg[data-index="${idx}"]`);
-        if (activeEl) activeEl.classList.add("active");
+        updateMarkerActive();
         loadPreview(vibes[idx]);
       }
 
       clearTimeout(onWheel._t);
-      onWheel._t = setTimeout(() => {
-        const idx2 = angleToNearestIndex(rot);
-        setActive(idx2, {snap:true, reason:"wheelEnd"});
+      onWheel._t = setTimeout(()=>{
+        const idx2 = nearestIndexFromAngle(angle);
+        setActive(idx2, {snap:true});
       }, 110);
     }
 
-    // ========= BUTTONS =========
-    resetBtn.addEventListener("click", () => setActive(0, {snap:true, reason:"reset"}));
-    spinBtn.addEventListener("click", () => {
-      // quick spin feel, then snap
-      setRot(rot + 260, {animate:true});
-      setTimeout(() => {
-        const idx = angleToNearestIndex(rot);
-        setActive(idx, {snap:true, reason:"spinEnd"});
-      }, 170);
+    // ========= THERMOSTAT =========
+    thermo.addEventListener("input", ()=>{
+      thermoVal = Number(thermo.value) / 100;
+      thermoReadout.textContent = `${Math.round(thermoVal*100)}%`;
     });
 
-    // ========= ENTER BUTTON (mobile: respects tap twice rule via segment tap) =========
-    // On desktop it just enters the currently active vibe
-    enterBtn.addEventListener("click", (e) => {
-      if (window.matchMedia("(hover:none)").matches){
-        // On mobile, treat Enter as enter (obviously)
-        return;
+    // ========= BUTTONS =========
+    resetBtn.addEventListener("click", ()=>{
+      autoSpin = false;
+      velocity = 0;
+      setActive(0, {snap:true});
+    });
+
+    spinBtn.addEventListener("click", ()=>{
+      // boost
+      const boost = 2.8 + thermoVal*4.2;
+      velocity += boost;
+    });
+
+    brakeBtn.addEventListener("click", ()=>{
+      autoSpin = false;
+      velocity *= 0.15;
+      setTimeout(()=>{
+        const idx = nearestIndexFromAngle(angle);
+        setActive(idx, {snap:true});
+      }, 80);
+    });
+
+    autoBtn.addEventListener("click", ()=>{
+      autoSpin = !autoSpin;
+      autoBtn.textContent = autoSpin ? "Auto: ON" : "Auto";
+      if (!autoSpin){
+        setTimeout(()=>{
+          const idx = nearestIndexFromAngle(angle);
+          setActive(idx, {snap:true});
+        }, 80);
       }
     });
 
-    // ========= INIT =========
-    buildRing();
-    // start with vibe 0 snapped
-    snapToIndex(0, {animate:false});
-    setActive(0, {snap:false, reason:"init"});
+    // ========= RENDER: 3D WHEEL (CANVAS) =========
+    function drawWheel(a, speed){
+      const w = canvas.width, h = canvas.height;
+      const cx = w/2, cy = h/2;
+      const R = w*0.43;
 
-    // events
-    donutWrap.addEventListener("pointerdown", onPointerDown, {passive:true});
+      ctx.clearRect(0,0,w,h);
+
+      // background subtle vignette
+      ctx.save();
+      const vg = ctx.createRadialGradient(cx,cy,R*0.1,cx,cy,R*1.2);
+      vg.addColorStop(0,"rgba(255,255,255,0.06)");
+      vg.addColorStop(0.35,"rgba(0,0,0,0.20)");
+      vg.addColorStop(1,"rgba(0,0,0,0.75)");
+      ctx.fillStyle = vg;
+      ctx.beginPath(); ctx.arc(cx,cy,R*1.12,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+
+      // tyre outer ring
+      ctx.save();
+      ctx.translate(cx,cy);
+      ctx.rotate(a);
+
+      // tyre texture
+      ctx.beginPath();
+      ctx.arc(0,0,R*1.02,0,Math.PI*2);
+      ctx.fillStyle = "rgba(0,0,0,0.75)";
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0,0,R*0.98,0,Math.PI*2);
+      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      ctx.lineWidth = 6;
+      ctx.stroke();
+
+      // tread lines
+      ctx.globalAlpha = 0.22;
+      ctx.strokeStyle = "rgba(155,231,255,0.28)";
+      ctx.lineWidth = 3;
+      for(let i=0;i<26;i++){
+        const ang = (i/26)*Math.PI*2;
+        ctx.save();
+        ctx.rotate(ang);
+        ctx.beginPath();
+        ctx.moveTo(R*0.90, -10);
+        ctx.lineTo(R*1.02, -2);
+        ctx.stroke();
+        ctx.restore();
+      }
+      ctx.globalAlpha = 1;
+
+      // rim ring
+      const rimGrad = ctx.createRadialGradient(0,-R*0.2,R*0.2,0,0,R*0.9);
+      rimGrad.addColorStop(0,"rgba(255,255,255,0.14)");
+      rimGrad.addColorStop(0.55,"rgba(155,231,255,0.06)");
+      rimGrad.addColorStop(1,"rgba(0,0,0,0.55)");
+
+      ctx.beginPath();
+      ctx.arc(0,0,R*0.82,0,Math.PI*2);
+      ctx.fillStyle = rimGrad;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0,0,R*0.80,0,Math.PI*2);
+      ctx.strokeStyle = "rgba(255,255,255,0.18)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // spokes (3D-ish)
+      const spokeCount = 5;
+      for(let i=0;i<spokeCount;i++){
+        const ang = (i/spokeCount)*Math.PI*2;
+        ctx.save();
+        ctx.rotate(ang);
+
+        const g = ctx.createLinearGradient(-20, -R*0.10, 40, R*0.62);
+        g.addColorStop(0,"rgba(255,255,255,0.14)");
+        g.addColorStop(0.45,"rgba(155,231,255,0.06)");
+        g.addColorStop(1,"rgba(0,0,0,0.35)");
+
+        ctx.fillStyle = g;
+        ctx.strokeStyle = "rgba(255,255,255,0.14)";
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(-40, -R*0.05);
+        ctx.lineTo( 40, -R*0.05);
+        ctx.lineTo( 20,  R*0.62);
+        ctx.lineTo(-20,  R*0.62);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // spoke highlight
+        ctx.globalAlpha = 0.25;
+        ctx.strokeStyle = "rgba(255,255,255,0.35)";
+        ctx.beginPath();
+        ctx.moveTo(-20, 0);
+        ctx.lineTo(  0, R*0.58);
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        ctx.restore();
+      }
+
+      // centre cap
+      const capGrad = ctx.createRadialGradient(-R*0.08, -R*0.10, R*0.02, 0,0,R*0.22);
+      capGrad.addColorStop(0,"rgba(255,255,255,0.22)");
+      capGrad.addColorStop(0.45,"rgba(155,231,255,0.10)");
+      capGrad.addColorStop(1,"rgba(0,0,0,0.55)");
+
+      ctx.beginPath();
+      ctx.arc(0,0,R*0.22,0,Math.PI*2);
+      ctx.fillStyle = capGrad;
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(0,0,R*0.21,0,Math.PI*2);
+      ctx.strokeStyle = "rgba(255,255,255,0.16)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // tiny lug dots
+      ctx.globalAlpha = 0.75;
+      for(let i=0;i<5;i++){
+        const ang = (i/5)*Math.PI*2;
+        const x = Math.cos(ang)*R*0.14;
+        const y = Math.sin(ang)*R*0.14;
+        ctx.beginPath();
+        ctx.arc(x,y,8,0,Math.PI*2);
+        ctx.fillStyle = "rgba(0,0,0,0.45)";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x-2,y-2,4,0,Math.PI*2);
+        ctx.fillStyle = "rgba(255,255,255,0.18)";
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.restore();
+
+      // screen-space gloss
+      ctx.save();
+      const gloss = ctx.createLinearGradient(0,0,w,h);
+      gloss.addColorStop(0,"rgba(255,255,255,0.06)");
+      gloss.addColorStop(0.25,"rgba(155,231,255,0.03)");
+      gloss.addColorStop(0.55,"rgba(0,0,0,0)");
+      gloss.addColorStop(1,"rgba(0,0,0,0.18)");
+      ctx.fillStyle = gloss;
+      ctx.beginPath();
+      ctx.arc(cx,cy,R*1.08,0,Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // ========= RESIZE CANVAS FOR CRISPNESS =========
+    function resizeCanvas(){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+    }
+
+    // ========= LOOP =========
+    let lastFrame = performance.now();
+    function tick(now){
+      const dt = Math.min(0.05, (now - lastFrame)/1000);
+      lastFrame = now;
+
+      // thermostat influences friction + response
+      const friction = 2.8 - thermoVal*1.9;     // higher thermo => less friction
+      const drift = 0.6 + thermoVal*1.2;        // higher thermo => more drift
+
+      if (autoSpin){
+        // gentle auto drive, scaled by thermostat
+        velocity += (0.8 + thermoVal*1.8) * dt;
+      }
+
+      if (!isDragging){
+        // integrate
+        angle += velocity * dt;
+        // friction
+        velocity *= Math.exp(-friction * dt);
+
+        // if nearly stopped, snap to nearest
+        if (Math.abs(velocity) < 0.03){
+          const idx = nearestIndexFromAngle(angle);
+          // soft snap (no jumpy)
+          const target = targetAngleForIndex(idx);
+          const cur = norm(angle);
+          const targ = norm(target);
+          let diff = targ - cur;
+          if (diff > Math.PI) diff -= Math.PI*2;
+          if (diff < -Math.PI) diff += Math.PI*2;
+          angle += diff * Math.min(1, dt*8);
+
+          if (idx !== activeIndex){
+            activeIndex = idx;
+            updateMarkerActive();
+            loadPreview(vibes[idx]);
+          }
+        }
+      }
+
+      // VFX intensity based on speed
+      const s = Math.abs(velocity);
+      const hot = s > (1.2 + (1-thermoVal)*0.4);
+      vfx.classList.toggle("on", hot);
+      speedLines.classList.toggle("on", s > 0.9);
+
+      // draw
+      drawWheel(angle, s);
+
+      requestAnimationFrame(tick);
+    }
+
+    // ========= INIT =========
+    buildMarkers();
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    // inputs
+    wheelStage.addEventListener("pointerdown", onPointerDown, {passive:true});
     window.addEventListener("pointermove", onPointerMove, {passive:true});
     window.addEventListener("pointerup", onPointerUp, {passive:true});
-    donutWrap.addEventListener("wheel", onWheel, {passive:false});
+    wheelStage.addEventListener("wheel", onWheel, {passive:false});
 
-    // If user taps outside segments but inside donut on mobile, just toggle "preview mode" feel by snapping to current
-    donutWrap.addEventListener("click", (e) => {
-      if (!window.matchMedia("(hover:none)").matches) return;
-      // ignore if segment was clicked (handled already)
-      if (e.target.closest(".seg")) return;
-      setActive(activeIndex, {snap:true, reason:"tapDonut"});
-    });
+    // start on vibe 0 (snap)
+    setActive(0, {snap:true});
 
-    // Keep preview video from blasting audio
-    prevVid.muted = true;
-    prevVid.playsInline = true;
-    prevVid.loop = true;
+    // start loop
+    requestAnimationFrame(tick);
   </script>
 </body>
 </html>
