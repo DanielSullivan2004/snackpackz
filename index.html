@@ -9,18 +9,22 @@
   <style>
     :root{
       --txt:#EEF3FF;
-      --mut:rgba(238,243,255,.70);
-      --line:rgba(255,255,255,.10);
-      --glass:rgba(10,14,26,.55);
-      --shadow:0 20px 80px rgba(0,0,0,.60);
+      --mut:rgba(238,243,255,.72);
+      --line:rgba(255,255,255,.12);
+      --glass:rgba(12,16,32,.46);
+      --glass2:rgba(12,16,32,.28);
+      --shadow: 0 24px 110px rgba(0,0,0,.60);
       --r:22px;
 
-      --accent:#9BE7FF;
+      --accent:#A5F0FF;
       --accent2:#B7A8FF;
-      --hot:#FF6A3D;
 
-      --hudW:min(42vw, 560px);
-      --wheelSize:min(56vmin, 520px);
+      --bg0:#050612;
+      --bg1:#06081A;
+
+      --hudW:min(36vw, 520px);
+      --stageW:min(1050px, 100%);
+      --sphereSize:min(52vmin, 520px);
     }
 
     *{ box-sizing:border-box; }
@@ -29,68 +33,74 @@
       margin:0;
       color:var(--txt);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background:#050612;
+      background:
+        radial-gradient(1400px 900px at 20% 15%, rgba(167,120,255,.14), transparent 60%),
+        radial-gradient(1200px 900px at 78% 18%, rgba(72,220,255,.12), transparent 60%),
+        radial-gradient(900px 700px at 50% 90%, rgba(120,255,209,.08), transparent 62%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
     }
     a{ color:inherit; text-decoration:none; }
     button{ font:inherit; }
+    .hide{ opacity:0; pointer-events:none; transform: translateY(8px); }
 
-    /* ===== HERO BACKGROUND (REALISTIC) ===== */
-    .hero{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      background:
-        radial-gradient(1200px 700px at 18% 12%, rgba(155,231,255,.10), transparent 62%),
-        radial-gradient(1200px 700px at 82% 25%, rgba(183,168,255,.08), transparent 62%),
-        linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.65)),
-        url("assets/hero-car.webp");
-      background-size: cover;
-      background-position: center;
-      filter: contrast(1.05) saturate(1.04);
-      transform: translateZ(0);
-    }
-    .hero:after{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(900px 500px at 20% 10%, rgba(0,0,0,.12), transparent 60%),
-        radial-gradient(900px 700px at 70% 30%, rgba(0,0,0,.28), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.72));
-      pointer-events:none;
-    }
-
-    /* ===== TOP BAR ===== */
-    .topbar{
+    /* ===== NAV ===== */
+    .nav{
       position:fixed; left:0; right:0; top:0;
       z-index:50;
-      padding: 14px 16px;
+      padding: 14px 18px;
       display:flex;
-      justify-content:space-between;
       align-items:center;
+      justify-content:space-between;
       gap:14px;
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(0,0,0,.60), rgba(0,0,0,.12));
-      border-bottom:1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.08));
+      border-bottom: 1px solid rgba(255,255,255,.10);
     }
-    .brand{ display:flex; gap:12px; align-items:center; min-width:0; }
+    .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
     .logo{
       width:40px;height:40px;border-radius:14px;
       background:
         radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
-        radial-gradient(18px 18px at 70% 65%, rgba(155,231,255,.22), transparent 65%),
-        linear-gradient(135deg, rgba(155,231,255,.25), rgba(183,168,255,.20));
+        radial-gradient(18px 18px at 70% 65%, rgba(165,240,255,.22), transparent 65%),
+        linear-gradient(135deg, rgba(165,240,255,.25), rgba(183,168,255,.20));
       border:1px solid rgba(255,255,255,.16);
-      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      box-shadow: 0 14px 34px rgba(0,0,0,.40);
       flex:0 0 auto;
     }
-    .brandText h1{ margin:0; font-size:15px; font-weight:950; letter-spacing:.5px; }
-    .brandText p{ margin:4px 0 0; font-size:12px; color:rgba(238,243,255,.70); }
+    .brandText h1{
+      margin:0;
+      font-size:15px;
+      font-weight:950;
+      letter-spacing:.5px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brandText p{
+      margin:4px 0 0;
+      font-size:12px;
+      color:rgba(238,243,255,.70);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
 
-    .chip,.btn{
+    .navLinks{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      color: rgba(238,243,255,.72);
+      font-size:12px;
+      letter-spacing:.2px;
+    }
+    .navLinks a{ padding:8px 10px; border-radius:999px; transition: background .12s ease; }
+    .navLinks a:hover{ background: rgba(255,255,255,.06); }
+
+    .btn{
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
+      background: rgba(0,0,0,.20);
       color: rgba(238,243,255,.92);
       border-radius: 999px;
       padding: 9px 12px;
@@ -105,169 +115,257 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       cursor:pointer;
+      white-space:nowrap;
     }
-    .chip:hover,.btn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.28); border-color: rgba(255,255,255,.20); }
-    .chip:active,.btn:active{ transform: translateY(0px) scale(.99); }
+    .btn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.26); border-color: rgba(255,255,255,.18); }
+    .btn:active{ transform: translateY(0px) scale(.99); }
     .dot{
       width:7px;height:7px;border-radius:50%;
       background: linear-gradient(180deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 0 4px rgba(155,231,255,.10);
+      box-shadow: 0 0 0 4px rgba(165,240,255,.10);
     }
-    .right{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
 
     /* ===== LAYOUT ===== */
     .scene{
-      position:fixed; inset:0;
-      padding-top:72px;
+      position:fixed;
+      inset:0;
+      padding-top: 74px;
       z-index:10;
       display:grid;
       grid-template-columns: 1fr var(--hudW);
-      gap: clamp(12px, 2.2vw, 22px);
+      gap: clamp(14px, 2.4vw, 26px);
       align-items:stretch;
     }
     @media (max-width: 980px){
       body{ overflow:auto; }
       .scene{
         position:relative;
-        padding-top:76px;
+        padding-top: 78px;
         grid-template-columns: 1fr;
       }
+      .navLinks{ display:none; }
     }
 
-    /* ===== LEFT PANEL ===== */
-    .leftPane{
-      padding: clamp(10px, 2vw, 18px);
+    /* ===== HERO / CENTRE ===== */
+    .left{
+      padding: clamp(12px, 2vw, 18px);
       display:flex;
       align-items:center;
       justify-content:center;
     }
-    .card{
-      width:min(980px, 100%);
+    .heroCard{
+      width: var(--stageW);
       border-radius: var(--r);
       border:1px solid rgba(255,255,255,.10);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
+      min-height: 72vh;
     }
-    .head{
-      padding: 16px;
-      display:flex;
-      justify-content:space-between;
-      gap:14px;
-      border-bottom:1px solid rgba(255,255,255,.06);
-      position:relative;
-      z-index:2;
-    }
-    .head h2{ margin:0; font-size:16px; font-weight:950; letter-spacing:.5px; }
-    .head p{ margin:6px 0 0; font-size:12.5px; color:rgba(238,243,255,.70); }
-    .miniBtns{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-
-    .stageRow{
-      display:grid;
-      grid-template-columns: 1fr 300px;
-      gap:14px;
-      padding: 14px;
-      position:relative;
-      z-index:2;
-    }
-    @media (max-width: 920px){ .stageRow{ grid-template-columns: 1fr; } }
-
-    .carStage{
-      border-radius: 20px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      overflow:hidden;
-      box-shadow: 0 20px 70px rgba(0,0,0,.45);
-      min-height: max(520px, calc(var(--wheelSize) + 190px));
-      position:relative;
-    }
-    .carStage:before{
+    .heroCard:before{
       content:"";
-      position:absolute; inset:0;
+      position:absolute; inset:-1px;
       background:
-        radial-gradient(1000px 520px at 15% 15%, rgba(155,231,255,.08), transparent 60%),
-        radial-gradient(900px 600px at 70% 30%, rgba(183,168,255,.06), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.10), rgba(0,0,0,.55));
+        radial-gradient(800px 420px at 50% 22%, rgba(165,240,255,.12), transparent 62%),
+        radial-gradient(900px 600px at 60% 70%, rgba(183,168,255,.10), transparent 62%),
+        radial-gradient(900px 700px at 40% 110%, rgba(120,255,209,.07), transparent 62%);
+      opacity:.95;
       pointer-events:none;
-      z-index:1;
     }
 
-    /* Wheel overlay anchored to "front wheel" location */
-    .wheelZone{
-      position:absolute;
-      left: clamp(26px, 3vw, 46px);
-      bottom: clamp(24px, 3vw, 44px);
-      width: var(--wheelSize);
-      height: var(--wheelSize);
-      z-index:5;
+    .heroInner{
+      position:relative;
+      z-index:2;
+      height:100%;
+      padding: clamp(18px, 2.4vw, 26px);
+      display:grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 18px;
+    }
+
+    /* big headline area that fades when sphere engaged */
+    .headline{
+      display:grid;
+      gap:10px;
+      justify-items:center;
+      text-align:center;
+      transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+    }
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      border-radius:999px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: rgba(238,243,255,.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .kicker .dot{ width:8px;height:8px; }
+    .headline h2{
+      margin:0;
+      font-size: clamp(34px, 4.6vw, 56px);
+      line-height:1.03;
+      font-weight: 980;
+      letter-spacing: -0.8px;
+      text-shadow: 0 30px 70px rgba(0,0,0,.55);
+      max-width: 18ch;
+    }
+    .headline p{
+      margin:0;
+      color: rgba(238,243,255,.74);
+      font-size: 13px;
+      line-height: 1.45;
+      max-width: 62ch;
+    }
+
+    .ctaRow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin-top: 6px;
+    }
+    .ctaPrimary{
+      padding: 11px 14px;
+      font-weight: 950;
+      border-color: rgba(165,240,255,.18);
+    }
+
+    /* centre stage */
+    .centreStage{
+      position:relative;
+      display:grid;
+      place-items:center;
+      min-height: 420px;
+    }
+
+    /* 3D sphere */
+    .sphereWrap{
+      width: var(--sphereSize);
+      height: var(--sphereSize);
+      position:relative;
       display:grid;
       place-items:center;
       touch-action:none;
+      -webkit-tap-highlight-color: transparent;
       user-select:none;
     }
 
-    .wheelImg{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      transform: rotate(var(--rot, 0deg));
-      will-change: transform;
-      filter: drop-shadow(0 35px 90px rgba(0,0,0,.80));
-      pointer-events:none;
-      user-select:none;
-    }
-
-    /* heat / sparks are subtle and premium */
-    .heatRing{
-      position:absolute; inset:-10%;
-      border-radius:50%;
-      opacity:0;
-      transition: opacity .14s ease;
-      background:
-        radial-gradient(circle at 55% 50%, rgba(255,106,61,.35), transparent 60%),
-        radial-gradient(circle at 45% 40%, rgba(255,210,122,.20), transparent 55%),
-        radial-gradient(circle at 50% 50%, rgba(155,231,255,.12), transparent 65%);
-      filter: blur(10px);
-      mix-blend-mode: screen;
-      pointer-events:none;
-    }
-    .heatRing.on{ opacity:1; }
-
-    .sparkRing{
-      position:absolute; inset:-18%;
-      border-radius:50%;
-      opacity:0;
-      transition: opacity .14s ease;
-      pointer-events:none;
-      mix-blend-mode: screen;
-      background:
-        repeating-conic-gradient(from 0deg,
-          rgba(255,106,61,0) 0deg 7deg,
-          rgba(255,106,61,.18) 7deg 7.6deg
-        );
-      -webkit-mask: radial-gradient(circle at 50% 50%, transparent 48%, #000 54%, #000 82%, transparent 88%);
-              mask: radial-gradient(circle at 50% 50%, transparent 48%, #000 54%, #000 82%, transparent 88%);
-    }
-    .sparkRing.on{ opacity:.75; }
-
-    /* Markers around wheel */
-    .markers{
+    /* background particle canvas */
+    canvas#fx{
       position:absolute;
-      inset:0;
-      z-index:7;
-      pointer-events:auto;
+      inset:-30%;
+      width:160%;
+      height:160%;
+      z-index:0;
+      opacity:.85;
+      pointer-events:none;
+      filter: blur(0.2px);
     }
-    .marker{
+
+    .sphere{
+      position:relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      z-index:2;
+
+      background:
+        radial-gradient(circle at 36% 30%, rgba(255,255,255,.18), rgba(255,255,255,0) 34%),
+        radial-gradient(circle at 60% 46%, rgba(165,240,255,.10), rgba(165,240,255,0) 46%),
+        radial-gradient(circle at 50% 62%, rgba(183,168,255,.08), rgba(183,168,255,0) 55%),
+        radial-gradient(circle at 50% 55%, rgba(0,0,0,.08), rgba(0,0,0,.55)),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.30));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow:
+        0 40px 130px rgba(0,0,0,.65),
+        inset 0 0 0 1px rgba(255,255,255,.07);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transform: translateZ(0);
+    }
+
+    .sphere:before{
+      content:"";
+      position:absolute;
+      inset:-14%;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 55% 50%, rgba(255,255,255,.06), transparent 60%),
+        radial-gradient(circle at 40% 42%, rgba(165,240,255,.14), transparent 62%),
+        radial-gradient(circle at 60% 58%, rgba(183,168,255,.12), transparent 62%);
+      filter: blur(18px);
+      opacity:.9;
+      pointer-events:none;
+      mix-blend-mode: screen;
+    }
+
+    /* subtle vertical beam like your screenshot */
+    .beam{
+      position:absolute;
+      z-index:1;
+      width: 24%;
+      height: 140%;
+      top: -20%;
+      left: 38%;
+      background: linear-gradient(180deg, rgba(165,240,255,0), rgba(165,240,255,.18), rgba(183,168,255,.14), rgba(0,0,0,0));
+      filter: blur(10px);
+      opacity:.75;
+      pointer-events:none;
+    }
+
+    /* ring / wheel */
+    .ring{
+      position:absolute;
+      inset:-16%;
+      border-radius:50%;
+      z-index:3;
+      pointer-events:none;
+    }
+    .ring:before{
+      content:"";
+      position:absolute;
+      inset: 6%;
+      border-radius:50%;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), rgba(0,0,0,0) 55%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,.10), rgba(0,0,0,0) 62%);
+    }
+
+    /* vibe options (hidden until engaged) */
+    .options{
+      position:absolute;
+      inset:-18%;
+      border-radius:50%;
+      z-index:4;
+      pointer-events:auto;
+      opacity:0;
+      transform: scale(.985);
+      filter: blur(.2px);
+      transition: opacity 240ms ease, transform 240ms ease;
+    }
+    .engaged .options{
+      opacity:1;
+      transform: scale(1);
+    }
+
+    .opt{
       position:absolute;
       left:50%; top:50%;
-      height:34px;
+      height:36px;
       transform-origin: 0% 50%;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.26);
+      background: rgba(0,0,0,.24);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       display:flex;
@@ -275,90 +373,81 @@
       gap:10px;
       padding: 0 12px;
       cursor:pointer;
-      box-shadow: 0 16px 55px rgba(0,0,0,.55);
-      transition: border-color .12s ease, background .12s ease, box-shadow .12s ease;
-      white-space:nowrap;
-      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 18px 70px rgba(0,0,0,.55);
+      transition: border-color .12s ease, background .12s ease, box-shadow .12s ease, transform .12s ease;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      pointer-events:auto;
+      white-space:nowrap;
     }
-    .marker:hover{ border-color: rgba(255,255,255,.22); background: rgba(0,0,0,.30); }
-    .marker.active{ border-color: rgba(155,231,255,.36); box-shadow: 0 18px 70px rgba(0,0,0,.70); }
-
-    .mDot{
+    .opt:hover{
+      border-color: rgba(165,240,255,.28);
+      background: rgba(0,0,0,.30);
+      box-shadow: 0 18px 80px rgba(0,0,0,.70);
+    }
+    .opt.active{
+      border-color: rgba(165,240,255,.36);
+      background: rgba(0,0,0,.32);
+    }
+    .oDot{
       width:10px;height:10px;border-radius:50%;
       background: linear-gradient(180deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
+      box-shadow: 0 0 0 6px rgba(165,240,255,.10);
       flex:0 0 auto;
     }
-    .mTxt{ font-weight:950; font-size:12px; letter-spacing:.55px; text-transform:uppercase; }
-    .mSub{ margin-left:auto; font-size:11px; color:rgba(238,243,255,.66); letter-spacing:.2px; text-transform:uppercase; }
+    .oTxt{ font-weight:950; font-size:12px; letter-spacing:.55px; text-transform:uppercase; }
+    .oSub{ margin-left:auto; font-size:11px; color:rgba(238,243,255,.66); letter-spacing:.2px; text-transform:uppercase; }
 
-    /* ===== SPEED HUD (CODED, CLEAN) ===== */
-    .speedPanel{
-      border-radius:20px;
+    /* sphere hint */
+    .sphereHint{
+      position:absolute;
+      bottom: -44px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: rgba(238,243,255,.62);
+      text-align:center;
+      line-height:1.25;
+      max-width: 46ch;
+      pointer-events:none;
+      opacity:.95;
+    }
+
+    /* headline hides when engaged */
+    .engaged .headline{
+      opacity:0;
+      transform: translateY(-10px);
+      filter: blur(2px);
+      pointer-events:none;
+    }
+
+    /* bottom stats tiles */
+    .stats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 4px;
+    }
+    @media (max-width: 920px){
+      .stats{ grid-template-columns: 1fr; }
+    }
+    .stat{
+      border-radius: 18px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      box-shadow: 0 20px 70px rgba(0,0,0,.45);
-      padding:14px 12px 12px;
-      overflow:hidden;
-      position:relative;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-    .speedHead{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
-    .speedHead h3{ margin:0; font-size:12px; font-weight:950; letter-spacing:.35px; color:rgba(238,243,255,.85); }
-    .rank{ font-size:11px; color:rgba(238,243,255,.65); font-weight:800; }
-
-    canvas#speedCanvas{
-      width:100%;
-      aspect-ratio: 16/10;
-      border-radius:16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.16);
-      box-shadow: 0 16px 55px rgba(0,0,0,.40);
-      display:block;
-    }
-    .digits{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .digitBox{
-      flex:1;
-      min-width: 120px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding: 10px 12px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
+      padding: 14px 14px;
     }
-    .digitBox .k{ font-size:11px; color:rgba(238,243,255,.65); }
-    .digitBox .v{ margin-top:6px; font-size:20px; font-weight:950; letter-spacing:.6px; line-height:1; }
-    .digitBox .u{ margin-top:6px; font-size:11px; color:rgba(238,243,255,.60); }
-    .panelBtns{ display:flex; gap:10px; flex-wrap:wrap; }
-    .panelBtns .btn{ flex:1; justify-content:center; border-radius:14px; padding:10px 12px; font-weight:950; }
-
-    .foot{
-      padding: 10px 16px 14px;
-      border-top:1px solid rgba(255,255,255,.06);
-      font-size:11px;
-      color:rgba(238,243,255,.60);
-      position:relative;
-      z-index:2;
-    }
+    .stat .n{ font-size: 26px; font-weight: 980; letter-spacing:-.3px; }
+    .stat .t{ margin-top:6px; font-size: 12px; color: rgba(238,243,255,.70); }
 
     /* ===== RIGHT PREVIEW ===== */
     .hud{
-      position:relative;
-      border-left:1px solid rgba(255,255,255,.06);
-      padding: clamp(10px, 2vw, 16px);
+      padding: clamp(12px, 2vw, 16px);
+      border-left:1px solid rgba(255,255,255,.08);
       display:flex;
       align-items:stretch;
-      z-index:10;
     }
     @media (max-width: 980px){ .hud{ border-left:none; } }
 
@@ -374,7 +463,6 @@
       position:relative;
       min-height: 420px;
     }
-    @media (max-width: 980px){ .hudCard{ min-height: 360px; } }
 
     .hudMedia{ position:absolute; inset:0; z-index:2; }
     .hudMedia img, .hudMedia video{
@@ -394,7 +482,7 @@
       background:
         radial-gradient(700px 380px at 20% 10%, rgba(0,0,0,.12), transparent 60%),
         radial-gradient(800px 520px at 70% 35%, rgba(0,0,0,.26), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.70));
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.72));
       pointer-events:none;
     }
     .hudTop{
@@ -402,13 +490,26 @@
       padding:16px 16px 0;
       display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
     }
-    .hudTitle h3{ margin:0; font-size:18px; font-weight:950; letter-spacing:.5px; text-shadow: 0 18px 50px rgba(0,0,0,.65); }
-    .hudTitle p{ margin:6px 0 0; font-size:12.5px; color:rgba(238,243,255,.78); line-height:1.35; text-shadow: 0 18px 50px rgba(0,0,0,.65); max-width:46ch; }
+    .hudTitle h3{
+      margin:0;
+      font-size:18px;
+      font-weight:950;
+      letter-spacing:.5px;
+      text-shadow: 0 18px 50px rgba(0,0,0,.65);
+    }
+    .hudTitle p{
+      margin:6px 0 0;
+      font-size:12.5px;
+      color:rgba(238,243,255,.78);
+      line-height:1.35;
+      text-shadow: 0 18px 50px rgba(0,0,0,.65);
+      max-width:46ch;
+    }
     .enter{
       border-radius: 16px;
       padding: 10px 12px;
       border: 1px solid rgba(255,255,255,.18);
-      background: rgba(0,0,0,.26);
+      background: rgba(0,0,0,.24);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       font-size: 12px;
@@ -422,8 +523,8 @@
     }
     .spark{
       width:18px;height:18px;border-radius:10px;
-      background: linear-gradient(180deg, rgba(155,231,255,.90), rgba(183,168,255,.82));
-      box-shadow: 0 0 0 6px rgba(155,231,255,.10);
+      background: linear-gradient(180deg, rgba(165,240,255,.90), rgba(183,168,255,.82));
+      box-shadow: 0 0 0 6px rgba(165,240,255,.10);
       border:1px solid rgba(255,255,255,.12);
     }
 
@@ -451,13 +552,17 @@
       line-height:1.25;
       text-shadow: 0 18px 50px rgba(0,0,0,.65);
     }
+
+    /* small helper */
+    .mobileOnly{ display:none; }
+    @media (hover:none){
+      .mobileOnly{ display:block; }
+    }
   </style>
 </head>
+
 <body>
-
-  <div class="hero" aria-hidden="true"></div>
-
-  <div class="topbar">
+  <div class="nav">
     <div class="brand">
       <div class="logo"></div>
       <div class="brandText">
@@ -465,70 +570,68 @@
         <p>Spin the wheel. Pick your vibe. Order fast.</p>
       </div>
     </div>
-    <div class="right">
-      <div class="chip"><span class="dot"></span> Drag • Scroll • Snap</div>
-      <a class="chip" id="waTop" href="#" rel="noopener">WhatsApp Order</a>
+
+    <div class="navLinks">
+      <a href="#" onclick="return false;">About</a>
+      <a href="#" onclick="return false;">Services</a>
+      <a href="#" onclick="return false;">Pricing</a>
+      <a href="#" onclick="return false;">Resources</a>
+      <a href="#" onclick="return false;">Blog</a>
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:center;">
+      <div class="btn"><span class="dot"></span> Drag • Scroll • Snap</div>
+      <a class="btn" id="waTop" href="#" rel="noopener">WhatsApp</a>
     </div>
   </div>
 
-  <div class="scene">
-    <!-- LEFT -->
-    <div class="leftPane">
-      <div class="card">
-        <div class="head">
-          <div>
-            <h2>Spin Select</h2>
-            <p>Spin the front wheel. Speedometer reacts live. Preview loads clean (image → video).</p>
-          </div>
-          <div class="miniBtns">
-            <button class="btn" id="resetBtn" type="button">Reset</button>
-            <button class="btn" id="boostBtn" type="button">Boost</button>
-          </div>
-        </div>
+  <div class="scene" id="scene">
+    <!-- LEFT HERO -->
+    <div class="left">
+      <div class="heroCard" id="heroCard">
+        <div class="heroInner">
 
-        <div class="stageRow">
-          <div class="carStage" id="carStage">
-            <div class="wheelZone" id="wheelZone">
-              <div class="heatRing" id="heatRing"></div>
-              <div class="sparkRing" id="sparkRing"></div>
-              <img class="wheelImg" id="wheelImg" src="assets/front-wheel.webp" alt="Wheel"/>
-              <div class="markers" id="markers" aria-label="Vibes"></div>
+          <div class="headline" id="headline">
+            <div class="kicker"><span class="dot"></span> Spin-to-select • Premium previews • Fast order</div>
+            <h2>Redefining Snack Packs with a 3D Spin Selector.</h2>
+            <p>Hover the sphere to reveal the vibes. Spin to choose. Preview loads clean (image → video). Then enter and order.</p>
+            <div class="ctaRow">
+              <a class="btn ctaPrimary" href="#" onclick="document.getElementById('sphereWrap').scrollIntoView({behavior:'smooth'}); return false;">Discover</a>
+              <a class="btn" id="waCta" href="#" rel="noopener">Order on WhatsApp</a>
+            </div>
+            <div class="mobileOnly" style="margin-top:10px; font-size:11px; color:rgba(238,243,255,.62);">
+              Mobile: tap the sphere once to reveal options.
             </div>
           </div>
 
-          <div class="speedPanel">
-            <div class="speedHead">
-              <h3>SPIN SPEED</h3>
-              <div class="rank" id="rankTxt">Rank: Warm</div>
-            </div>
+          <div class="centreStage">
+            <div class="beam" aria-hidden="true"></div>
 
-            <canvas id="speedCanvas" width="800" height="500"></canvas>
+            <div class="sphereWrap" id="sphereWrap" aria-label="3D selector">
+              <canvas id="fx" width="900" height="900" aria-hidden="true"></canvas>
 
-            <div class="digits">
-              <div class="digitBox">
-                <div class="k">Speed</div>
-                <div class="v" id="spdVal">0</div>
-                <div class="u">SPIN / SEC</div>
-              </div>
-              <div class="digitBox">
-                <div class="k">Peak</div>
-                <div class="v" id="peakVal">0</div>
-                <div class="u">TOP HIT</div>
+              <div class="sphere" id="sphere" role="button" aria-label="Reveal vibes"></div>
+              <div class="ring" aria-hidden="true"></div>
+
+              <div class="options" id="options" aria-label="Vibe options"></div>
+
+              <div class="sphereHint" id="sphereHint">
+                Hover the sphere to reveal options. Drag to spin. Scroll to flick.
               </div>
             </div>
-
-            <div class="panelBtns">
-              <button class="btn" id="brakeBtn" type="button">Brake</button>
-              <button class="btn" id="autoBtn" type="button">Auto</button>
-            </div>
           </div>
-        </div>
 
-        <div class="foot">Tip: click/tap a vibe label to snap instantly. Drag the wheel to throw it. Scroll to flick.</div>
+          <div class="stats">
+            <div class="stat"><div class="n">Fast</div><div class="t">No slow rotation. Snap selection instantly.</div></div>
+            <div class="stat"><div class="n">Premium</div><div class="t">Image loads instantly → video fades in when ready.</div></div>
+            <div class="stat"><div class="n">Simple</div><div class="t">Pick a vibe. Enter. WhatsApp order in one tap.</div></div>
+          </div>
+
+        </div>
       </div>
     </div>
 
-    <!-- RIGHT -->
+    <!-- RIGHT PREVIEW -->
     <div class="hud">
       <div class="hudCard">
         <div class="hudMedia" id="hudMedia" aria-hidden="true">
@@ -553,15 +656,18 @@
             <div class="k">Preview</div>
             <div class="v" id="hudMeta">Image → Video</div>
           </div>
-          <div class="hudTip">Drag to spin<br/>Scroll to flick<br/>Tap twice on mobile</div>
+          <div class="hudTip">
+            Hover sphere to reveal<br/>Drag to spin<br/>Tap twice on mobile
+          </div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ====== CONFIG ======
-    const WHATSAPP_NUMBER = "447483849357";
+    // ===== Config =====
+    const WHATSAPP_NUMBER = "447483849357"; // wa.me format (no +)
+
     const vibes = [
       { key:"gym",     label:"GYM",     sub:"FOCUS", page:"gym.html",     img:"assets/gym.jpg",     vid:"assets/gym.mp4",     desc:"High focus. Clean fuel. No distractions." },
       { key:"lockin",  label:"LOCK-IN", sub:"GRIND", page:"lock-in.html", img:"assets/lockin.jpg",  vid:"assets/lockin.mp4",  desc:"Tunnel vision mode. Phone down. Get it done." },
@@ -570,29 +676,19 @@
       { key:"mystery", label:"MYSTERY", sub:"DROP",  page:"mystery.html", img:"assets/mystery.jpg", vid:"assets/mystery.mp4", desc:"Random pull. Premium chaos (in a good way)." },
       { key:"fresh",   label:"FRESH",   sub:"CLEAN", page:"fresh.html",   img:"assets/fresh.jpg",   vid:"assets/fresh.mp4",   desc:"Light, clean, refreshing. Reset the day." },
     ];
+
     const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
 
-    document.getElementById("waTop").href =
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Snack Packz — I want to place an order.")}`;
+    const wa = (text)=>`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    document.getElementById("waTop").href = wa("Hi Snack Packz — I want to place an order.");
+    document.getElementById("waCta").href = wa("Hi Snack Packz — I want to place an order.");
 
-    // ====== DOM ======
-    const wheelZone = document.getElementById("wheelZone");
-    const wheelImg  = document.getElementById("wheelImg");
-    const markers   = document.getElementById("markers");
-    const heatRing  = document.getElementById("heatRing");
-    const sparkRing = document.getElementById("sparkRing");
-
-    const resetBtn  = document.getElementById("resetBtn");
-    const boostBtn  = document.getElementById("boostBtn");
-    const brakeBtn  = document.getElementById("brakeBtn");
-    const autoBtn   = document.getElementById("autoBtn");
-
-    const spdVal    = document.getElementById("spdVal");
-    const peakVal   = document.getElementById("peakVal");
-    const rankTxt   = document.getElementById("rankTxt");
-
-    const speedCanvas = document.getElementById("speedCanvas");
-    const sctx = speedCanvas.getContext("2d");
+    // ===== DOM =====
+    const heroCard  = document.getElementById("heroCard");
+    const headline  = document.getElementById("headline");
+    const sphereWrap= document.getElementById("sphereWrap");
+    const sphere    = document.getElementById("sphere");
+    const optionsEl = document.getElementById("options");
 
     const hudMedia = document.getElementById("hudMedia");
     const hudImg   = document.getElementById("hudImg");
@@ -602,7 +698,7 @@
     const hudMeta  = document.getElementById("hudMeta");
     const enterBtn = document.getElementById("enterBtn");
 
-    // ====== PREVIEW (image instantly → video fade when ready) ======
+    // ===== Premium preview (image instantly → video fades when ready) =====
     let videoToken = 0;
     function loadPreview(v){
       hudTitle.textContent = v.label;
@@ -637,37 +733,39 @@
       hudVid.load();
     }
 
-    // ====== MARKERS ======
+    // ===== Options ring build =====
     const N = vibes.length;
-    function buildMarkers(){
-      markers.innerHTML = "";
-      const radiusPct = 52;
-      for (let i=0; i<N; i++){
-        const m = document.createElement("div");
-        m.className = "marker";
-        m.dataset.index = String(i);
-        m.style.width = (vibes[i].label.length > 6 ? 150 : 130) + "px";
+    function buildOptions(){
+      optionsEl.innerHTML = "";
+      const radiusPct = 54; // distance from centre
+      for(let i=0;i<N;i++){
+        const opt = document.createElement("div");
+        opt.className = "opt";
+        opt.dataset.index = String(i);
+        opt.style.width = (vibes[i].label.length > 6 ? 158 : 138) + "px";
+
         const deg = (i*(360/N)) - 90;
-        m.style.transform = `rotate(${deg}deg) translateX(${radiusPct}%)`;
-        m.innerHTML = `
-          <span class="mDot"></span>
-          <span class="mTxt">${vibes[i].label}</span>
-          <span class="mSub">${vibes[i].sub}</span>
+        opt.style.transform = `rotate(${deg}deg) translateX(${radiusPct}%)`;
+
+        opt.innerHTML = `
+          <span class="oDot" aria-hidden="true"></span>
+          <span class="oTxt">${vibes[i].label}</span>
+          <span class="oSub">${vibes[i].sub}</span>
         `;
 
-        m.addEventListener("mouseenter", ()=>{
+        opt.addEventListener("mouseenter", ()=>{
           if (window.matchMedia("(hover:hover)").matches){
             setActive(i, false);
           }
         });
 
-        m.addEventListener("click", (e)=>{
+        opt.addEventListener("click", (e)=>{
           e.preventDefault();
-          const idx = Number(m.dataset.index);
+          const idx = Number(opt.dataset.index);
 
           // mobile: tap once preview, second tap enter
           if (window.matchMedia("(hover:none)").matches){
-            if (activeIndex === idx && m.classList.contains("active")){
+            if (activeIndex === idx && opt.classList.contains("active")){
               window.location.href = vibes[idx].page;
               return;
             }
@@ -678,29 +776,30 @@
           setActive(idx, true);
         }, {passive:false});
 
-        markers.appendChild(m);
+        optionsEl.appendChild(opt);
       }
-      updateMarkerActive();
+      updateActiveClass();
     }
-    function updateMarkerActive(){
-      markers.querySelectorAll(".marker").forEach(el=>el.classList.remove("active"));
-      const el = markers.querySelector(`.marker[data-index="${activeIndex}"]`);
+
+    function updateActiveClass(){
+      optionsEl.querySelectorAll(".opt").forEach(el=>el.classList.remove("active"));
+      const el = optionsEl.querySelector(`.opt[data-index="${activeIndex}"]`);
       if (el) el.classList.add("active");
     }
 
-    // ====== WHEEL PHYSICS ======
-    let rot = 0;          // degrees
-    let vel = 0;          // deg/sec
+    // ===== Interaction: ring spin =====
+    const step = 360/N;
+
+    let rot = 0;     // degrees
+    let vel = 0;     // deg/sec
     let dragging = false;
     let pointerId = null;
     let lastAng = 0;
     let lastT = 0;
 
     let activeIndex = 0;
-    let autoSpin = false;
-    let peak = 0;
+    let engaged = false; // sphere reveal mode
 
-    const step = 360 / N;
     const normDeg = d => ((d%360)+360)%360;
 
     function nearestIndex(){
@@ -709,6 +808,7 @@
       i = ((i%N)+N)%N;
       return i;
     }
+
     function snapToIndex(i){
       const target = -i * step;
       let diff = target - rot;
@@ -716,15 +816,16 @@
       rot += diff;
       vel = 0;
     }
+
     function setActive(i, snap=true){
       activeIndex = i;
-      updateMarkerActive();
+      updateActiveClass();
       loadPreview(vibes[i]);
       if (snap) snapToIndex(i);
     }
 
     function angleFromEvent(e){
-      const rect = wheelZone.getBoundingClientRect();
+      const rect = sphereWrap.getBoundingClientRect();
       const cx = rect.left + rect.width/2;
       const cy = rect.top + rect.height/2;
       const dx = e.clientX - cx;
@@ -732,15 +833,22 @@
       return Math.atan2(dy, dx) * 180 / Math.PI;
     }
 
+    function applyRotation(){
+      optionsEl.style.transform = `rotate(${rot}deg)`;
+    }
+
     function onDown(e){
+      if (!engaged) return;
       dragging = true;
       pointerId = e.pointerId;
-      wheelZone.setPointerCapture?.(pointerId);
+      sphereWrap.setPointerCapture?.(pointerId);
       lastAng = angleFromEvent(e);
       lastT = performance.now();
     }
+
     function onMove(e){
       if (!dragging || e.pointerId !== pointerId) return;
+
       const a = angleFromEvent(e);
       let da = a - lastAng;
       if (da > 180) da -= 360;
@@ -751,35 +859,41 @@
       const now = performance.now();
       const dt = Math.max(1, (now - lastT)) / 1000;
       const v = da / dt;
-      vel = vel*0.75 + v*0.25;
+      vel = vel*0.78 + v*0.22;
 
       lastAng = a;
       lastT = now;
 
+      applyRotation();
+
       const idx = nearestIndex();
       if (idx !== activeIndex){
         activeIndex = idx;
-        updateMarkerActive();
+        updateActiveClass();
         loadPreview(vibes[idx]);
       }
     }
+
     function onUp(e){
       if (!dragging || e.pointerId !== pointerId) return;
       dragging = false;
       pointerId = null;
       setTimeout(()=> setActive(nearestIndex(), true), 70);
     }
+
     function onWheel(e){
+      if (!engaged) return;
       e.preventDefault();
       const delta = e.deltaY || 0;
       const add = clamp(delta * 0.16, -35, 35);
       rot += add;
       vel += add * 6;
+      applyRotation();
 
       const idx = nearestIndex();
       if (idx !== activeIndex){
         activeIndex = idx;
-        updateMarkerActive();
+        updateActiveClass();
         loadPreview(vibes[idx]);
       }
 
@@ -787,192 +901,139 @@
       onWheel._t = setTimeout(()=> setActive(nearestIndex(), true), 110);
     }
 
-    // ====== SPEEDOMETER (Canvas, clean) ======
-    function fitCanvas(){
-      const rect = speedCanvas.getBoundingClientRect();
-      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
-      speedCanvas.width = Math.round(rect.width * dpr);
-      speedCanvas.height = Math.round(rect.height * dpr);
-    }
+    function loop(){
+      if (engaged && !dragging){
+        rot += vel * (1/60);
+        vel *= 0.94;
 
-    function drawSpeed(speed, peakSpeed){
-      const w = speedCanvas.width, h = speedCanvas.height;
-      sctx.clearRect(0,0,w,h);
-
-      const cx = w*0.58, cy = h*0.70;
-      const R  = Math.min(w,h)*0.46;
-
-      // panel bg
-      const bg = sctx.createRadialGradient(cx, cy, R*0.15, cx, cy, R*1.2);
-      bg.addColorStop(0, "rgba(255,255,255,0.06)");
-      bg.addColorStop(0.45, "rgba(0,0,0,0.30)");
-      bg.addColorStop(1, "rgba(0,0,0,0.65)");
-      sctx.fillStyle = bg;
-      sctx.fillRect(0,0,w,h);
-
-      const start = Math.PI*0.80;
-      const end   = Math.PI*2.18;
-      const span  = end - start;
-
-      // track arc
-      sctx.lineCap = "round";
-      sctx.lineWidth = Math.max(10, R*0.075);
-      sctx.strokeStyle = "rgba(255,255,255,0.10)";
-      sctx.beginPath(); sctx.arc(cx,cy,R,start,end); sctx.stroke();
-
-      const pct = clamp(speed/100, 0, 1);
-      const grad = sctx.createLinearGradient(cx-R, cy, cx+R, cy);
-      grad.addColorStop(0, "rgba(155,231,255,0.85)");
-      grad.addColorStop(0.55, "rgba(183,168,255,0.75)");
-      grad.addColorStop(1, "rgba(255,106,61,0.90)");
-
-      // speed arc glow
-      sctx.strokeStyle = grad;
-      sctx.shadowColor = "rgba(255,106,61,0.18)";
-      sctx.shadowBlur  = 26;
-      sctx.beginPath(); sctx.arc(cx,cy,R,start,start+span*pct); sctx.stroke();
-      sctx.shadowBlur = 0;
-
-      // needle
-      const a = start + span*pct;
-      const nx = cx + Math.cos(a)*R*0.78;
-      const ny = cy + Math.sin(a)*R*0.78;
-
-      sctx.strokeStyle = "rgba(255,255,255,0.85)";
-      sctx.lineWidth = 5;
-      sctx.beginPath(); sctx.moveTo(cx,cy); sctx.lineTo(nx,ny); sctx.stroke();
-
-      sctx.strokeStyle = "rgba(255,106,61,0.22)";
-      sctx.lineWidth = 11;
-      sctx.beginPath(); sctx.moveTo(cx,cy); sctx.lineTo(nx,ny); sctx.stroke();
-
-      // centre cap
-      const cap = sctx.createRadialGradient(cx-10, cy-12, 6, cx, cy, 30);
-      cap.addColorStop(0,"rgba(255,255,255,0.22)");
-      cap.addColorStop(0.55,"rgba(155,231,255,0.08)");
-      cap.addColorStop(1,"rgba(0,0,0,0.70)");
-      sctx.fillStyle = cap;
-      sctx.beginPath(); sctx.arc(cx,cy, 22, 0, Math.PI*2); sctx.fill();
-
-      // digits left
-      sctx.fillStyle = "rgba(238,243,255,0.92)";
-      sctx.font = `900 ${Math.round(h*0.34)}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto`;
-      sctx.textAlign = "left";
-      sctx.textBaseline = "middle";
-      sctx.fillText(String(Math.round(speed)), w*0.08, h*0.30);
-
-      sctx.fillStyle = "rgba(238,243,255,0.62)";
-      sctx.font = `900 ${Math.round(h*0.07)}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto`;
-      sctx.fillText("SPIN / SEC", w*0.08, h*0.41);
-
-      // peak mini bar
-      const p = clamp(peakSpeed/100, 0, 1);
-      const bx = w*0.08, by = h*0.50, bw = w*0.40, bh = Math.max(10, h*0.045);
-      sctx.fillStyle = "rgba(255,255,255,0.10)";
-      sctx.beginPath();
-      sctx.roundRect ? sctx.roundRect(bx,by,bw,bh,999) : sctx.rect(bx,by,bw,bh);
-      sctx.fill();
-
-      sctx.fillStyle = "rgba(255,106,61,0.55)";
-      sctx.beginPath();
-      sctx.roundRect ? sctx.roundRect(bx,by,bw*p,bh,999) : sctx.rect(bx,by,bw*p,bh);
-      sctx.fill();
-
-      sctx.fillStyle = "rgba(238,243,255,0.65)";
-      sctx.font = `850 ${Math.round(h*0.06)}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto`;
-      sctx.fillText("Peak", bx+bw+12, by+bh/2);
-
-      sctx.fillStyle = "rgba(238,243,255,0.92)";
-      sctx.font = `950 ${Math.round(h*0.07)}px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto`;
-      sctx.fillText(String(Math.round(peakSpeed)), bx+bw+62, by+bh/2);
-    }
-
-    function setSpeedUI(speed){
-      spdVal.textContent = String(Math.round(speed));
-      peak = Math.max(peak, speed);
-      peakVal.textContent = String(Math.round(peak));
-
-      let rank = "Warm";
-      if (speed >= 25) rank = "Hot";
-      if (speed >= 50) rank = "Flame";
-      if (speed >= 75) rank = "Overdrive";
-      rankTxt.textContent = "Rank: " + rank;
-
-      heatRing.classList.toggle("on", speed >= 45);
-      sparkRing.classList.toggle("on", speed >= 60);
-    }
-
-    // ====== LOOP ======
-    let lastFrame = performance.now();
-    function tick(now){
-      const dt = Math.min(0.05, (now - lastFrame)/1000);
-      lastFrame = now;
-
-      if (autoSpin) vel += 380 * dt;
-
-      if (!dragging){
-        rot += vel * dt;
-        vel *= Math.exp(-3.0 * dt);
-
-        if (Math.abs(vel) < 20){
+        if (Math.abs(vel) < 18){
           const idx = nearestIndex();
           const target = -idx * step;
           let diff = target - rot;
           diff = ((diff + 540) % 360) - 180;
-          rot += diff * Math.min(1, dt*8);
+          rot += diff * 0.10;
 
           if (idx !== activeIndex){
             activeIndex = idx;
-            updateMarkerActive();
+            updateActiveClass();
             loadPreview(vibes[idx]);
           }
         }
+        applyRotation();
       }
-
-      wheelImg.style.setProperty("--rot", `${rot}deg`);
-
-      // deg/sec -> spins/sec -> scaled to 0..100
-      const spinsPerSec = Math.abs(vel) / 360;
-      const speed = clamp(spinsPerSec * 85, 0, 100);
-
-      setSpeedUI(speed);
-      drawSpeed(speed, peak);
-
-      requestAnimationFrame(tick);
+      requestAnimationFrame(loop);
     }
 
-    // ====== BUTTONS ======
-    resetBtn.addEventListener("click", ()=>{
-      autoSpin = false;
-      vel = 0; peak = 0;
-      setActive(0, true);
+    // ===== Engage behaviour =====
+    function setEngaged(on){
+      engaged = on;
+      heroCard.classList.toggle("engaged", engaged);
+    }
+
+    // desktop hover to reveal
+    sphereWrap.addEventListener("mouseenter", ()=>{
+      if (window.matchMedia("(hover:hover)").matches) setEngaged(true);
     });
-    boostBtn.addEventListener("click", ()=>{ vel += 1600; });
-    brakeBtn.addEventListener("click", ()=>{
-      autoSpin = false;
-      vel *= 0.12;
-      setTimeout(()=> setActive(nearestIndex(), true), 80);
-    });
-    autoBtn.addEventListener("click", ()=>{
-      autoSpin = !autoSpin;
-      autoBtn.textContent = autoSpin ? "Auto: ON" : "Auto";
+    heroCard.addEventListener("mouseleave", ()=>{
+      if (window.matchMedia("(hover:hover)").matches) setEngaged(false);
     });
 
-    // ====== INIT ======
-    buildMarkers();
-    loadPreview(vibes[0]);
-    setActive(0, true);
+    // mobile tap to reveal
+    sphere.addEventListener("click", ()=>{
+      if (window.matchMedia("(hover:none)").matches){
+        setEngaged(!engaged);
+      }
+    });
 
-    wheelZone.addEventListener("pointerdown", onDown, {passive:true});
+    // pointer controls
+    sphereWrap.addEventListener("pointerdown", onDown, {passive:true});
     window.addEventListener("pointermove", onMove, {passive:true});
     window.addEventListener("pointerup", onUp, {passive:true});
-    wheelZone.addEventListener("wheel", onWheel, {passive:false});
+    sphereWrap.addEventListener("wheel", onWheel, {passive:false});
 
-    function onResize(){ fitCanvas(); }
-    window.addEventListener("resize", onResize);
-    fitCanvas();
+    // ===== FX canvas (particles + subtle parallax glow) =====
+    const fx = document.getElementById("fx");
+    const fctx = fx.getContext("2d");
+    let px = 0, py = 0;
 
-    requestAnimationFrame(tick);
+    function fitFx(){
+      const rect = fx.getBoundingClientRect();
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      fx.width  = Math.round(rect.width * dpr);
+      fx.height = Math.round(rect.height * dpr);
+    }
+
+    const parts = [];
+    function seedParts(){
+      parts.length = 0;
+      const n = 110;
+      for(let i=0;i<n;i++){
+        parts.push({
+          x: Math.random(),
+          y: Math.random(),
+          r: 0.6 + Math.random()*1.6,
+          a: 0.10 + Math.random()*0.26,
+          vx:(Math.random()-0.5)*0.0006,
+          vy:(Math.random()-0.5)*0.0006
+        });
+      }
+    }
+
+    function drawFx(){
+      const w = fx.width, h = fx.height;
+      fctx.clearRect(0,0,w,h);
+
+      // soft glow field
+      const gx = w*(0.50 + px*0.06);
+      const gy = h*(0.50 + py*0.06);
+      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.48);
+      g.addColorStop(0, "rgba(165,240,255,0.12)");
+      g.addColorStop(0.45, "rgba(183,168,255,0.07)");
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      fctx.fillStyle = g;
+      fctx.fillRect(0,0,w,h);
+
+      // particles
+      for(const p of parts){
+        p.x += p.vx; p.y += p.vy;
+        if (p.x<0) p.x=1; if (p.x>1) p.x=0;
+        if (p.y<0) p.y=1; if (p.y>1) p.y=0;
+
+        const x = p.x*w;
+        const y = p.y*h;
+
+        fctx.fillStyle = `rgba(238,243,255,${p.a})`;
+        fctx.beginPath();
+        fctx.arc(x,y,p.r*(window.devicePixelRatio||1),0,Math.PI*2);
+        fctx.fill();
+      }
+
+      requestAnimationFrame(drawFx);
+    }
+
+    window.addEventListener("mousemove", (e)=>{
+      const r = sphereWrap.getBoundingClientRect();
+      const cx = r.left + r.width/2;
+      const cy = r.top + r.height/2;
+      px = clamp((e.clientX - cx)/(r.width/2), -1, 1);
+      py = clamp((e.clientY - cy)/(r.height/2), -1, 1);
+    });
+
+    // ===== Init =====
+    buildOptions();
+    setActive(0, true);
+    loadPreview(vibes[0]);
+    applyRotation();
+
+    fitFx();
+    seedParts();
+    drawFx();
+    loop();
+
+    window.addEventListener("resize", ()=>{
+      fitFx();
+      seedParts();
+    });
   </script>
 </body>
 </html>
