@@ -352,4 +352,135 @@ export function startScene(ids){
 
   // Main loop
   let last = performance.now();
-  let f
+  let frames = 0;
+  let fpsLast = performance.now();
+  let fxFrame = 0;
+
+  function tick(t){
+    const dt = Math.min(40, t - last);
+    last = t;
+
+    // Smooth look
+    cam.yaw += cam.vyaw;
+    cam.pitch += cam.vpitch;
+    cam.vyaw *= 0.78;
+    cam.vpitch *= 0.78;
+    cam.pitch = Math.max(-0.35, Math.min(0.20, cam.pitch));
+
+    // Move input
+    let mx = 0, mz = 0;
+    const sp = cam.speed * (keys.shift ? 1.65 : 1.0);
+
+    if(keys.w) mz -= 1;
+    if(keys.s) mz += 1;
+    if(keys.a) mx -= 1;
+    if(keys.d) mx += 1;
+
+    // Mobile joystick: dy up should move forward
+    if(mobile){
+      mx += joyState.dx;
+      mz += joyState.dy; // pushing down means +dy; we handle by mapping to forward below
+    }
+
+    // Normalise
+    const len = Math.hypot(mx, mz) || 1;
+    mx /= len; mz /= len;
+
+    // Map mz so that forward is negative Z direction in camera space
+    // For mobile: pushing up on screen gives dy negative (forward), so this works naturally.
+    const sin = Math.sin(cam.yaw);
+    const cos = Math.cos(cam.yaw);
+
+    // Convert (mx,mz) from local to world
+    cam.x += (mx * cos - mz * sin) * sp * dt * 0.010;
+    cam.z += (mx * sin + mz * cos) * sp * dt * 0.010;
+
+    // Background parallax
+    const bx = Math.sin(cam.yaw) * 18;
+    const by = cam.pitch * 40;
+    bg.style.transform = `translate(${bx}px, ${by}px) scale(${quality.ultra ? 1.09 : 1.06})`;
+
+    // Focus + render totems
+    updateFocus();
+
+    for(let i=0;i<totems.length;i++){
+      const o = totems[i];
+      const rel = project(o.wx, o.wz);
+
+      // Only draw if in front
+      if(rel.z > -0.8){
+        o.el.style.opacity = "0";
+        o.el.style.pointerEvents = "none";
+        continue;
+      }
+
+      // Perspective
+      const inv = 1 / (-rel.z);
+      const sx = proj.cx() + rel.x * inv * proj.f;
+      const sy = proj.cy() + (cam.pitch * 120) + (0 * inv); // ground plane
+
+      // Depth scaling (clamp)
+      const scale = Math.max(0.40, Math.min(1.35, inv * 2.2));
+      const alpha = Math.max(0.12, Math.min(1.0, inv * 1.2));
+
+      // Add a little idle wobble
+      const wob = Math.sin(t*0.0012 + o.wob) * 6;
+      const tiltX = (-cam.pitch * 10);
+      const tiltY = ( cam.vyaw * 8);
+
+      o.el.style.opacity = String(alpha);
+      o.el.style.pointerEvents = "auto";
+      o.el.style.zIndex = String(Math.floor(scale * 1000));
+
+      // Centre element around its own middle
+      o.el.style.transform =
+        `translate(${sx - 130}px, ${sy - 210}px)
+         translateY(${wob}px)
+         rotateX(${tiltX}deg) rotateY(${tiltY}deg)
+         scale(${scale})`;
+
+      if(i === focused){
+        o.el.style.borderColor = "rgba(255,255,255,.34)";
+        dockTitle.textContent = o.p.name;
+        dockSub.textContent = (getDistance(i) < 2.3) ? "Press E / USE to enter" : `Walk closer (${getDistance(i).toFixed(1)}m)`;
+        stateChip.textContent = (getDistance(i) < 2.3) ? "Interact: E / USE" : "Move closer";
+      } else {
+        o.el.style.borderColor = "rgba(255,255,255,.10)";
+      }
+    }
+
+    // FX motes
+    fxFrame++;
+    if(!reduce && (fxFrame % quality.fxEvery === 0)){
+      ctx.clearRect(0,0,innerWidth,innerHeight);
+      ctx.globalCompositeOperation = "screen";
+
+      for(const m of motes){
+        m.p += dt*0.0006;
+        const x = (m.x + Math.sin(m.p)*14 + Math.sin(cam.yaw)*80*(1-m.z)) % innerWidth;
+        const y = (m.y + Math.cos(m.p)*10 + cam.pitch*60*(1-m.z)) % innerHeight;
+        const a = 0.05 + m.z*0.18;
+        ctx.globalAlpha = a;
+        ctx.fillStyle = "rgba(255,255,255,.90)";
+        ctx.beginPath();
+        ctx.arc(x,y,m.r,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+
+    // FPS
+    frames++;
+    const now = performance.now();
+    if(now - fpsLast > 500){
+      const fps = Math.round(frames * 1000 / (now - fpsLast));
+      fpsChip.textContent = `FPS: ${fps}`;
+      frames = 0;
+      fpsLast = now;
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  bg.play().catch(()=>{});
+  requestAnimationFrame(tick);
+}
