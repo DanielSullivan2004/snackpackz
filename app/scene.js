@@ -2,8 +2,8 @@ export function startScene(ids){
   const bg = document.getElementById(ids.bgVideoId);
   const fx = document.getElementById(ids.fxId);
   const ctx = fx.getContext("2d");
-  const totemsHost = document.getElementById(ids.totemsId);
 
+  const totemsHost = document.getElementById(ids.totemsId);
   const soundBtn = document.getElementById(ids.soundBtnId);
   const qualityBtn = document.getElementById(ids.qualityBtnId);
   const fpsChip = document.getElementById(ids.fpsChipId);
@@ -11,41 +11,44 @@ export function startScene(ids){
   const dockTitle = document.getElementById(ids.dockTitleId);
   const dockSub = document.getElementById(ids.dockSubId);
 
+  const joy = document.getElementById("joy");
+  const joyKnob = document.getElementById("joyKnob");
+  const useBtn = document.getElementById("useBtn");
+
+  const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
+  const reduce = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mobile = coarse || innerWidth < 820;
+
+  // Packs (keep your existing pages)
   const PACKS = [
-    { key:"fresh",  name:"FRESH",  tag:"Clean energy. Zero noise.",      page:"fresh.html",   poster:"assets/fresh.jpg",   video:"assets/fresh.mp4" },
-    { key:"gaming", name:"GAMING", tag:"Locked focus. Long sessions.",    page:"gaming.html",  poster:"assets/gaming.jpg",  video:"assets/gaming.mp4" },
-    { key:"gym",    name:"GYM",    tag:"Explosive drive. Controlled burn.",page:"gym.html",     poster:"assets/gym.jpg",     video:"assets/gym.mp4" },
-    { key:"work",   name:"WORK",   tag:"Calm clarity. Get it done.",      page:"work.html",    poster:"assets/work.jpg",    video:"assets/work.mp4" },
-    { key:"lockin", name:"LOCK-IN",tag:"Tunnel vision. No distractions.", page:"lock-in.html", poster:"assets/lockin.jpg",  video:"assets/lockin.mp4" },
+    { key:"fresh",  name:"FRESH",  tag:"Clean energy. Zero noise.",        page:"fresh.html",   poster:"assets/fresh.jpg",   video:"assets/fresh.mp4" },
+    { key:"gaming", name:"GAMING", tag:"Locked focus. Long sessions.",      page:"gaming.html",  poster:"assets/gaming.jpg",  video:"assets/gaming.mp4" },
+    { key:"gym",    name:"GYM",    tag:"Explosive drive. Controlled burn.", page:"gym.html",     poster:"assets/gym.jpg",     video:"assets/gym.mp4" },
+    { key:"work",   name:"WORK",   tag:"Calm clarity. Get it done.",        page:"work.html",    poster:"assets/work.jpg",    video:"assets/work.mp4" },
+    { key:"lockin", name:"LOCK-IN",tag:"Tunnel vision. No distractions.",   page:"lock-in.html", poster:"assets/lockin.jpg",  video:"assets/lockin.mp4" },
   ];
 
-  // ---- quality
-  const quality = { ultra:true, fxEvery:1, motes:46, flies:22, birds:10 };
-  const prefersReduce = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
-  if(prefersReduce || coarse){
-    quality.ultra = false;
-    quality.fxEvery = 3;
-    quality.motes = 18;
-    quality.flies = 10;
-    quality.birds = 6;
-  }
+  // World placement (metres). Player looks down -Z.
+  const world = {
+    spawnX: 0,
+    spawnZ: 0,
+    totems: [
+      { x:-4.6, z:-10.8 },
+      { x: 4.9, z:-10.3 },
+      { x:-2.7, z:-16.4 },
+      { x: 2.6, z:-15.9 },
+      { x: 0.1, z:-13.2 },
+    ]
+  };
 
-  // ---- camera feel
-  const cam = { x:0, y:0, sx:0, sy:0, vx:0, vy:0 };
-  function onMove(e){
-    const x = (e.clientX ?? (e.touches?.[0]?.clientX ?? innerWidth/2));
-    const y = (e.clientY ?? (e.touches?.[0]?.clientY ?? innerHeight/2));
-    const nx = (x / innerWidth - 0.5) * 2;
-    const ny = (y / innerHeight - 0.5) * 2;
-    cam.vx += (nx - cam.x) * 0.06;
-    cam.vy += (ny - cam.y) * 0.06;
-    cam.x = nx; cam.y = ny;
-  }
-  addEventListener("mousemove", onMove, {passive:true});
-  addEventListener("touchmove", onMove, {passive:true});
+  // Quality / FX
+  const quality = {
+    ultra: !mobile && !reduce,
+    fxEvery: (!mobile && !reduce) ? 1 : 3,
+    motes: (!mobile && !reduce) ? 44 : 18
+  };
 
-  // ---- resize
+  // Resize canvas
   let DPR = Math.min(devicePixelRatio || 1, 2);
   function resize(){
     DPR = Math.min(devicePixelRatio || 1, 2);
@@ -58,7 +61,113 @@ export function startScene(ids){
   addEventListener("resize", resize, {passive:true});
   resize();
 
-  // ---- totems layout (scene positions)
+  // Camera / player
+  const cam = {
+    x: world.spawnX,
+    z: world.spawnZ,
+    yaw: 0,
+    pitch: -0.06,
+    vyaw: 0,
+    vpitch: 0,
+    speed: 3.2
+  };
+
+  // Pointer lock (desktop)
+  let locked = false;
+  function tryLock(){
+    if(mobile) return;
+    document.body.requestPointerLock?.();
+  }
+  document.addEventListener("pointerlockchange", ()=>{
+    locked = (document.pointerLockElement === document.body);
+    stateChip.textContent = locked ? "WASD • E" : "Click to lock";
+  });
+
+  addEventListener("click", (e)=>{
+    // Don’t steal clicks from buttons
+    const t = e.target;
+    if(t && (t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#mobileUI")))) return;
+    if(!locked && !mobile) tryLock();
+  });
+
+  addEventListener("mousemove", (e)=>{
+    if(!locked) return;
+    cam.vyaw += (e.movementX || 0) * 0.0022;
+    cam.vpitch += (e.movementY || 0) * 0.0018;
+  }, {passive:true});
+
+  // Keyboard movement
+  const keys = { w:false,a:false,s:false,d:false, shift:false };
+  addEventListener("keydown", (e)=>{
+    const k = e.key.toLowerCase();
+    if(k==="w") keys.w=true;
+    if(k==="a") keys.a=true;
+    if(k==="s") keys.s=true;
+    if(k==="d") keys.d=true;
+    if(k==="shift") keys.shift=true;
+    if(k==="e") tryUse();
+  });
+  addEventListener("keyup", (e)=>{
+    const k = e.key.toLowerCase();
+    if(k==="w") keys.w=false;
+    if(k==="a") keys.a=false;
+    if(k==="s") keys.s=false;
+    if(k==="d") keys.d=false;
+    if(k==="shift") keys.shift=false;
+  });
+
+  // Mobile joystick + swipe look
+  const joyState = { active:false, id:null, cx:0, cy:0, dx:0, dy:0 };
+  if(joy){
+    joy.addEventListener("pointerdown", (e)=>{
+      joyState.active = true;
+      joyState.id = e.pointerId;
+      joy.setPointerCapture(e.pointerId);
+      const r = joy.getBoundingClientRect();
+      joyState.cx = r.left + r.width/2;
+      joyState.cy = r.top + r.height/2;
+    });
+    joy.addEventListener("pointermove", (e)=>{
+      if(!joyState.active || e.pointerId !== joyState.id) return;
+      const max = 46;
+      let dx = e.clientX - joyState.cx;
+      let dy = e.clientY - joyState.cy;
+      const len = Math.hypot(dx,dy) || 1;
+      if(len > max){ dx = dx/len*max; dy = dy/len*max; }
+      joyState.dx = dx/max;
+      joyState.dy = dy/max;
+      joyKnob.style.transform = `translate(${dx}px, ${dy}px) translate(-50%,-50%)`;
+    });
+    const end = ()=>{
+      joyState.active = false;
+      joyState.dx = 0; joyState.dy = 0;
+      joyKnob.style.transform = `translate(-50%,-50%)`;
+    };
+    joy.addEventListener("pointerup", end);
+    joy.addEventListener("pointercancel", end);
+  }
+
+  let look = { on:false, x:0, y:0 };
+  addEventListener("pointerdown", (e)=>{
+    if(!mobile) return;
+    if(e.target === joy || e.target === joyKnob || e.target === useBtn) return;
+    look.on = true;
+    look.x = e.clientX;
+    look.y = e.clientY;
+  }, {passive:true});
+  addEventListener("pointermove", (e)=>{
+    if(!mobile || !look.on) return;
+    const dx = e.clientX - look.x;
+    const dy = e.clientY - look.y;
+    look.x = e.clientX;
+    look.y = e.clientY;
+    cam.vyaw += dx * 0.0030;
+    cam.vpitch += dy * 0.0022;
+  }, {passive:true});
+  addEventListener("pointerup", ()=>{ look.on=false; }, {passive:true});
+  useBtn?.addEventListener("click", ()=> tryUse());
+
+  // Totems DOM + preview
   const totems = [];
   function makeTotem(p, i){
     const el = document.createElement("div");
@@ -75,12 +184,12 @@ export function startScene(ids){
       </div>
 
       <div class="window">
-        <img src="${p.poster}" alt="${p.name} preview"/>
+        <img src="${p.poster}" alt="${p.name} preview">
         <video muted playsinline loop preload="metadata"></video>
       </div>
 
       <div class="foot">
-        <div class="hint">Hover to preview</div>
+        <div class="hint">Walk up + E</div>
         <div class="enter">Enter</div>
       </div>
     `;
@@ -88,16 +197,15 @@ export function startScene(ids){
     const img = el.querySelector("img");
     const vid = el.querySelector("video");
 
-    // hover preview: poster -> video crossfade
-    let hoverTimer = null;
     let hovered = false;
+    let timer = null;
 
     async function prime(){
       if(vid.dataset.ready === "1") return true;
       vid.src = p.video;
       vid.dataset.ready = "1";
       try{
-        await vid.play(); // muted so allowed
+        await vid.play();
         vid.pause();
         vid.currentTime = 0;
         return true;
@@ -106,298 +214,142 @@ export function startScene(ids){
       }
     }
 
-    function showVideo(){
-      vid.style.opacity = "1";
-      img.style.opacity = "0";
-      try{ vid.play().catch(()=>{}); }catch{}
-    }
     function showPoster(){
       vid.style.opacity = "0";
       img.style.opacity = "1";
       try{ vid.pause(); }catch{}
     }
+    function showVideo(){
+      vid.style.opacity = "1";
+      img.style.opacity = "0";
+      try{ vid.play().catch(()=>{}); }catch{}
+    }
 
     el.addEventListener("mouseenter", ()=>{
       hovered = true;
-      stateChip.textContent = `Hover: ${p.name}`;
-      dockTitle.textContent = p.name;
-      dockSub.textContent = p.tag;
-
       showPoster();
-      hoverTimer = setTimeout(async ()=>{
+      timer = setTimeout(async ()=>{
         if(!hovered) return;
         const ok = await prime();
         if(ok && hovered) showVideo();
       }, 140);
     });
-
     el.addEventListener("mouseleave", ()=>{
       hovered = false;
-      stateChip.textContent = "Idle";
-      if(hoverTimer) clearTimeout(hoverTimer);
+      if(timer) clearTimeout(timer);
       showPoster();
     });
 
     el.addEventListener("click", ()=>{
-      window.location.href = p.page;
+      // Only enter if close enough (game feel)
+      if(getDistance(i) < 2.3){
+        location.href = p.page;
+      } else if(!locked && !mobile){
+        tryLock();
+      }
     });
 
-    // pack position in “scene” (x,y,depth)
-    const pos = [
-      {x:0.14,y:0.28,z:0.35},
-      {x:0.68,y:0.24,z:0.25},
-      {x:0.22,y:0.62,z:0.55},
-      {x:0.64,y:0.64,z:0.45},
-      {x:0.42,y:0.42,z:0.70},
-    ][i] || {x:0.5,y:0.5,z:0.5};
-
-    totems.push({ el, img, vid, p, ...pos, wob: Math.random()*10 });
+    const wp = world.totems[i] || { x:0, z:-12 };
+    totems.push({ el, img, vid, p, wx: wp.x, wz: wp.z, wob: Math.random()*10 });
     totemsHost.appendChild(el);
   }
 
   PACKS.forEach(makeTotem);
 
-  // ---- FX entities
-  let seed = 1337;
-  const rnd = ()=> (seed = (seed*16807)%2147483647)/2147483647;
-  const motes = Array.from({length:quality.motes}, ()=>({
-    x:rnd()*innerWidth, y:rnd()*innerHeight, z:0.15+rnd()*0.85,
-    r: 1.2 + rnd()*2.8, p:rnd()*1000
-  }));
-  const flies = Array.from({length:quality.flies}, ()=>({
-    x:rnd()*innerWidth, y:rnd()*innerHeight, z:0.35+rnd()*0.65,
-    vx:(rnd()-0.5)*30, vy:(rnd()-0.5)*22, p:rnd()*1000
-  }));
-  const birds = Array.from({length:quality.birds}, ()=>({
-    x: (rnd()<0.5 ? -100 : innerWidth+100),
-    y: innerHeight*(0.08+rnd()*0.25),
-    dir: rnd()<0.5 ? 1 : -1,
-    sp: 14 + rnd()*22,
-    p: rnd()*1000
-  }));
-
-  // ---- audio (simple, safe)
-  const audio = { ctx:null, on:false, master:null };
-  function toggleSound(){
-    audio.on = !audio.on;
-    soundBtn.setAttribute("aria-pressed", String(audio.on));
-    soundBtn.textContent = `Sound: ${audio.on ? "On" : "Off"}`;
-
-    if(!audio.ctx){
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if(!AC) return;
-      audio.ctx = new AC();
-      audio.master = audio.ctx.createGain();
-      audio.master.gain.value = 0;
-      audio.master.connect(audio.ctx.destination);
-    }
-    audio.ctx.resume();
-
-    // we reuse the bg video as a sound source (simple + works)
-    const src = audio.ctx.createMediaElementSource(bg);
-    const g = audio.ctx.createGain();
-    g.gain.value = 0;
-    src.connect(g).connect(audio.master);
-
-    // fade
-    const now = audio.ctx.currentTime;
-    audio.master.gain.cancelScheduledValues(now);
-    audio.master.gain.setValueAtTime(audio.master.gain.value, now);
-    audio.master.gain.linearRampToValueAtTime(audio.on ? 0.9 : 0.0, now + 1.2);
-
-    if(audio.on) bg.muted = false;
-    else bg.muted = true;
+  function getDistance(i){
+    const t = totems[i];
+    const dx = t.wx - cam.x;
+    const dz = t.wz - cam.z;
+    return Math.hypot(dx, dz);
   }
 
-  soundBtn.addEventListener("click", toggleSound);
+  // Projection: camera looks down -Z. If relZ is negative, it’s in front.
+  const proj = {
+    f: 820,            // focal length in px
+    cx: () => innerWidth * 0.5,
+    cy: () => innerHeight * 0.52
+  };
+
+  function project(wx, wz){
+    const dx = wx - cam.x;
+    const dz = wz - cam.z;
+
+    // rotate world around camera by -yaw
+    const c = Math.cos(-cam.yaw);
+    const s = Math.sin(-cam.yaw);
+    const rx = dx * c - dz * s;
+    const rz = dx * s + dz * c;
+
+    return { x: rx, z: rz };
+  }
+
+  let focused = -1;
+
+  function updateFocus(){
+    focused = -1;
+    let best = Infinity;
+
+    for(let i=0;i<totems.length;i++){
+      const rel = project(totems[i].wx, totems[i].wz);
+      if(rel.z > -0.8) continue; // behind or too close behind camera
+      const dist = Math.hypot(rel.x, rel.z);
+      const centre = Math.abs(rel.x); // closeness to crosshair
+      const score = centre + dist*0.10;
+      if(score < best){
+        best = score;
+        focused = i;
+      }
+    }
+  }
+
+  function tryUse(){
+    if(focused < 0) return;
+    const dist = getDistance(focused);
+    if(dist < 2.3){
+      location.href = totems[focused].p.page;
+    } else {
+      stateChip.textContent = `Too far (${dist.toFixed(1)}m)`;
+    }
+  }
+
+  // FX motes
+  let seed = 1337;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  const motes = [];
+  function seedMotes(){
+    motes.length = 0;
+    const n = quality.motes;
+    for(let i=0;i<n;i++){
+      motes.push({
+        x: rnd()*innerWidth,
+        y: rnd()*innerHeight,
+        z: 0.15 + rnd()*0.85,
+        r: 1.0 + rnd()*2.6,
+        p: rnd()*1000
+      });
+    }
+  }
+  seedMotes();
+
+  // UI controls
+  soundBtn.addEventListener("click", ()=>{
+    const on = soundBtn.getAttribute("aria-pressed") !== "true";
+    soundBtn.setAttribute("aria-pressed", String(on));
+    soundBtn.textContent = `Sound: ${on ? "On" : "Off"}`;
+    bg.muted = !on;
+    bg.play().catch(()=>{});
+  });
 
   qualityBtn.addEventListener("click", ()=>{
     quality.ultra = !quality.ultra;
+    quality.fxEvery = quality.ultra ? 1 : 3;
+    quality.motes = quality.ultra ? 44 : 18;
     qualityBtn.setAttribute("aria-pressed", String(quality.ultra));
     qualityBtn.textContent = `Quality: ${quality.ultra ? "Ultra" : "Lite"}`;
-    quality.fxEvery = quality.ultra ? 1 : 3;
-    stateChip.textContent = quality.ultra ? "Ultra mode" : "Lite mode";
+    seedMotes();
   });
 
-  // ---- main loop
+  // Main loop
   let last = performance.now();
-  let raf = 0;
-  let frames = 0;
-  let fpsLast = performance.now();
-
-  function tick(t){
-    const dt = Math.min(40, t-last);
-    last = t;
-
-    // smooth cam
-    cam.sx += (cam.x - cam.sx) * 0.06;
-    cam.sy += (cam.y - cam.sy) * 0.06;
-    cam.vx *= 0.92; cam.vy *= 0.92;
-
-    // background camera drift (feels like “standing there”)
-    const bx = cam.sx * 12 + cam.vx * 220;
-    const by = cam.sy * 8  + cam.vy * 180;
-    bg.style.transform = `translate(${bx}px, ${by}px) scale(${quality.ultra ? 1.08 : 1.05})`;
-
-    // totems parallax + depth + breathing
-    const rect = totemsHost.getBoundingClientRect();
-    for(const o of totems){
-      const wob = Math.sin(t*0.0012 + o.wob) * 6;
-      const px = (o.x - 0.5) * rect.width;
-      const py = (o.y - 0.5) * rect.height;
-
-      const depth = o.z;
-      const dx = cam.sx * (18 * (1-depth));
-      const dy = cam.sy * (12 * (1-depth));
-
-      const lift = (depth * 26) + wob;
-      const scale = 0.86 + depth * 0.28;
-
-      const rx = (-cam.sy * (8*(1-depth)));
-      const ry = ( cam.sx * (10*(1-depth)));
-
-      o.el.style.left = `${(rect.width/2 + px) - 120}px`;
-      o.el.style.top  = `${(rect.height/2 + py) - 170}px`;
-      o.el.style.transform = `translate(${dx}px, ${dy}px) translateY(${-lift}px) rotateX(${rx}deg) rotateY(${ry}deg) scale(${scale})`;
-      o.el.style.opacity = String(0.55 + depth*0.45);
-      o.el.style.zIndex = String(Math.floor(depth*100));
-    }
-
-    // FX draw throttle
-    frames++;
-    if(frames % quality.fxEvery === 0){
-      ctx.clearRect(0,0,innerWidth,innerHeight);
-
-      // haze
-      ctx.globalCompositeOperation = "screen";
-      const g = ctx.createRadialGradient(innerWidth*0.32, innerHeight*0.28, 20, innerWidth*0.32, innerHeight*0.28, 520);
-      g.addColorStop(0,"rgba(205,255,140,.025)");
-      g.addColorStop(0.6,"rgba(255,220,150,.010)");
-      g.addColorStop(1,"rgba(0,0,0,0)");
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.arc(innerWidth*0.32, innerHeight*0.28, 520, 0, Math.PI*2); ctx.fill();
-
-      // motes
-      for(const m of motes){
-        m.p += dt*0.0006;
-        const s = 0.55 + m.z*0.85;
-        const x = (m.x + Math.sin(m.p)*12 + cam.sx*90*(1-m.z)) % (innerWidth+80) - 40;
-        const y = (m.y + Math.cos(m.p)*10 + cam.sy*70*(1-m.z)) % (innerHeight+80) - 40;
-        const a = (0.06 + m.z*0.18);
-        ctx.globalAlpha = a;
-        ctx.fillStyle = "rgba(255,255,255,.85)";
-        ctx.beginPath(); ctx.arc(x,y,m.r*s,0,Math.PI*2); ctx.fill();
-      }
-
-      // flies
-      for(const f of flies){
-        f.p += dt*0.0012;
-        if(rnd() < 0.02){ f.vx += (rnd()-0.5)*70; f.vy += (rnd()-0.5)*55; }
-        f.vx *= 0.985; f.vy *= 0.985;
-        f.x += f.vx*dt*0.02;
-        f.y += f.vy*dt*0.02;
-        if(f.x < -80) f.x = innerWidth+80;
-        if(f.x > innerWidth+80) f.x = -80;
-        if(f.y < -80) f.y = innerHeight+80;
-        if(f.y > innerHeight+80) f.y = -80;
-
-        const tw = (Math.sin(f.p*10) * 0.5 + 0.5);
-        ctx.globalAlpha = (0.08 + tw*0.18) * f.z;
-        ctx.fillStyle = "rgba(205,255,140,.85)";
-        ctx.beginPath(); ctx.arc(f.x, f.y, (1.2+tw*1.8)*(0.6+f.z), 0, Math.PI*2); ctx.fill();
-      }
-
-      // birds (far)
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 0.22;
-      ctx.strokeStyle = "rgba(0,0,0,.55)";
-      ctx.lineWidth = 1.2;
-      ctx.lineCap = "round";
-      for(const b of birds){
-        b.x += b.dir*b.sp*dt*0.05;
-        b.y += Math.sin((t*0.0015)+b.p)*0.12*dt;
-        if(b.dir>0 && b.x>innerWidth+140){ b.x=-140; }
-        if(b.dir<0 && b.x<-140){ b.x=innerWidth+140; }
-        const wing = 18 + (b.sp*0.25);
-        ctx.beginPath();
-        ctx.moveTo(b.x-wing,b.y);
-        ctx.quadraticCurveTo(b.x-wing*0.35, b.y - wing*0.42, b.x, b.y);
-        ctx.quadraticCurveTo(b.x+wing*0.35, b.y - wing*0.42, b.x+wing, b.y);
-        ctx.stroke();
-      }
-    }
-
-    // fps
-    const now = performance.now();
-    if(now - fpsLast > 500){
-      const fps = Math.round((frames * 1000) / (now - fpsLast));
-      fpsChip.textContent = `FPS: ${fps}`;
-      frames = 0;
-      fpsLast = now;
-    }
-
-    raf = requestAnimationFrame(tick);
-  }
-
-  // start
-  bg.play().catch(()=>{});
-  requestAnimationFrame(tick);
-}
-
-    const len = Math.hypot(mx, mz) || 1;
-    mx /= len; mz /= len;
-
-    // move in facing direction
-    const sin = Math.sin(cam.yaw);
-    const cos = Math.cos(cam.yaw);
-
-    cam.x += (mx * cos - mz * sin) * sp * dt * 0.01;
-    cam.z += (mx * sin + mz * cos) * sp * dt * 0.01;
-
-    // focus logic
-    updateFocus();
-
-    // highlight focused totem
-    totems.forEach((t, i)=>{
-      if(i === focusedIndex){
-        t.el.style.borderColor = "rgba(255,255,255,.32)";
-        dockTitle.textContent = t.p.name;
-        dockSub.textContent = t.p.tag;
-        stateChip.textContent = "Press E / USE";
-      } else {
-        t.el.style.borderColor = "rgba(255,255,255,.10)";
-      }
-    });
-
-    // FX (light)
-    fxFrame++;
-    if(fxFrame % quality.fxEvery === 0){
-      ctx.clearRect(0,0,innerWidth,innerHeight);
-      for(const m of motes){
-        m.p += dt*0.0006;
-        const x = (m.x + Math.sin(m.p)*14) % innerWidth;
-        const y = (m.y + Math.cos(m.p)*10) % innerHeight;
-        ctx.globalAlpha = 0.08 + m.z*0.2;
-        ctx.fillStyle = "rgba(255,255,255,.85)";
-        ctx.beginPath();
-        ctx.arc(x,y,m.r,0,Math.PI*2);
-        ctx.fill();
-      }
-    }
-
-    // FPS counter
-    frames++;
-    const now = performance.now();
-    if(now - fpsLast > 500){
-      const fps = Math.round(frames * 1000 / (now - fpsLast));
-      fpsChip.textContent = `FPS: ${fps}`;
-      frames = 0;
-      fpsLast = now;
-    }
-
-    requestAnimationFrame(tick);
-  }
-
-  bg.play().catch(()=>{});
-  requestAnimationFrame(tick);
-}
+  let f
