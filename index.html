@@ -2186,6 +2186,168 @@
     requestAnimationFrame(tickMicro);
   }
 
+      /* ============================================================
+     PART 8/10 — Performance + 4K Quality Control (append-only)
+     - Adaptive quality when dt rises
+     - FX throttling on low power / hidden tab
+     - Background video resolution sanity
+     - Preview warm-up scheduling
+     ============================================================ */
+
+  const perfCtl = {
+    // quality: 1 = full cinema, 0 = minimal
+    q: 1,
+    targetQ: 1,
+    lastT: performance.now(),
+    avgDt: 16.6,
+    hidden: document.hidden,
+    lowPower: false,
+
+    // FX throttle: draw every N frames at lower quality
+    fxEvery: 1,
+    fxFrame: 0,
+
+    // background throttles
+    bgRate: 1.0,     // playbackRate
+    bgScale: 1.05    // transform scale
+  };
+
+  function detectLowPower(){
+    const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
+    const small = window.innerWidth < 820;
+    const cores = navigator.hardwareConcurrency || 8;
+
+    // user agents vary; keep this simple + safe
+    perfCtl.lowPower = motion.reduce || coarse || small || cores <= 4;
+  }
+
+  function setBackgroundQuality(){
+    if(!bgVideo) return;
+
+    // Reduce decoding load on low power
+    bgVideo.playbackRate = perfCtl.bgRate;
+
+    // Keep the “cinema push-in” but avoid GPU thrash
+    // (applyParallax sets translate; we set scale target)
+    bgVideo.style.willChange = perfCtl.q > 0.6 ? "transform, filter" : "transform";
+
+    // Slightly reduce grade when low power (helps some devices)
+    if(perfCtl.q < 0.6){
+      bgVideo.style.filter = "contrast(1.08) saturate(1.10) brightness(.84)";
+    } else {
+      bgVideo.style.filter = "contrast(1.12) saturate(1.14) brightness(.82)";
+    }
+  }
+
+  function setFXThrottle(){
+    // throttle canvas drawing without killing motion engine
+    if(perfCtl.q > 0.85) perfCtl.fxEvery = 1;
+    else if(perfCtl.q > 0.65) perfCtl.fxEvery = 2;
+    else if(perfCtl.q > 0.45) perfCtl.fxEvery = 3;
+    else perfCtl.fxEvery = 4;
+  }
+
+  function updatePerf(dt){
+    // rolling avg
+    perfCtl.avgDt = lerp(perfCtl.avgDt, dt, 0.06);
+
+    // compute a target quality from avg dt
+    // > 24ms means struggling, < 18ms means healthy
+    if(perfCtl.hidden){
+      perfCtl.targetQ = 0.25;
+    } else if(perfCtl.lowPower){
+      // low power prefers stable
+      if(perfCtl.avgDt > 22) perfCtl.targetQ = 0.40;
+      else if(perfCtl.avgDt > 19) perfCtl.targetQ = 0.55;
+      else perfCtl.targetQ = 0.70;
+    } else {
+      if(perfCtl.avgDt > 26) perfCtl.targetQ = 0.35;
+      else if(perfCtl.avgDt > 22) perfCtl.targetQ = 0.55;
+      else if(perfCtl.avgDt > 19) perfCtl.targetQ = 0.75;
+      else perfCtl.targetQ = 1.00;
+    }
+
+    // smooth quality changes
+    perfCtl.q = lerp(perfCtl.q, perfCtl.targetQ, 0.05);
+
+    // apply derived throttles
+    setFXThrottle();
+
+    // background decoding load tweaks
+    if(perfCtl.hidden){
+      perfCtl.bgRate = 0.6;
+      perfCtl.bgScale = 1.02;
+    } else if(perfCtl.lowPower && perfCtl.q < 0.6){
+      perfCtl.bgRate = 0.85;
+      perfCtl.bgScale = 1.03;
+    } else {
+      perfCtl.bgRate = 1.0;
+      perfCtl.bgScale = 1.05;
+    }
+
+    setBackgroundQuality();
+  }
+
+  // Wrap drawFX to throttle without rewriting your engine
+  const _drawFX = drawFX;
+  drawFX = function(dt){
+    if(motion.reduce) return;
+
+    perfCtl.fxFrame++;
+    if(perfCtl.fxEvery > 1 && (perfCtl.fxFrame % perfCtl.fxEvery) !== 0){
+      return; // skip this frame's FX
+    }
+    _drawFX(dt);
+  };
+
+  // Wrap tick to update perf each frame (append-only safe)
+  const _tick = tick;
+  tick = function(t){
+    const dt = Math.min(40, t - lastT);
+    // keep your original time updates
+    // (lastT is in outer scope already; use as-is)
+    updatePerf(dt);
+    _tick(t);
+  };
+
+  function warmPreviewCache(){
+    // Warm a couple pack videos in background AFTER the page settles.
+    // Prevents "first hover = delay".
+    if(motion.reduce) return;
+
+    const warmList = ["lockin","fresh","gym","gaming","work"];
+    let i = 0;
+
+    const step = () => {
+      if(i >= warmList.length) return;
+      const key = warmList[i++];
+      try { getPreloadVideo(key); } catch(_){}
+      // schedule with idle time
+      setTimeout(step, perfCtl.lowPower ? 900 : 520);
+    };
+
+    setTimeout(step, perfCtl.lowPower ? 1400 : 900);
+  }
+
+  function initPerf(){
+    detectLowPower();
+    window.addEventListener("resize", detectLowPower, {passive:true});
+
+    document.addEventListener("visibilitychange", ()=>{
+      perfCtl.hidden = document.hidden;
+      if(perfCtl.hidden){
+        // if hidden, ease off GPU load a bit
+        if(bgVideo) bgVideo.pause();
+      } else {
+        if(bgVideo) bgVideo.play().catch(()=>{});
+      }
+    });
+
+    setBackgroundQuality();
+    warmPreviewCache();
+  }
+
+
   /* ---------- Init Orbit ---------- */
 
   function initOrbit(){
@@ -2204,6 +2366,8 @@
       magnet(revealBtn, 0.10);
 
       initMicro();
+      initPerf();
+
   
       // set default pack
       setPack("lockin");
