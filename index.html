@@ -2,9 +2,9 @@
 <html lang="en-GB">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Snack Packz</title>
-  <meta name="description" content="Snack Packz — spin the snack, pick a vibe, tap to enter." />
+  <meta name="description" content="Snack Packz — a 3D snack hub for real-life packs." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,19 +12,19 @@
 
   <style>
     :root{
-      --bg:#05060a;
-      --text:#eef1f7;
-      --muted:#a4adbf;
-      --line:rgba(255,255,255,.10);
-      --glass:rgba(10,12,18,.55);
-      --glass2:rgba(10,12,18,.35);
-
+      --bg:#06070b;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.04);
+      --line: rgba(255,255,255,.10);
+      --line2: rgba(255,255,255,.14);
+      --text:#eef2ff;
+      --muted: rgba(238,242,255,.72);
       --yellow:#ffd400;
       --orange:#ff9f1a;
-      --blue:#79a7ff;
-
-      --radius:22px;
-      --shadow: 0 20px 70px rgba(0,0,0,.55);
+      --blue:#7fb3ff;
+      --r: 26px;
+      --shadow: 0 24px 80px rgba(0,0,0,.55);
+      --shadow2: 0 10px 40px rgba(0,0,0,.35);
     }
 
     *{box-sizing:border-box}
@@ -34,685 +34,704 @@
       color:var(--text);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(900px 600px at 12% -10%, rgba(255,212,0,.18), transparent 55%),
-        radial-gradient(900px 600px at 110% 0%, rgba(121,167,255,.14), transparent 55%),
-        radial-gradient(900px 600px at 50% 120%, rgba(255,159,26,.10), transparent 55%),
+        radial-gradient(1200px 700px at 15% -10%, rgba(255,212,0,.20), transparent 60%),
+        radial-gradient(900px 700px at 105% 0%, rgba(127,179,255,.18), transparent 55%),
+        radial-gradient(900px 700px at 70% 120%, rgba(255,159,26,.12), transparent 60%),
         var(--bg);
-      overflow:hidden;
+      overflow-x:hidden;
     }
-
     a{color:inherit;text-decoration:none}
 
-    /* ===== top bar ===== */
-    .topbar{
-      position:fixed; inset:16px 16px auto 16px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-      z-index:50;
+    /* ===== Top bar ===== */
+    .top{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.22));
+      border-bottom: 1px solid rgba(255,255,255,.06);
     }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      padding:10px 12px;
-      border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(5,6,10,.35);
-      backdrop-filter: blur(14px);
-      box-shadow: 0 18px 60px rgba(0,0,0,.35);
-      max-width: 70vw;
-    }
+    .wrap{max-width:1200px;margin:0 auto;padding:14px 18px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:14px}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
     .mark{
-      width:36px; height:36px; border-radius:14px;
-      background: linear-gradient(135deg, var(--yellow), var(--orange));
-      box-shadow: 0 16px 60px rgba(255,212,0,.18);
-      flex: 0 0 auto;
+      width:42px;height:42px;border-radius:16px;
+      background: linear-gradient(135deg,var(--yellow),var(--orange));
+      box-shadow: 0 18px 60px rgba(255,212,0,.18);
+      flex:0 0 auto;
     }
-    .brand h1{
-      margin:0;
+    .title{
       font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      letter-spacing: 1px;
-      font-size: 22px;
-      line-height: 1;
+      letter-spacing: 1.2px;
+      font-size: 28px; line-height:1; margin:0;
       text-transform: uppercase;
       white-space:nowrap;
     }
-    .brand .sub{
+    .sub{
       margin:4px 0 0;
-      font-size:12px;
-      color:rgba(238,241,247,.72);
+      color: var(--muted);
+      font-size: 13px;
       white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      max-width: 55vw;
+      overflow:hidden;text-overflow:ellipsis;
+      max-width: 52vw;
     }
 
-    .actions{display:flex; gap:10px; align-items:center}
+    .actions{display:flex;align-items:center;gap:10px}
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:10px 12px;
       border-radius: 999px;
-      border:1px solid var(--line);
-      background: rgba(5,6,10,.35);
-      backdrop-filter: blur(14px);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      box-shadow: var(--shadow2);
       font-weight: 800;
-      font-size: 12.5px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.25);
+      font-size: 13px;
       user-select:none;
     }
-    .pill small{opacity:.75; font-weight:700}
+    .pill.small{padding:8px 10px;font-size:12.5px;font-weight:800}
     .pill.primary{
       border-color: rgba(255,212,0,.35);
       background: rgba(255,212,0,.14);
     }
     .pill:active{transform: translateY(1px)}
 
-    /* ===== hero stage ===== */
+    /* ===== Stage ===== */
     .stage{
-      position:absolute; inset:0;
-      display:grid;
-      place-items:center;
-      padding: 96px 20px 20px;
+      max-width:1200px;
+      margin: 22px auto 40px;
+      padding: 0 18px;
+      position:relative;
     }
 
-    .heroWrap{
-      width:min(1100px, 100%);
+    /* Fancy faint star field */
+    .stars{
+      position:absolute; inset:-100px -40px -120px -40px;
+      pointer-events:none;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.55) 0, transparent 1px),
+        radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,.40) 0, transparent 1px),
+        radial-gradient(1px 1px at 55% 85%, rgba(255,255,255,.35) 0, transparent 1px),
+        radial-gradient(1px 1px at 25% 70%, rgba(255,255,255,.30) 0, transparent 1px),
+        radial-gradient(1px 1px at 90% 75%, rgba(255,255,255,.25) 0, transparent 1px);
+      opacity:.55;
+      filter: blur(.1px);
+    }
+
+    .grid{
       display:grid;
       grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
+      gap: 16px;
       align-items:center;
     }
     @media (max-width: 980px){
-      body{overflow:auto}
-      .stage{position:relative; min-height: 100vh; padding-top: 86px; overflow:hidden}
-      .heroWrap{grid-template-columns: 1fr; gap:14px}
+      .grid{grid-template-columns:1fr; gap:14px}
+      .sub{max-width: 70vw}
     }
 
-    .heroCard{
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      border-radius: 28px;
+    /* Hero card */
+    .hero{
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 300px at 10% 10%, rgba(255,212,0,.14), transparent 55%),
+        radial-gradient(900px 300px at 100% 40%, rgba(127,179,255,.14), transparent 60%),
+        rgba(255,255,255,.05);
       box-shadow: var(--shadow);
       overflow:hidden;
-      position:relative;
-      min-height: 320px;
-    }
-
-    /* hero video background */
-    .heroMedia{
-      position:absolute; inset:0;
-      background:
-        radial-gradient(800px 420px at 18% 20%, rgba(255,212,0,.20), transparent 55%),
-        radial-gradient(700px 420px at 100% 0%, rgba(121,167,255,.14), transparent 55%),
-        rgba(8,10,16,.85);
-    }
-    .heroMedia::before{
-      content:"";
-      position:absolute; inset:0;
-      background-image:
-        radial-gradient(800px 420px at 18% 20%, rgba(255,212,0,.20), transparent 55%),
-        radial-gradient(700px 420px at 100% 0%, rgba(121,167,255,.14), transparent 55%);
-      opacity: .9;
-    }
-    .heroMedia video{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit: cover;
-      opacity: 0; /* stays hidden until loaded */
-      filter: saturate(1.05) contrast(1.05);
-      transform: scale(1.03);
-      transition: opacity .25s ease;
-    }
-    .heroMedia video[data-ready="1"]{opacity:.55}
-
-    .heroOverlay{
-      position:absolute; inset:0;
-      background:
-        linear-gradient(90deg, rgba(5,6,10,.78), rgba(5,6,10,.34) 55%, rgba(5,6,10,.75)),
-        radial-gradient(700px 280px at 25% 20%, rgba(255,212,0,.14), transparent 60%),
-        radial-gradient(700px 280px at 90% 20%, rgba(121,167,255,.10), transparent 60%);
-    }
-
-    .heroBody{
       position:relative;
       padding: 26px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
+      min-height: 260px;
+    }
+    .hero h1{
+      font-size: clamp(34px, 4.2vw, 56px);
+      line-height: 1.02;
+      margin:0 0 10px;
+      letter-spacing: -.6px;
+    }
+    .hero p{
+      margin:0;
+      color: var(--muted);
+      max-width: 62ch;
+      line-height: 1.5;
+      font-size: 14.5px;
     }
 
-    .heroTitle{
-      margin:0;
-      font-size: clamp(30px, 4.6vw, 56px);
-      letter-spacing: -.8px;
-      line-height: 1.03;
+    .chips{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 14px;
     }
-    .heroText{
-      margin:0;
-      max-width: 60ch;
-      color: rgba(238,241,247,.78);
-      line-height:1.45;
-      font-size: 14px;
-    }
-
-    .badges{
-      display:flex; flex-wrap:wrap; gap:8px;
-      margin-top: 2px;
-    }
-    .badge{
+    .chip{
       display:inline-flex; align-items:center; gap:8px;
-      padding: 9px 10px;
+      padding:9px 12px;
       border-radius: 999px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      backdrop-filter: blur(10px);
+      background: rgba(0,0,0,.18);
+      color: rgba(238,242,255,.86);
       font-size: 12.5px;
-      color: rgba(238,241,247,.76);
+      backdrop-filter: blur(8px);
     }
 
-    /* ===== donut hub ===== */
-    .hubCard{
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      border-radius: 28px;
+    .hintrow{
+      display:flex; flex-wrap:wrap; gap:10px;
+      margin-top: 16px;
+      color: rgba(238,242,255,.78);
+      font-size: 12.5px;
+    }
+    .hint{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      padding:8px 10px;
+      border-radius: 999px;
+    }
+
+    /* ===== Ring panel ===== */
+    .ringPanel{
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
       box-shadow: var(--shadow);
       overflow:hidden;
       position:relative;
-      min-height: 320px;
-      display:grid;
-      place-items:center;
-      padding: 22px;
+      min-height: 380px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
     }
 
-    .space{
-      position:absolute; inset:-60px;
-      background:
-        radial-gradient(1000px 700px at 50% 50%, rgba(255,255,255,.04), transparent 70%),
-        transparent;
-      pointer-events:none;
-      opacity:.8;
-    }
-
-    .stars{
-      position:absolute; inset:0;
-      background-image:
-        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.35), transparent 55%),
-        radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.25), transparent 55%),
-        radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,.28), transparent 55%),
-        radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,.22), transparent 55%),
-        radial-gradient(1px 1px at 20% 70%, rgba(255,255,255,.20), transparent 55%);
-      opacity:.7;
-      pointer-events:none;
-    }
-
-    .hub{
-      width: min(420px, 100%);
-      aspect-ratio: 1/1;
+    /* Donut */
+    .donutWrap{
       position:relative;
-      display:grid;
-      place-items:center;
+      width: 360px;
+      height: 360px;
+      max-width: 78vw;
+      max-height: 78vw;
       user-select:none;
-      touch-action:none;
-      filter: drop-shadow(0 40px 120px rgba(0,0,0,.55));
+      touch-action: none;
     }
 
-    /* donut */
     .donut{
-      width: 74%;
-      height: 74%;
+      position:absolute; inset:0;
       border-radius: 999px;
-      position:relative;
+      background:
+        conic-gradient(from 0deg,
+          rgba(255,212,0,.95),
+          rgba(255,159,26,.90),
+          rgba(127,179,255,.85),
+          rgba(255,212,0,.95)
+        );
+      filter: drop-shadow(0 25px 60px rgba(0,0,0,.45));
       transform: rotate(0deg);
       will-change: transform;
-      cursor: grab;
-    }
-    .donut:active{cursor: grabbing}
-
-    .donut::before{
-      content:"";
-      position:absolute; inset:0;
-      border-radius:999px;
-      background:
-        conic-gradient(
-          from 0deg,
-          rgba(255,212,0,.0),
-          rgba(255,212,0,.95),
-          rgba(255,159,26,.95),
-          rgba(121,167,255,.80),
-          rgba(255,212,0,.95),
-          rgba(255,159,26,.95),
-          rgba(121,167,255,.80),
-          rgba(255,212,0,.0)
-        );
-      filter: blur(0px);
-      opacity: .95;
     }
 
+    /* inner hole */
     .donut::after{
       content:"";
       position:absolute;
-      inset: 14%;
-      border-radius:999px;
+      inset: 26%;
+      border-radius: 999px;
       background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.14), transparent 40%),
-        radial-gradient(circle at 60% 70%, rgba(0,0,0,.55), transparent 55%),
-        rgba(6,7,12,.92);
-      box-shadow:
-        inset 0 0 0 2px rgba(255,255,255,.06),
-        inset 0 -30px 60px rgba(0,0,0,.45);
+        radial-gradient(180px 140px at 30% 25%, rgba(255,212,0,.12), transparent 55%),
+        radial-gradient(200px 170px at 90% 70%, rgba(127,179,255,.12), transparent 55%),
+        rgba(0,0,0,.55);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 0 50px rgba(0,0,0,.6);
     }
 
-    .coreText{
+    /* center text */
+    .centerText{
       position:absolute;
-      inset:0;
-      display:grid;
-      place-items:center;
+      inset: 26%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       text-align:center;
+      padding: 18px;
+      z-index: 5;
       pointer-events:none;
-      padding: 18%;
     }
-    .coreText h3{
-      margin:0;
-      font-size: 14px;
-      letter-spacing:.2px;
-      color: rgba(238,241,247,.75);
-    }
-    .coreText p{
-      margin:8px 0 0;
-      font-size: 12px;
-      color: rgba(164,173,191,.85);
-      line-height:1.35;
-    }
+    .centerText b{display:block;font-size:14px}
+    .centerText span{display:block;margin-top:6px;color:rgba(238,242,255,.70);font-size:12.5px}
 
-    /* ring of options around donut */
-    .menuRing{
+    /* Vibe pills around ring */
+    .vibes{
       position:absolute;
-      inset:0;
+      inset:-10px;
+      z-index: 7;
       transform: rotate(0deg);
       will-change: transform;
-      cursor: grab;
+      pointer-events:auto;
     }
-    .menuRing:active{cursor: grabbing}
-
     .vibe{
       position:absolute;
-      display:flex; align-items:center; gap:8px;
+      left:50%;
+      top:50%;
+      transform: translate(-50%,-50%) rotate(var(--a)) translateY(-185px) rotate(calc(-1 * var(--a)));
+      transform-origin: center;
+      width: 126px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
       padding: 10px 12px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(10,12,18,.40);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      cursor: pointer;
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
       font-weight: 900;
       font-size: 12.5px;
-      color: rgba(238,241,247,.88);
-      transform: translate(-50%,-50%);
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+      color: rgba(238,242,255,.88);
     }
-    .vibe .dot{
-      width:10px; height:10px; border-radius: 999px;
-      background: rgba(255,255,255,.25);
-      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
-    }
+    .vibe i{opacity:.95;font-style:normal}
     .vibe:hover{
       border-color: rgba(255,212,0,.35);
       background: rgba(255,212,0,.10);
-      transform: translate(-50%,-50%) scale(1.05);
     }
-    .vibe:active{transform: translate(-50%,-50%) scale(0.98)}
+    .vibe.active{
+      border-color: rgba(255,212,0,.55);
+      background: rgba(255,212,0,.14);
+      box-shadow: 0 0 0 1px rgba(255,212,0,.25), 0 18px 55px rgba(0,0,0,.45);
+    }
 
-    /* positions */
-    .pos1{left:50%; top:6%}
-    .pos2{left:82%; top:22%}
-    .pos3{left:92%; top:55%}
-    .pos4{left:70%; top:86%}
-    .pos5{left:30%; top:86%}
-    .pos6{left:8%; top:55%}
-    .pos7{left:18%; top:22%}
-
-    /* ===== premium preview panel ===== */
+    /* ===== Premium preview card ===== */
     .preview{
-      position:fixed;
+      position: fixed;
       right: 18px;
       bottom: 18px;
-      width: min(420px, calc(100vw - 36px));
-      border-radius: 24px;
+      width: min(380px, 92vw);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.12);
       background: rgba(10,12,18,.62);
-      backdrop-filter: blur(18px);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 45px 140px rgba(0,0,0,.70);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 24px 90px rgba(0,0,0,.62);
       overflow:hidden;
-      opacity:0;
-      transform: translateY(10px) scale(.985);
+      z-index: 999;
+      transform: translateY(14px);
+      opacity: 0;
       pointer-events:none;
-      transition: .18s ease;
-      z-index:60;
+      transition: opacity .18s ease, transform .18s ease;
     }
-    .preview.on{
-      opacity:1;
-      transform: translateY(0) scale(1);
+    .preview.show{
+      opacity: 1;
+      transform: translateY(0);
       pointer-events:auto;
     }
-    .previewMedia{
-      height: 185px;
-      background-size: cover;
-      background-position: center;
-      position:relative;
-      overflow:hidden;
+    .pvMedia{
+      position: relative;
+      height: 190px;
+      background: rgba(255,255,255,.03);
     }
-    .previewMedia::after{
-      content:"";
+    .pvMedia img,
+    .pvMedia video{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit: cover;
+      transform: scale(1.02);
+      transition: transform 1.2s ease;
+      filter: saturate(1.06) contrast(1.06);
+    }
+    .preview:hover .pvMedia img,
+    .preview:hover .pvMedia video{ transform: scale(1.08); }
+
+    /* hide video until ready */
+    .pvMedia video{ opacity: 0; }
+    .pvMedia video.ready{ opacity: 1; }
+
+    .pvShade{
       position:absolute; inset:0;
       background:
-        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.60)),
-        radial-gradient(600px 240px at 18% 20%, rgba(255,212,0,.16), transparent 60%),
-        radial-gradient(600px 240px at 90% 20%, rgba(121,167,255,.12), transparent 60%);
+        linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.78)),
+        radial-gradient(700px 240px at 20% 10%, rgba(255,212,0,.16), transparent 55%);
       pointer-events:none;
     }
-    .previewBody{padding: 14px 14px 16px}
-    .previewPill{
+    .pvBody{ padding: 14px 14px 16px; }
+    .pvKicker{
       display:inline-flex; align-items:center; gap:8px;
-      font-size: 12px;
-      color: rgba(238,241,247,.75);
-      opacity:.95;
-    }
-    .preview h3{margin:10px 0 6px; font-size: 18px}
-    .preview p{margin:0; color: rgba(238,241,247,.70); font-size: 13px; line-height:1.35}
-    .previewFooter{
-      display:flex; justify-content:space-between; align-items:center;
-      gap: 10px;
-      margin-top: 14px;
-    }
-    .previewBtn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding: 10px 14px;
-      border-radius: 14px;
-      background: rgba(255,212,0,.14);
-      border: 1px solid rgba(255,212,0,.35);
-      font-weight: 900;
-      font-size: 12.5px;
-    }
-    .previewHint{
-      font-size: 12px;
-      color: rgba(164,173,191,.9);
-    }
-
-    /* ===== small helper text on right card ===== */
-    .hintRow{
-      display:flex; gap:10px; flex-wrap:wrap;
-      color: rgba(164,173,191,.9);
-      font-size: 12.5px;
-      margin-top: 6px;
-    }
-    .hintChip{
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      padding: 8px 10px;
+      padding: 7px 10px;
       border-radius: 999px;
-      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(238,242,255,.88);
+      margin-bottom: 10px;
+    }
+    .pvTitle{ margin:0; font-size: 18px; letter-spacing: .2px; }
+    .pvDesc{ margin:6px 0 12px; color: rgba(238,242,255,.72); font-size: 13px; line-height: 1.35; }
+
+    .pvBtns{ display:flex; gap:10px; align-items:center; }
+    .pvBtn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.05);
+      font-weight: 900;
+      font-size: 13px;
+      cursor:pointer;
+    }
+    .pvBtn.primary{
+      border-color: rgba(255,212,0,.38);
+      background: rgba(255,212,0,.14);
     }
 
-    /* reduce motion */
-    @media (prefers-reduced-motion: reduce){
-      *{transition:none !important; animation:none !important}
+    .pvClose{
+      position:absolute; top:10px; right:10px;
+      width:34px; height:34px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      z-index: 5;
+    }
+
+    /* Mobile tweaks */
+    @media (hover: none){
+      .preview{ right: 10px; bottom: 10px; }
     }
   </style>
 </head>
 
 <body>
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="brand">
-      <div class="mark"></div>
-      <div>
-        <h1>SNACK PACKZ</h1>
-        <div class="sub">Spin the snack • pick a vibe • click to enter</div>
+  <div class="top">
+    <div class="wrap">
+      <div class="row">
+        <div class="brand">
+          <div class="mark" aria-hidden="true"></div>
+          <div style="min-width:0">
+            <h1 class="title">Snack Packz</h1>
+            <p class="sub">Spin the snack • pick a vibe • click to enter</p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="pill small" id="soundBtn" type="button">🔈 Sound: Off</button>
+          <a class="pill primary" href="https://wa.me/447483849357?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">Order</a>
+        </div>
       </div>
-    </div>
-
-    <div class="actions">
-      <div id="soundBtn" class="pill" role="button" tabindex="0">🔊 <small>Sound:</small> <span id="soundState">Off</span></div>
-
-      <a class="pill primary" href="https://wa.me/447483849357?text=Yo%20Snack%20Packz%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">
-        Order
-      </a>
     </div>
   </div>
 
-  <div class="stage">
-    <div class="heroWrap">
+  <main class="stage">
+    <div class="stars" aria-hidden="true"></div>
 
-      <!-- LEFT: HERO (real brand look + hero video) -->
-      <section class="heroCard">
-        <div class="heroMedia">
-          <video id="heroVid" muted playsinline preload="metadata">
-            <source src="assets/hero.mp4" type="video/mp4">
-          </video>
+    <section class="grid">
+      <!-- HERO -->
+      <div class="hero">
+        <h1>A 3D snack hub for real-life packs.</h1>
+        <p>
+          Drag the donut or drag the menu ring. Hover a vibe to preview it. Click to enter.
+          Stock changes daily, the vibe stays elite.
+        </p>
+
+        <div class="chips">
+          <span class="chip">💛 Sticker inside</span>
+          <span class="chip">🎟️ Prize draw entry</span>
+          <span class="chip">🎲 RNG drops sometimes</span>
+          <span class="chip">⚠️ No energy drinks to under 16s</span>
         </div>
-        <div class="heroOverlay"></div>
 
-        <div class="heroBody">
-          <h2 class="heroTitle">A 3D snack hub for real-life packs.</h2>
-          <p class="heroText">
-            Drag the donut or drag the menu ring. Hover a vibe to preview it. Click to enter.
-            Stock changes daily, the vibe stays elite.
-          </p>
-
-          <div class="badges">
-            <span class="badge">💛 Sticker inside</span>
-            <span class="badge">🎟️ Prize draw entry</span>
-            <span class="badge">🎲 RNG drops sometimes</span>
-            <span class="badge">⚠️ No energy drinks to under 16s</span>
-          </div>
-
-          <div class="hintRow">
-            <span class="hintChip">🖱️ Drag = spin</span>
-            <span class="hintChip">🛞 Wheel = scroll ring</span>
-            <span class="hintChip">👆 Tap = preview / enter</span>
-          </div>
+        <div class="hintrow">
+          <span class="hint">🟡 Drag = spin</span>
+          <span class="hint">🖱️ Wheel = scroll ring</span>
+          <span class="hint">👆 Tap = preview / enter</span>
         </div>
-      </section>
+      </div>
 
-      <!-- RIGHT: DONUT HUB -->
-      <section class="hubCard">
-        <div class="space"></div>
-        <div class="stars"></div>
+      <!-- RING -->
+      <div class="ringPanel">
+        <div class="donutWrap" id="donutWrap" aria-label="Snack ring menu">
+          <div class="donut" id="donut"></div>
 
-        <div id="hub" class="hub">
-          <div id="menuRing" class="menuRing" aria-label="Vibe selector ring">
-            <button id="vibe-gym" class="vibe pos1" data-vibe="gym"><span class="dot"></span>🏋️ Gym</button>
-            <button id="vibe-lockin" class="vibe pos2" data-vibe="lockin"><span class="dot"></span>🧠 Lock-In</button>
-            <button id="vibe-work" class="vibe pos3" data-vibe="work"><span class="dot"></span>🧰 Work</button>
-            <button id="vibe-gaming" class="vibe pos4" data-vibe="gaming"><span class="dot"></span>🎮 Gaming</button>
-            <button id="vibe-mystery" class="vibe pos5" data-vibe="mystery"><span class="dot"></span>🎲 Mystery</button>
-            <button id="vibe-fresh" class="vibe pos6" data-vibe="fresh"><span class="dot"></span>🧼 Fresh</button>
-            <button id="vibe-custom" class="vibe pos7" data-vibe="custom"><span class="dot"></span>💬 Custom</button>
-          </div>
-
-          <div id="donut" class="donut" aria-label="Snack donut"></div>
-
-          <div class="coreText">
+          <div class="centerText">
             <div>
-              <h3>Spin. Hover. Enter.</h3>
-              <p>Futuristic menu. No dead sandwich energy.</p>
+              <b>Spin. Hover. Enter.</b>
+              <span>Futuristic menu. No dead sandwich energy.</span>
             </div>
           </div>
+
+          <div class="vibes" id="vibes">
+            <!-- Each vibe uses data- attributes (NO IDs needed) -->
+            <div class="vibe" style="--a:0deg"
+              data-kicker="🏋️ Gym"
+              data-title="Gym Packs"
+              data-desc="Starter • OG • Sweat Session • Afterburn."
+              data-img="assets/gym.jpg"
+              data-vid="assets/gym.mp4"
+              data-link="gym.html"
+            ><i>🏋️</i> Gym</div>
+
+            <div class="vibe" style="--a:60deg"
+              data-kicker="🧠 Lock-In"
+              data-title="Lock-In Packs"
+              data-desc="Revision fuel • all-nighter kit • focus mode."
+              data-img="assets/lockin.jpg"
+              data-vid="assets/lockin.mp4"
+              data-link="lock-in.html"
+            ><i>🧠</i> Lock-in</div>
+
+            <div class="vibe" style="--a:120deg"
+              data-kicker="🧰 Work"
+              data-title="Shift Packs"
+              data-desc="Cheaper than random shop runs. No dead meal deals."
+              data-img="assets/work.jpg"
+              data-vid="assets/work.mp4"
+              data-link="work.html"
+            ><i>🧰</i> Work</div>
+
+            <div class="vibe" style="--a:180deg"
+              data-kicker="🎮 Gaming"
+              data-title="Gaming Packs"
+              data-desc="Queue • clutch • late nights. Don’t tilt hungry."
+              data-img="assets/gaming.jpg"
+              data-vid="assets/gaming.mp4"
+              data-link="gaming.html"
+            ><i>🎮</i> Gaming</div>
+
+            <div class="vibe" style="--a:240deg"
+              data-kicker="🎲 Mystery"
+              data-title="RNG Drops"
+              data-desc="Lucky dip energy. Loot drop vibes. Could be elite."
+              data-img="assets/mystery.jpg"
+              data-vid="assets/mystery.mp4"
+              data-link="mystery.html"
+            ><i>🎲</i> Mystery</div>
+
+            <div class="vibe" style="--a:300deg"
+              data-kicker="🧼 Fresh"
+              data-title="Fresh Packs"
+              data-desc="Deo • wipes • mints • smell-good. Reset your day."
+              data-img="assets/fresh.jpg"
+              data-vid="assets/fresh.mp4"
+              data-link="fresh.html"
+            ><i>🧼</i> Fresh</div>
+          </div>
         </div>
-      </section>
+      </div>
+    </section>
+  </main>
 
+  <!-- Premium preview card (single, reusable) -->
+  <aside class="preview" id="preview" aria-live="polite">
+    <div class="pvMedia">
+      <div class="pvClose" id="pvClose" title="Close">✕</div>
+      <img id="pvImg" alt="" />
+      <video id="pvVid" muted playsinline preload="metadata"></video>
+      <div class="pvShade" aria-hidden="true"></div>
     </div>
-  </div>
-
-  <!-- PREMIUM HOVER PREVIEW -->
-  <div id="preview" class="preview" aria-live="polite">
-    <div id="previewMedia" class="previewMedia"></div>
-    <div class="previewBody">
-      <div id="previewPill" class="previewPill"></div>
-      <h3 id="previewTitle">—</h3>
-      <p id="previewDesc">—</p>
-      <div class="previewFooter">
-        <span id="previewBtn" class="previewBtn">Enter</span>
-        <span class="previewHint">Hover = preview • Click = enter</span>
+    <div class="pvBody">
+      <div class="pvKicker" id="pvKicker">✨ Preview</div>
+      <h3 class="pvTitle" id="pvTitle">Title</h3>
+      <p class="pvDesc" id="pvDesc">Description</p>
+      <div class="pvBtns">
+        <button class="pvBtn primary" id="pvEnter" type="button">Enter</button>
+        <button class="pvBtn" id="pvPin" type="button">Keep open</button>
       </div>
     </div>
-  </div>
+  </aside>
 
   <script>
-    /* ===== hero video: show only when loaded ===== */
-    (function(){
-      const v = document.getElementById("heroVid");
-      if(!v) return;
-      const ready = () => v.setAttribute("data-ready","1");
-      v.addEventListener("canplay", ready, {once:true});
-      v.addEventListener("loadeddata", ready, {once:true});
-      v.addEventListener("error", () => v.removeAttribute("data-ready"));
-      v.play().catch(()=>{});
-    })();
-
-    /* ===== sound: lightweight (no files) ===== */
+    // ===== Sound toggle (placeholder - your future SFX can hook into this)
     let soundOn = false;
-    const soundBtn = document.getElementById("soundBtn");
-    const soundState = document.getElementById("soundState");
-    let audioCtx = null;
-
-    function beep(type="hover"){
-      if(!soundOn) return;
-      try{
-        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.type = "sine";
-        o.frequency.value = type === "click" ? 520 : 740;
-        g.gain.value = 0.0001;
-        o.connect(g); g.connect(audioCtx.destination);
-        o.start();
-        const t = audioCtx.currentTime;
-        g.gain.exponentialRampToValueAtTime(0.08, t + 0.01);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + (type==="click" ? 0.08 : 0.05));
-        o.stop(t + (type==="click" ? 0.09 : 0.06));
-      }catch(e){}
-    }
-
-    function setSound(on){
-      soundOn = on;
-      soundState.textContent = on ? "On" : "Off";
-      soundBtn.style.borderColor = on ? "rgba(255,212,0,.35)" : "rgba(255,255,255,.10)";
-      soundBtn.style.background = on ? "rgba(255,212,0,.12)" : "rgba(5,6,10,.35)";
-      if(on) beep("click");
-    }
-
-    soundBtn.addEventListener("click", () => setSound(!soundOn));
-    soundBtn.addEventListener("keydown", (e) => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setSound(!soundOn); } });
-
-    /* ===== vibe data (NO GUESSING) ===== */
-    const WA = "https://wa.me/447483849357?text=";
-
-    const VIBES = {
-      gym:     { pill:"🏋️ Gym",      title:"Gym Packs",    desc:"Starter • OG • Sweat Session • Afterburn", img:"assets/gym.jpg",     link:"gym.html" },
-      lockin:  { pill:"🧠 Lock-In",   title:"Lock-In Packs",desc:"Revision fuel • All-nighter kit • Focus mode", img:"assets/lockin.jpg",  link:"lock-in.html" },
-      work:    { pill:"🧰 Work",     title:"Shift Packs",  desc:"Cheaper than shop runs. No dead meal deals.", img:"assets/work.jpg",    link:"work.html" },
-      gaming:  { pill:"🎮 Gaming",   title:"Gaming Packs", desc:"Queue • clutch • late nights. Don’t tilt hungry.", img:"assets/gaming.jpg", link:"gaming.html" },
-      mystery: { pill:"🎲 Mystery",  title:"RNG Drops",    desc:"Loot drop vibes. Random. Could be elite.", img:"assets/mystery.jpg", link:"mystery.html" },
-      fresh:   { pill:"🧼 Fresh",    title:"Fresh Packs",  desc:"Deo • wipes • mints • reset your day.", img:"assets/fresh.jpg",   link:"fresh.html" },
-      custom:  { pill:"💬 Custom",   title:"Build Me One", desc:"Tell me your budget + vibe. I’ll build it.", img:"assets/fresh.jpg",  link: WA + encodeURIComponent("Yo Snack Packz - I want a custom pack. Budget £__ | Vibe __ | Notes: __") }
-    };
-
-    /* ===== preview panel ===== */
-    const preview = document.getElementById("preview");
-    const previewMedia = document.getElementById("previewMedia");
-    const previewPill = document.getElementById("previewPill");
-    const previewTitle = document.getElementById("previewTitle");
-    const previewDesc = document.getElementById("previewDesc");
-    const previewBtn = document.getElementById("previewBtn");
-    let activeVibeKey = null;
-
-    function showPreview(key){
-      const v = VIBES[key];
-      if(!v) return;
-      activeVibeKey = key;
-      previewMedia.style.backgroundImage = `url('${v.img}')`;
-      previewPill.textContent = v.pill;
-      previewTitle.textContent = v.title;
-      previewDesc.textContent = v.desc;
-      preview.classList.add("on");
-    }
-    function hidePreview(){
-      preview.classList.remove("on");
-      activeVibeKey = null;
-    }
-    previewBtn.addEventListener("click", () => {
-      if(!activeVibeKey) return;
-      beep("click");
-      location.href = VIBES[activeVibeKey].link;
+    const soundBtn = document.getElementById('soundBtn');
+    soundBtn.addEventListener('click', () => {
+      soundOn = !soundOn;
+      soundBtn.textContent = soundOn ? "🔊 Sound: On" : "🔈 Sound: Off";
     });
 
-    /* ===== spin logic: DONUT + MENU RING (both draggable) ===== */
-    const donut = document.getElementById("donut");
-    const ring = document.getElementById("menuRing");
-    const hub = document.getElementById("hub");
+    // ===== Preview system (no IDs on vibes needed)
+    const preview = document.getElementById('preview');
+    const pvImg = document.getElementById('pvImg');
+    const pvVid = document.getElementById('pvVid');
+    const pvKicker = document.getElementById('pvKicker');
+    const pvTitle = document.getElementById('pvTitle');
+    const pvDesc = document.getElementById('pvDesc');
+    const pvEnter = document.getElementById('pvEnter');
+    const pvPin = document.getElementById('pvPin');
+    const pvClose = document.getElementById('pvClose');
 
-    let rot = 0; // shared rotation
-    let down = false;
-    let lastX = 0;
+    let pinned = false;
+    let currentLink = null;
+
+    function showPreviewFor(el){
+      const kicker = el.dataset.kicker || "✨ Preview";
+      const title  = el.dataset.title  || "Snack Packz";
+      const desc   = el.dataset.desc   || "";
+      const imgSrc = el.dataset.img    || "";
+      const vidSrc = el.dataset.vid    || "";
+      currentLink  = el.dataset.link   || null;
+
+      pvKicker.textContent = kicker;
+      pvTitle.textContent = title;
+      pvDesc.textContent = desc;
+
+      // Always set image immediately (fast)
+      pvImg.src = imgSrc;
+      pvImg.alt = title;
+
+      // Reset video
+      pvVid.classList.remove('ready');
+      pvVid.pause();
+      pvVid.removeAttribute('src');
+      pvVid.load();
+
+      if(vidSrc){
+        pvVid.src = vidSrc;
+
+        const markReady = () => {
+          pvVid.classList.add('ready');
+          // try play (only works muted)
+          pvVid.play().catch(()=>{});
+        };
+
+        pvVid.onloadeddata = markReady;
+        pvVid.oncanplay = markReady;
+        pvVid.onerror = () => {
+          pvVid.classList.remove('ready');
+        };
+        pvVid.load();
+      }
+
+      preview.classList.add('show');
+    }
+
+    function hidePreview(){
+      if(pinned) return;
+      preview.classList.remove('show');
+      pvVid.pause();
+    }
+
+    document.querySelectorAll('.vibe').forEach(v => {
+      v.addEventListener('mouseenter', () => {
+        if(pinned) return;
+        showPreviewFor(v);
+        setActive(v);
+      });
+      v.addEventListener('mouseleave', () => {
+        // small delay so it doesn't flicker if you move fast
+        setTimeout(() => { hidePreview(); }, 120);
+      });
+
+      // Click = snap to it + open page
+      v.addEventListener('click', () => {
+        showPreviewFor(v);
+        pinned = false;
+        pvPin.textContent = "Keep open";
+        snapToVibe(v);
+        if(currentLink) window.location.href = currentLink;
+      });
+
+      // Mobile tap preview first, second tap enter
+      let tapped = false;
+      v.addEventListener('touchstart', (e) => {
+        if(!tapped){
+          e.preventDefault();
+          tapped = true;
+          showPreviewFor(v);
+          setActive(v);
+          snapToVibe(v);
+          setTimeout(()=> tapped = false, 900);
+        }
+      }, {passive:false});
+    });
+
+    pvEnter.addEventListener('click', () => {
+      if(currentLink) window.location.href = currentLink;
+    });
+
+    pvPin.addEventListener('click', () => {
+      pinned = !pinned;
+      pvPin.textContent = pinned ? "Unpin" : "Keep open";
+      if(!pinned) hidePreview();
+    });
+
+    pvClose.addEventListener('click', () => {
+      pinned = false;
+      pvPin.textContent = "Keep open";
+      hidePreview();
+    });
+
+    // ===== Ring + donut spin (drag + wheel + snap)
+    const donutWrap = document.getElementById('donutWrap');
+    const donut = document.getElementById('donut');
+    const vibes = document.getElementById('vibes');
+
+    let rot = -20; // start angle
+    let dragging = false;
+    let startX = 0;
+    let startRot = 0;
 
     function applyRot(){
       donut.style.transform = `rotate(${rot}deg)`;
-      ring.style.transform = `rotate(${rot}deg)`;
+      vibes.style.transform = `rotate(${rot}deg)`;
     }
     applyRot();
 
-    function startDrag(x){
-      down = true;
-      lastX = x;
-    }
-    function dragMove(x){
-      if(!down) return;
-      const dx = x - lastX;
-      rot += dx * 0.35;
-      lastX = x;
+    // drag to rotate
+    donutWrap.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      donutWrap.setPointerCapture(e.pointerId);
+      startX = e.clientX;
+      startRot = rot;
+    });
+    donutWrap.addEventListener('pointermove', (e) => {
+      if(!dragging) return;
+      const dx = e.clientX - startX;
+      rot = startRot + dx * 0.35;
       applyRot();
-    }
-    function endDrag(){ down = false; }
+    });
+    donutWrap.addEventListener('pointerup', () => { dragging = false; });
+    donutWrap.addEventListener('pointercancel', () => { dragging = false; });
 
-    // Drag anywhere on the hub: spins both
-    hub.addEventListener("pointerdown", (e) => { startDrag(e.clientX); hub.setPointerCapture(e.pointerId); });
-    hub.addEventListener("pointermove", (e) => dragMove(e.clientX));
-    hub.addEventListener("pointerup", endDrag);
-
-    // Mouse wheel spins ring (and donut with it)
-    hub.addEventListener("wheel", (e) => {
+    // wheel scroll rotates ring (THIS fixes your "wait ages" problem)
+    donutWrap.addEventListener('wheel', (e) => {
       e.preventDefault();
-      rot += e.deltaY * 0.18;
+      rot += (e.deltaY > 0 ? 18 : -18);
       applyRot();
     }, {passive:false});
 
-    // Keyboard support
-    window.addEventListener("keydown", (e)=>{
-      if(e.key==="ArrowLeft"){ rot -= 8; applyRot(); }
-      if(e.key==="ArrowRight"){ rot += 8; applyRot(); }
-    });
+    // snap to clicked vibe quickly
+    function snapToVibe(el){
+      const a = parseFloat((el.style.getPropertyValue('--a') || "0").replace("deg","")) || 0;
+      // We want that vibe to face roughly right side (a target angle)
+      // Vibe uses rotate(var(--a)) then we rotate the whole vibes container by rot,
+      // so visible angle = a + rot. Target visible angle = ~20deg.
+      const targetVisible = 20;
+      const desiredRot = targetVisible - a;
 
-    /* ===== wire vibe buttons ===== */
-    document.querySelectorAll(".vibe").forEach(btn=>{
-      const key = btn.getAttribute("data-vibe");
-      btn.addEventListener("mouseenter", ()=>{ if(VIBES[key]){ showPreview(key); beep("hover"); } });
-      btn.addEventListener("mouseleave", ()=> hidePreview());
-      btn.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        if(!VIBES[key]) return;
-        beep("click");
-        location.href = VIBES[key].link;
-      });
+      animateTo(desiredRot, 260);
+      setActive(el);
+    }
 
-      // mobile: tap previews first then tap again enters (prevents accidental)
-      let tapped = false;
-      btn.addEventListener("touchstart", ()=>{
-        if(!VIBES[key]) return;
-        if(!tapped){
-          showPreview(key);
-          tapped = true;
-          setTimeout(()=>tapped=false, 1200);
-        }
-      }, {passive:true});
-    });
+    function animateTo(target, ms){
+      const from = rot;
+      const start = performance.now();
+      function step(t){
+        const p = Math.min(1, (t - start) / ms);
+        const ease = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        rot = from + (target - from) * ease;
+        applyRot();
+        if(p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    function setActive(el){
+      document.querySelectorAll('.vibe').forEach(x => x.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Optional: start with Gym selected + preview (feels "alive")
+    const first = document.querySelector('.vibe');
+    if(first){
+      setActive(first);
+      showPreviewFor(first);
+      setTimeout(()=>{ if(!pinned) hidePreview(); }, 1200);
+    }
   </script>
 </body>
 </html>
