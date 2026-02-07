@@ -3,98 +3,72 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snack Packz — Snack Core</title>
+  <title>Snack Packz</title>
+  <meta name="description" content="Snack Packz — Gym • Lock-In • Work • Gaming • Mystery • Fresh" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg0:#05060a;
-      --bg1:#070815;
-      --ink:#eef2ff;
-      --mut:rgba(238,242,255,.72);
+      --bg:#07080c;
+      --panel:#0f1220;
       --line:rgba(255,255,255,.10);
-      --glass:rgba(255,255,255,.06);
-      --glass2:rgba(255,255,255,.10);
-
-      --y:#ffd400;
-      --o:#ff9f1a;
-      --c:#33d6ff;
-      --v:#9a7bff;
-      --g:#32ff92;
-
-      --r:22px;
-      --shadow: 0 30px 120px rgba(0,0,0,.75);
-      --shadow2: 0 14px 60px rgba(0,0,0,.55);
+      --text:#eef1f7;
+      --muted:rgba(238,241,247,.72);
+      --yellow:#ffd400;
+      --orange:#ff9f1a;
+      --shadow: 0 18px 70px rgba(0,0,0,.55);
+      --radius: 22px;
+      --max: 1180px;
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
       margin:0;
-      color:var(--ink);
+      color:var(--text);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(1100px 680px at 12% -10%, rgba(255,212,0,.18), transparent 60%),
-        radial-gradient(1000px 700px at 110% 10%, rgba(51,214,255,.14), transparent 60%),
-        radial-gradient(1200px 700px at 55% 120%, rgba(154,123,255,.12), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow:hidden;
+        radial-gradient(900px 500px at 15% -10%, rgba(255,212,0,.18), transparent 55%),
+        radial-gradient(900px 500px at 110% 10%, rgba(120,170,255,.12), transparent 55%),
+        linear-gradient(180deg, #05060a, #090a16);
     }
-    a{color:inherit; text-decoration:none}
-    button{font:inherit}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:var(--max);margin:0 auto;padding:18px}
 
-    /* Top bar */
-    .top{
-      position: fixed; top:0; left:0; right:0;
-      z-index: 50;
-      padding: 14px 18px;
-      display:flex; align-items:center; justify-content:space-between;
-      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,0));
+    /* Top nav */
+    .nav{
+      position: sticky; top:0; z-index:50;
+      padding: 14px 0;
+      background: linear-gradient(180deg, rgba(0,0,0,.65), rgba(0,0,0,0));
       backdrop-filter: blur(10px);
     }
-    .brand{
-      display:flex; align-items:center; gap:12px;
-      min-width: 0;
-    }
+    .navrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}
     .mark{
-      width:42px; height:42px; border-radius:16px;
-      background: linear-gradient(135deg, var(--y), var(--o));
+      width:42px;height:42px;border-radius:16px;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
       box-shadow: 0 16px 60px rgba(255,212,0,.18);
-      flex: 0 0 auto;
+      flex:0 0 auto;
     }
-    .titleblock{min-width:0}
     .title{
       font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-size: 26px;
-      line-height: 1;
       margin:0;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      font-size: 30px;
+      line-height:1;
     }
-    .subtitle{
-      margin:4px 0 0;
-      color:var(--mut);
-      font-size: 12.5px;
-      white-space: nowrap;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
-    .top-actions{
-      display:flex; align-items:center; gap:10px;
-    }
+    .subtitle{margin:4px 0 0;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .actions{display:flex;gap:10px;align-items:center}
     .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:10px 12px;
-      border-radius: 999px;
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:10px 12px;border-radius:999px;
       border:1px solid var(--line);
       background: rgba(255,255,255,.04);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      color: rgba(238,242,255,.86);
-      font-weight: 800;
-      font-size: 12px;
+      font-weight:900;font-size:12px;
       user-select:none;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
     .pill.primary{
       border-color: rgba(255,212,0,.35);
@@ -102,541 +76,250 @@
     }
     .pill:active{transform: translateY(1px)}
 
-    /* Stage */
-    .stage{
-      position: relative;
-      height:100%;
-      display:grid;
-      place-items:center;
-      padding-top: 82px;
-    }
-
-    /* subtle grid */
-    .gridline{
-      position:absolute; inset:-40%;
-      background:
-        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
-      background-size: 62px 62px;
-      transform: rotate(12deg);
-      opacity:.05;
-      mask-image: radial-gradient(circle at 50% 45%, #000 0 40%, transparent 68%);
-      pointer-events:none;
-    }
-
-    /* Core container gives real 3D feel */
-    .core-wrap{
-      position: relative;
-      width: min(520px, 86vw);
-      height: min(520px, 86vw);
-      display:grid;
-      place-items:center;
-      transform-style: preserve-3d;
-      perspective: 1100px;
-      user-select:none;
-    }
-
-    /* Holo ring behind core */
-    .halo{
-      position:absolute;
-      width: 120%;
-      height: 120%;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.12), transparent 55%),
-        conic-gradient(from 0deg,
-          rgba(255,212,0,.00),
-          rgba(255,212,0,.60),
-          rgba(51,214,255,.45),
-          rgba(154,123,255,.40),
-          rgba(255,159,26,.55),
-          rgba(255,212,0,.00));
-      filter: blur(0px) drop-shadow(0 0 18px rgba(255,212,0,.18)) drop-shadow(0 0 28px rgba(51,214,255,.12));
-      opacity:.55;
-      transform: translateZ(-80px);
-      animation: haloSpin 10s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes haloSpin{ to{ transform: translateZ(-80px) rotate(360deg);} }
-
-    /* The "snack" (donut) */
-    .snack{
-      position: relative;
-      width: 58%;
-      height: 58%;
-      border-radius: 50%;
-      transform-style: preserve-3d;
-      filter: drop-shadow(0 40px 90px rgba(0,0,0,.70));
-    }
-
-    /* Donut face */
-    .donut{
-      position:absolute; inset:0;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.28), transparent 35%),
-        radial-gradient(circle at 70% 65%, rgba(0,0,0,.35), transparent 40%),
-        radial-gradient(circle at 50% 50%, rgba(0,0,0,.30) 0 22%, transparent 23%),
-        radial-gradient(circle at 50% 50%, rgba(255,212,0,.85), rgba(255,159,26,.55), rgba(154,123,255,.30));
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.14),
-        inset 0 -30px 60px rgba(0,0,0,.35);
-      transform: translateZ(22px);
-    }
-
-    /* Donut side thickness illusion */
-    .donut::after{
-      content:"";
-      position:absolute; inset:0;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 50% 50%, transparent 0 22%, rgba(0,0,0,.55) 23% 26%, transparent 27%),
-        linear-gradient(180deg, rgba(0,0,0,.45), rgba(255,255,255,.08));
-      transform: translateZ(-22px) scale(1.02);
-      filter: blur(.2px);
-      opacity:.9;
-    }
-
-    /* glossy frosting band */
-    .frost{
-      position:absolute; inset: -6%;
-      border-radius:50%;
-      background:
-        conic-gradient(from 220deg,
-          rgba(255,255,255,.00),
-          rgba(255,255,255,.20),
-          rgba(255,255,255,.00),
-          rgba(255,255,255,.12),
-          rgba(255,255,255,.00));
-      transform: translateZ(32px);
-      mix-blend-mode: screen;
-      opacity:.65;
-      pointer-events:none;
-    }
-
-    /* Logo plaque */
-    .plaque{
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%) translateZ(44px);
-      border-radius: 18px;
-      padding: 10px 14px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.28);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 18px 60px rgba(0,0,0,.45);
-      text-align:center;
-      min-width: 160px;
-    }
-    .plaque .p1{
-      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin:0;
-      font-size: 20px;
-    }
-    .plaque .p2{
-      margin:4px 0 0;
-      color: rgba(238,242,255,.72);
-      font-weight: 800;
-      font-size: 12px;
-    }
-
-    /* instructions */
-    .hint{
-      position:absolute;
-      bottom: -18px;
-      width: 100%;
-      text-align:center;
-      color: rgba(238,242,255,.62);
-      font-size: 12.5px;
-    }
-
-    /* Orbit menu nodes */
-    .orbit{
-      position:absolute; inset:0;
-      pointer-events:none;
-      transform-style: preserve-3d;
-    }
-
-    .node{
-      position:absolute;
-      left:50%; top:50%;
-      width: 170px;
-      transform: translate(-50%,-50%);
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow2);
+    /* Hero */
+    .hero{
+      margin-top: 6px;
+      border:1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      box-shadow: var(--shadow);
       overflow:hidden;
-      opacity:0;
-      translate: 0 0;
-      pointer-events:none;
-      transition: opacity .35s ease, transform .55s cubic-bezier(.2,.9,.2,1);
+      padding: 22px;
+      position: relative;
     }
-
-    .node::before{
+    .hero::before{
       content:"";
       position:absolute; inset:-1px;
       background:
-        radial-gradient(220px 90px at 15% 20%, rgba(255,212,0,.22), transparent 60%),
-        radial-gradient(220px 90px at 85% 0%, rgba(51,214,255,.16), transparent 60%);
-      opacity:.55;
+        radial-gradient(900px 420px at 15% 20%, rgba(255,212,0,.14), transparent 60%),
+        radial-gradient(900px 420px at 85% 0%, rgba(120,170,255,.12), transparent 60%);
+      opacity:.9;
       pointer-events:none;
     }
+    .heroinner{position:relative;z-index:2;display:grid;gap:10px}
+    .hero h2{margin:0;font-size:28px;letter-spacing:-.2px}
+    .hero p{margin:0;color:var(--muted);line-height:1.45;font-size:14px;max-width:62ch}
 
-    .node .topline{
-      position:absolute; left:10px; top:10px; right:10px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      z-index:2;
-    }
-
-    .badge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:7px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.25);
-      color: rgba(238,242,255,.88);
-      font-weight: 900;
-      font-size: 12px;
-      white-space:nowrap;
-    }
-    .go{
-      display:inline-flex; align-items:center; justify-content:center;
-      width: 38px; height: 38px;
-      border-radius: 14px;
-      border:1px solid rgba(255,212,0,.35);
-      background: rgba(255,212,0,.12);
-      font-weight: 1000;
-      letter-spacing:.5px;
-    }
-
-    .node .body{
-      position:relative;
-      z-index:2;
-      padding: 56px 14px 14px;
-    }
-    .node h3{
-      margin:0 0 6px;
-      font-size: 16px;
-      letter-spacing:.2px;
-      text-transform: uppercase;
-      font-weight: 1000;
-    }
-    .node p{
-      margin:0;
-      color: rgba(238,242,255,.74);
-      font-size: 12.5px;
-      line-height: 1.35;
-    }
-
-    /* show orbit on hover/focus */
-    .core-wrap.is-open .node{
-      opacity:1;
-      pointer-events:auto;
-    }
-
-    /* positions (left side + right side) */
-    .core-wrap.is-open .n-gym{    transform: translate(-50%,-50%) translate(-260px,-170px) rotate(-2deg); }
-    .core-wrap.is-open .n-lockin{ transform: translate(-50%,-50%) translate( 260px,-170px) rotate( 2deg); }
-    .core-wrap.is-open .n-work{   transform: translate(-50%,-50%) translate(-320px,  20px) rotate(-2deg); }
-    .core-wrap.is-open .n-gaming{ transform: translate(-50%,-50%) translate( 320px,  20px) rotate( 2deg); }
-    .core-wrap.is-open .n-myst{   transform: translate(-50%,-50%) translate(-260px, 200px) rotate(-2deg); }
-    .core-wrap.is-open .n-fresh{  transform: translate(-50%,-50%) translate( 260px, 200px) rotate( 2deg); }
-
-    /* hover polish */
-    .node:hover{
-      transform: translate(-50%,-50%) scale(1.03) !important;
-      border-color: rgba(255,255,255,.20);
-    }
-    .node:active{ transform: translate(-50%,-50%) scale(1.01) !important; }
-
-    /* Make nodes clickable with full overlay link */
-    .node a{
-      position:absolute; inset:0;
-      z-index:5;
-    }
-
-    /* Bottom mini footer */
-    .mini{
-      position: fixed;
-      left:0; right:0; bottom:0;
-      padding: 14px 18px;
-      display:flex; justify-content:space-between; align-items:center;
-      gap:12px;
-      color: rgba(238,242,255,.62);
-      font-size: 12px;
-      background: linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0));
-      backdrop-filter: blur(10px);
-    }
-    .mini .right{
-      display:flex; gap:10px; align-items:center;
-    }
-    .tag{
-      padding:8px 10px;
-      border-radius: 999px;
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
       border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.22);
+      color: rgba(238,241,247,.85);
+      font-size:12px;
+      font-weight:800;
+      backdrop-filter: blur(6px);
+    }
+
+    /* Grid */
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:repeat(12,1fr);
+      gap:14px;
+    }
+    .card{
+      grid-column: span 12;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
       background: rgba(255,255,255,.04);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      min-height: 220px;
+      transform: translateY(0);
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    @media (min-width: 860px){
+      .card.span6{grid-column:span 6}
+      .card.span4{grid-column:span 4}
     }
 
-    /* VFX sparkle */
-    .spark{
-      position: fixed;
-      width: 10px; height: 10px;
-      border-radius: 50%;
+    /* Poster image always works */
+    .media{
+      position:absolute; inset:0;
+      background-size:cover;
+      background-position:center;
+      transform: scale(1.05);
+      filter: saturate(1.05) contrast(1.05);
+      opacity:.95;
+      transition: transform 1.2s ease;
+    }
+    .overlay{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.72));
       pointer-events:none;
-      background: radial-gradient(circle, rgba(255,212,0,1), rgba(255,212,0,0));
-      filter: drop-shadow(0 0 10px rgba(255,212,0,.35));
-      animation: pop .55s ease-out forwards;
-      z-index: 100;
     }
-    @keyframes pop{
-      0%{ transform: translate(-50%,-50%) scale(.6); opacity: 1;}
-      100%{ transform: translate(-50%,-80%) scale(2.1); opacity: 0;}
+    .content{
+      position:absolute; left:14px; right:14px; bottom:14px;
+      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
     }
+    .kicker{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.25);
+      font-size:12px;
+      font-weight:900;
+    }
+    .name{
+      margin:10px 0 4px;
+      font-weight:1000;
+      font-size:18px;
+      text-transform:uppercase;
+      letter-spacing:.2px;
+    }
+    .desc{margin:0;color:rgba(238,241,247,.82);font-size:13px;line-height:1.35;max-width:50ch}
+    .go{
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(255,212,0,.35);
+      background: rgba(255,212,0,.14);
+      font-weight:1000;
+      text-transform:uppercase;
+      font-size:12px;
+      flex:0 0 auto;
+    }
+    .card:hover{
+      transform: translateY(-3px);
+      box-shadow: 0 24px 90px rgba(0,0,0,.60);
+      border-color: rgba(255,255,255,.16);
+    }
+    .card:hover .media{transform: scale(1.10)}
+    .card:hover .go{background: rgba(255,212,0,.20)}
+    .cardlink{position:absolute; inset:0; z-index:2}
 
-    /* Mobile: stack nodes vertically rather than off-screen */
-    @media (max-width: 860px){
-      .node{ width: 160px; }
-      .core-wrap.is-open .n-gym{    transform: translate(-50%,-50%) translate(-170px,-170px); }
-      .core-wrap.is-open .n-lockin{ transform: translate(-50%,-50%) translate( 170px,-170px); }
-      .core-wrap.is-open .n-work{   transform: translate(-50%,-50%) translate(-200px,  10px); }
-      .core-wrap.is-open .n-gaming{ transform: translate(-50%,-50%) translate( 200px,  10px); }
-      .core-wrap.is-open .n-myst{   transform: translate(-50%,-50%) translate(-170px, 190px); }
-      .core-wrap.is-open .n-fresh{  transform: translate(-50%,-50%) translate( 170px, 190px); }
-      .hint{ bottom:-26px }
-    }
-
-    /* reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .halo{ animation:none }
-      .node{ transition:none }
+    footer{
+      margin:18px 0 10px;
+      text-align:center;
+      color: rgba(238,241,247,.60);
+      font-size:12.5px;
     }
   </style>
 </head>
 
 <body>
-  <div class="top">
-    <div class="brand">
-      <div class="mark" aria-hidden="true"></div>
-      <div class="titleblock">
-        <h1 class="title">Snack Packz</h1>
-        <p class="subtitle">Gym • Lock-In • Work • Gaming • Mystery • Fresh</p>
-      </div>
-    </div>
-    <div class="top-actions">
-      <button class="pill" id="soundBtn" type="button">🔊 Sound: Off</button>
-      <a class="pill primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">Order</a>
-    </div>
-  </div>
-
-  <main class="stage">
-    <div class="gridline" aria-hidden="true"></div>
-
-    <div class="core-wrap" id="core" aria-label="Snack Core">
-      <div class="halo" aria-hidden="true"></div>
-
-      <div class="snack" id="snack">
-        <div class="donut" aria-hidden="true"></div>
-        <div class="frost" aria-hidden="true"></div>
-
-        <div class="plaque">
-          <p class="p1">SNACK PACKZ</p>
-          <p class="p2">Hover / tap to open</p>
+  <div class="wrap">
+    <div class="nav">
+      <div class="navrow">
+        <div class="brand">
+          <div class="mark"></div>
+          <div>
+            <h1 class="title">Snack Packz</h1>
+            <p class="subtitle">Gym • Lock-In • Work • Gaming • Mystery • Fresh</p>
+          </div>
+        </div>
+        <div class="actions">
+          <a class="pill" href="#shop">Shop</a>
+          <a class="pill primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">Order</a>
         </div>
       </div>
+    </div>
 
-      <div class="orbit" aria-hidden="false">
-        <div class="node n-gym">
-          <a href="gym.html" aria-label="Gym Packs"></a>
-          <div class="topline"><span class="badge">🏋️ Gym</span><span class="go">→</span></div>
-          <div class="body"><h3>Gym Packs</h3><p>Starter • OG • Sweat Session • Afterburn.</p></div>
+    <section class="hero">
+      <div class="heroinner">
+        <h2>Packs for real life. Not dead sandwiches.</h2>
+        <p>Pick a category. Pick a pack. Message to order. Stock changes daily so we swap like-for-like if something sells out.</p>
+        <div class="chips">
+          <span class="chip">💛 Sticker inside</span>
+          <span class="chip">🎟️ Prize draw entry</span>
+          <span class="chip">🎲 RNG drops sometimes</span>
+          <span class="chip">⚠️ No energy drinks to under 16s</span>
         </div>
+      </div>
+    </section>
 
-        <div class="node n-lockin">
-          <a href="lock-in.html" aria-label="Lock-In Packs"></a>
-          <div class="topline"><span class="badge">🧠 Lock-In</span><span class="go">→</span></div>
-          <div class="body"><h3>Lock-In</h3><p>Revision fuel • all-nighter kit • focus mode.</p></div>
-        </div>
-
-        <div class="node n-work">
-          <a href="work.html" aria-label="Work Packs"></a>
-          <div class="topline"><span class="badge">🧰 Work</span><span class="go">→</span></div>
-          <div class="body"><h3>Shift Packs</h3><p>Cheaper than random shop runs. No dead meal deals.</p></div>
-        </div>
-
-        <div class="node n-gaming">
-          <a href="gaming.html" aria-label="Gaming Packs"></a>
-          <div class="topline"><span class="badge">🎮 Gaming</span><span class="go">→</span></div>
-          <div class="body"><h3>Gaming Packs</h3><p>Queue • clutch • late nights. Don’t tilt hungry.</p></div>
-        </div>
-
-        <div class="node n-myst">
-          <a href="mystery.html" aria-label="Mystery Drops"></a>
-          <div class="topline"><span class="badge">🎲 Mystery</span><span class="go">→</span></div>
-          <div class="body"><h3>RNG Drops</h3><p>Loot box vibes. Lucky dip. Could be elite.</p></div>
-        </div>
-
-        <div class="node n-fresh">
-          <a href="fresh.html" aria-label="Fresh Packs"></a>
-          <div class="topline"><span class="badge">🧼 Fresh</span><span class="go">→</span></div>
-          <div class="body"><h3>Fresh Packs</h3><p>Deo • wipes • mints • smell-good reset.</p></div>
+    <section class="grid" id="shop">
+      <div class="card span6">
+        <a class="cardlink" href="gym.html" aria-label="Gym Packs"></a>
+        <div class="media" style="background-image:url('assets/gym.jpg')"></div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div>
+            <span class="kicker">🏋️ Gym</span>
+            <div class="name">Gym Packs</div>
+            <p class="desc">Starter • OG • Sweat Session • Afterburn.</p>
+          </div>
+          <div class="go">Enter</div>
         </div>
       </div>
 
-      <div class="hint">Drag the snack to spin. Hover/tap to open categories.</div>
-    </div>
-  </main>
+      <div class="card span6">
+        <a class="cardlink" href="lock-in.html" aria-label="Lock-In Packs"></a>
+        <div class="media" style="background-image:url('assets/lockin.jpg')"></div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div>
+            <span class="kicker">🧠 Lock-In</span>
+            <div class="name">Lock-In Packs</div>
+            <p class="desc">Revision fuel • all-nighter kit • focus mode.</p>
+          </div>
+          <div class="go">Enter</div>
+        </div>
+      </div>
 
-  <div class="mini">
-    <div>⚠️ No energy drinks to under 16s. Always check ingredients/allergens.</div>
-    <div class="right">
-      <span class="tag">✨ Futuristic UI</span>
-      <span class="tag">🎟️ Prize draw</span>
-      <span class="tag">🎲 RNG drops</span>
-    </div>
+      <div class="card span4">
+        <a class="cardlink" href="work.html" aria-label="Work Packs"></a>
+        <div class="media" style="background-image:url('assets/work.jpg')"></div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div>
+            <span class="kicker">🧰 Work</span>
+            <div class="name">Shift Packs</div>
+            <p class="desc">Cheaper than random shop runs. No dead meal deals.</p>
+          </div>
+          <div class="go">Enter</div>
+        </div>
+      </div>
+
+      <div class="card span4">
+        <a class="cardlink" href="gaming.html" aria-label="Gaming Packs"></a>
+        <div class="media" style="background-image:url('assets/gaming.jpg')"></div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div>
+            <span class="kicker">🎮 Gaming</span>
+            <div class="name">Gaming Packs</div>
+            <p class="desc">Queue • clutch • late nights. Don’t tilt hungry.</p>
+          </div>
+          <div class="go">Enter</div>
+        </div>
+      </div>
+
+      <div class="card span4">
+        <a class="cardlink" href="mystery.html" aria-label="Mystery Packs"></a>
+        <div class="media" style="background-image:url('assets/mystery.jpg')"></div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div>
+            <span class="kicker">🎲 Mystery</span>
+            <div class="name">RNG Drops</div>
+            <p class="desc">Lucky dip energy. Loot drop vibes. Could be elite.</p>
+          </div>
+          <div class="go">Enter</div>
+        </div>
+      </div>
+
+      <div class="card span6">
+        <a class="cardlink" href="fresh.html" aria-label="Fresh Packs"></a>
+        <div class="media" style="background-image:url('assets/fresh.jpg')"></div>
+        <div class="overlay"></div>
+        <div class="content">
+          <div>
+            <span class="kicker">🧼 Fresh</span>
+            <div class="name">Fresh Packs</div>
+            <p class="desc">Deo • wipes • mints • smell-good reset.</p>
+          </div>
+          <div class="go">Enter</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>© <span id="year"></span> Snack Packz • stock changes • good vibes only</footer>
   </div>
 
   <script>
-    // ===== SOUND (clean + optional) =====
-    let soundOn = false;
-    const soundBtn = document.getElementById("soundBtn");
-
-    // tiny synth beeps (no file uploads)
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    let ctx = null;
-
-    function beep(type="hover"){
-      if(!soundOn) return;
-      if(!ctx) ctx = new AudioCtx();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-
-      const now = ctx.currentTime;
-      const f = type==="click" ? 520 : 820;
-      o.type = "triangle";
-      o.frequency.setValueAtTime(f, now);
-      o.frequency.exponentialRampToValueAtTime(f*0.72, now+0.06);
-
-      g.gain.setValueAtTime(0.0001, now);
-      g.gain.exponentialRampToValueAtTime(0.12, now+0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, now+0.10);
-
-      o.start(now);
-      o.stop(now+0.11);
-    }
-
-    soundBtn.addEventListener("click", async () => {
-      soundOn = !soundOn;
-      soundBtn.textContent = soundOn ? "🔊 Sound: On" : "🔊 Sound: Off";
-      if(soundOn){
-        // ensure audio context can start
-        try{ if(!ctx) ctx = new AudioCtx(); await ctx.resume(); }catch(e){}
-        beep("click");
-      }
-    });
-
-    // ===== OPEN/CLOSE ORBIT =====
-    const core = document.getElementById("core");
-    const snack = document.getElementById("snack");
-
-    // desktop hover
-    core.addEventListener("mouseenter", () => { core.classList.add("is-open"); beep("hover"); });
-    core.addEventListener("mouseleave", () => core.classList.remove("is-open"));
-
-    // mobile tap
-    core.addEventListener("touchstart", () => {
-      core.classList.add("is-open");
-      beep("hover");
-      setTimeout(() => core.classList.remove("is-open"), 1700);
-    }, {passive:true});
-
-    // node sfx + sparkle
-    document.querySelectorAll(".node").forEach(n => {
-      n.addEventListener("mouseenter", () => beep("hover"));
-      n.addEventListener("click", (e) => {
-        beep("click");
-        sparkle(e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth/2,
-                e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight/2);
-      });
-    });
-
-    function sparkle(x,y){
-      const s = document.createElement("div");
-      s.className = "spark";
-      s.style.left = x + "px";
-      s.style.top = y + "px";
-      document.body.appendChild(s);
-      setTimeout(() => s.remove(), 650);
-    }
-
-    // ===== DRAG TO SPIN (clean, premium) =====
-    let dragging = false;
-    let rx = -10, ry = 18;
-    let vx = 0, vy = 0;
-    let lastX = 0, lastY = 0;
-
-    function apply(){
-      // smooth inertia
-      ry += vy;
-      rx += vx;
-      vx *= 0.92;
-      vy *= 0.92;
-
-      // clamp
-      rx = Math.max(-40, Math.min(40, rx));
-      snack.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
-      requestAnimationFrame(apply);
-    }
-    apply();
-
-    function down(x,y){
-      dragging = true;
-      lastX = x; lastY = y;
-      core.classList.add("is-open");
-      beep("hover");
-    }
-    function move(x,y){
-      if(!dragging) return;
-      const dx = x - lastX;
-      const dy = y - lastY;
-      lastX = x; lastY = y;
-      vy = dx * 0.18;
-      vx = -dy * 0.12;
-    }
-    function up(){
-      dragging = false;
-      setTimeout(() => core.classList.remove("is-open"), 900);
-    }
-
-    snack.addEventListener("mousedown", (e) => down(e.clientX, e.clientY));
-    window.addEventListener("mousemove", (e) => move(e.clientX, e.clientY));
-    window.addEventListener("mouseup", up);
-
-    snack.addEventListener("touchstart", (e) => {
-      const t = e.touches[0];
-      down(t.clientX, t.clientY);
-    }, {passive:true});
-    window.addEventListener("touchmove", (e) => {
-      const t = e.touches[0];
-      if(t) move(t.clientX, t.clientY);
-    }, {passive:true});
-    window.addEventListener("touchend", up);
-
-    // subtle cursor sparkle sometimes (fun but not childish)
-    let lastSpark = 0;
-    window.addEventListener("mousemove", (e) => {
-      if(!soundOn) return; // only when sound mode is on (feels like "fun mode")
-      const now = performance.now();
-      if(now - lastSpark > 220){
-        lastSpark = now;
-        sparkle(e.clientX, e.clientY);
-      }
-    }, {passive:true});
+    document.getElementById('year').textContent = new Date().getFullYear();
   </script>
 </body>
 </html>
