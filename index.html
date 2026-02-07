@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Snack Packz — Forest</title>
+  <title>Snack Packz — 3D Forest</title>
   <meta name="theme-color" content="#050705"/>
 
   <style>
     :root{
       --fg:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.72);
-      --dim:rgba(255,255,255,.50);
+      --dim:rgba(255,255,255,.52);
       --accent:rgba(205,255,140,.92);
       --ease:cubic-bezier(.16,1,.3,1);
       --shadow: 0 30px 110px rgba(0,0,0,.70);
@@ -20,54 +20,20 @@
     body{
       margin:0;
       overflow:hidden;
-      background:#050705;
+      background:#030403;
       color:var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
 
-    /* WORLD */
-    #world{ position:fixed; inset:0; z-index:-5; background:#020302; }
-    #bg{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-      transform: scale(1.12);
-      filter: contrast(1.12) saturate(1.12) brightness(.80);
-      will-change: transform;
-      z-index:1;
+    /* Fullscreen 3D canvas */
+    #stage{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      background:#020302;
     }
 
-    /* Walkable floor (procedural) ABOVE video */
-    #floor{
-      position:absolute; inset:0;
-      z-index:2;
-      pointer-events:none;
-      opacity:1;
-      mix-blend-mode: normal;
-    }
-
-    /* Fog wall / boundary vibe */
-    #fogWall{
-      position:absolute; inset:0;
-      z-index:3;
-      pointer-events:none;
-      background:
-        radial-gradient(900px 520px at 50% 65%, rgba(0,0,0,0), rgba(0,0,0,.45) 60%, rgba(0,0,0,.80) 100%),
-        radial-gradient(900px 520px at 50% 85%, rgba(205,255,140,.05), rgba(0,0,0,0) 60%);
-      opacity:.95;
-    }
-
-    #fx{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; z-index:4; }
-
-    #grade{
-      position:absolute; inset:-1px; pointer-events:none; z-index:5;
-      background:
-        radial-gradient(1200px 700px at 18% 10%, rgba(0,0,0,.08), rgba(0,0,0,.70) 58%, rgba(0,0,0,.90) 100%),
-        radial-gradient(900px 600px at 78% 18%, rgba(205,255,140,.07), rgba(0,0,0,0) 60%),
-        linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,.14) 40%, rgba(0,0,0,.55));
-    }
-
-    /* TOP UI */
+    /* Top bar */
     #topbar{
       position:fixed; left:18px; right:18px; top:16px;
       display:flex; align-items:center; justify-content:space-between;
@@ -77,16 +43,17 @@
       border: 1px solid rgba(255,255,255,.10);
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
-      z-index:30;
+      z-index:50;
+      user-select:none;
     }
-    .brand{ display:flex; gap:10px; align-items:center; user-select:none; }
+    .brand{ display:flex; gap:10px; align-items:center; }
     .seed{
       width:10px; height:10px; border-radius:999px;
       background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.18) 35%, var(--accent) 72%, rgba(0,0,0,0));
       box-shadow: 0 0 0 7px rgba(205,255,140,.08);
     }
-    .brand b{ font-weight:900; letter-spacing:.2px; }
-    .brand small{ display:block; color:var(--dim); font-weight:650; margin-top:2px; }
+    .brand b{ font-weight:950; letter-spacing:.2px; }
+    .brand small{ display:block; color:var(--dim); font-weight:700; margin-top:2px; }
 
     .controls{ display:flex; gap:10px; align-items:center; }
     .pill{
@@ -95,25 +62,17 @@
       color: var(--fg);
       padding:10px 12px;
       border-radius: 999px;
-      font-weight:850;
+      font-weight:900;
       cursor:pointer;
       text-decoration:none;
       user-select:none;
       transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
       white-space:nowrap;
     }
-    .pill:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,.06);
-      border-color: rgba(255,255,255,.20);
-    }
-    .pill.cta{
-      background: rgba(255,255,255,.90);
-      color:#070a08;
-      border-color: rgba(255,255,255,.30);
-    }
+    .pill:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.20); }
+    .pill.cta{ background: rgba(255,255,255,.90); color:#070a08; border-color: rgba(255,255,255,.30); }
 
-    /* HINT */
+    /* Center hint */
     #hint{
       position:fixed; left:50%; transform:translateX(-50%);
       top: 94px;
@@ -124,12 +83,12 @@
       backdrop-filter: blur(12px);
       display:flex; gap:10px; align-items:center;
       user-select:none;
-      z-index:30;
+      z-index:50;
     }
     #hint .k{ font-weight:950; }
-    #hint .s{ color:var(--muted); font-weight:750; }
+    #hint .s{ color:var(--muted); font-weight:800; }
 
-    /* DOCK */
+    /* Bottom dock */
     #dock{
       position:fixed; left:18px; right:18px; bottom:16px;
       display:flex; justify-content:space-between; align-items:center;
@@ -140,21 +99,21 @@
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
       user-select:none;
-      z-index:30;
+      z-index:50;
     }
-    .chips{ display:flex; gap:10px; }
+    .chips{ display:flex; gap:10px; align-items:center; }
     .chip{
       padding:9px 12px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.20);
       color: rgba(255,255,255,.76);
-      font-weight:850;
+      font-weight:900;
       font-size:12px;
       white-space:nowrap;
     }
 
-    /* CROSSHAIR */
+    /* Crosshair */
     #crosshair{
       position:fixed; left:50%; top:50%;
       width:10px; height:10px;
@@ -164,78 +123,10 @@
       box-shadow: 0 0 0 10px rgba(255,255,255,.05);
       mix-blend-mode: screen;
       pointer-events:none;
-      z-index:40;
+      z-index:60;
     }
 
-    /* TOTEMS */
-    #totems{
-      position:fixed; inset:0; z-index:25;
-      perspective: 900px;
-      perspective-origin: 50% 55%;
-    }
-    .totem{
-      position:absolute;
-      width:260px; height:360px;
-      border-radius:28px;
-      overflow:hidden;
-      cursor:pointer;
-      user-select:none;
-      background:
-        radial-gradient(600px 420px at 30% 20%, rgba(205,255,140,.10), transparent 60%),
-        radial-gradient(600px 420px at 70% 20%, rgba(255,220,150,.06), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.62), rgba(0,0,0,.20));
-      border: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 40px 120px rgba(0,0,0,.72);
-      will-change: transform, opacity;
-      transition: border-color .2s var(--ease), filter .2s var(--ease);
-    }
-    .totem:hover{ border-color: rgba(255,255,255,.18); filter:saturate(1.04); }
-
-    .cap{
-      position:absolute; left:16px; right:16px; top:14px;
-      display:flex; justify-content:space-between; gap:10px;
-      z-index:3;
-    }
-    .name{ font-weight:950; letter-spacing:.8px; text-transform:uppercase; font-size:13px; }
-    .tag{ color:rgba(255,255,255,.72); font-weight:750; font-size:12px; margin-top:6px; line-height:1.2; max-width:20ch; }
-    .orb{
-      width:10px; height:10px; border-radius:999px; margin-top:2px;
-      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.18) 35%, var(--accent) 72%, rgba(0,0,0,0));
-      box-shadow: 0 0 0 7px rgba(205,255,140,.08);
-    }
-
-    .window{
-      position:absolute; left:14px; right:14px; top:78px;
-      height:210px;
-      border-radius:18px;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.35);
-    }
-    .window img, .window video{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit:cover;
-    }
-    .window video{ opacity:0; transition: opacity .35s var(--ease); }
-    .window img{ opacity:1; transition: opacity .35s var(--ease); }
-
-    .foot{
-      position:absolute; left:14px; right:14px; bottom:14px;
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      z-index:3;
-    }
-    .hint2{ color:rgba(255,255,255,.74); font-weight:850; font-size:12px; }
-    .enter{
-      padding:10px 12px; border-radius:999px;
-      background: rgba(255,255,255,.90);
-      color:#070a08;
-      border:1px solid rgba(255,255,255,.25);
-      font-weight:950;
-    }
-
-    /* MINIMAP */
+    /* Minimap */
     #minimapHUD{
       position: fixed;
       right: 18px;
@@ -247,7 +138,7 @@
       backdrop-filter: blur(14px);
       box-shadow: var(--shadow);
       padding: 10px;
-      z-index: 45;
+      z-index: 60;
       user-select: none;
     }
     #minimapHUD .mmTop{
@@ -258,7 +149,7 @@
       padding: 4px 6px 8px;
     }
     #minimapHUD .mmTop b{ letter-spacing:.9px; font-weight:950; }
-    #minimapHUD .mmHint{ color: rgba(255,255,255,.62); font-weight:800; font-size: 11px; }
+    #minimapHUD .mmHint{ color: rgba(255,255,255,.62); font-weight:850; font-size: 11px; }
     #minimapHUD canvas{
       width: 220px; height: 220px;
       display:block;
@@ -278,7 +169,38 @@
       color: rgba(255,255,255,.78);
     }
 
-    /* MOBILE CONTROLS */
+    /* Pause menu */
+    #menu{
+      position:fixed; inset:0; z-index:80;
+      display:none; align-items:center; justify-content:center;
+      background: rgba(0,0,0,.45);
+      backdrop-filter: blur(12px);
+      padding:18px;
+    }
+    #menuCard{
+      width:min(520px, 94vw);
+      border-radius:26px;
+      background: rgba(0,0,0,.42);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    #menuCard h2{ margin:6px 6px 10px; font-size:18px; letter-spacing:.2px; }
+    #menuCard p{ margin:0 6px 14px; color: rgba(255,255,255,.70); font-weight:750; line-height:1.3; }
+    .menuRow{ display:flex; gap:10px; flex-wrap:wrap; padding:6px; }
+    .menuBtn{
+      flex:1; min-width: 140px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 18px;
+      padding:12px 12px;
+      background: rgba(255,255,255,.08);
+      color: var(--fg);
+      font-weight:950;
+      cursor:pointer;
+    }
+    .menuBtn.primary{ background: rgba(255,255,255,.90); color:#070a08; border-color: rgba(255,255,255,.25); }
+
+    /* Mobile controls */
     #mobileUI{
       position:fixed; left:0; right:0; bottom:0;
       padding:18px;
@@ -286,7 +208,7 @@
       justify-content:space-between;
       align-items:flex-end;
       gap:14px;
-      z-index:50;
+      z-index:90;
       pointer-events:none;
     }
     #joy{
@@ -318,6 +240,7 @@
       padding:16px 18px;
       min-width: 110px;
     }
+
     @media (pointer:coarse), (max-width: 820px){
       #mobileUI{ display:flex; }
       #minimapHUD{ display:none; }
@@ -326,27 +249,18 @@
 </head>
 
 <body>
-  <div id="world" aria-hidden="true">
-    <video id="bg" autoplay muted playsinline loop preload="auto">
-      <source src="assets/forest.mp4" type="video/mp4"/>
-    </video>
-
-    <canvas id="floor"></canvas>
-    <div id="fogWall"></div>
-    <canvas id="fx"></canvas>
-    <div id="grade"></div>
-  </div>
+  <canvas id="stage"></canvas>
 
   <header id="topbar">
     <div class="brand">
       <span class="seed"></span>
       <div>
         <b>Snack Packz</b>
-        <small>Click to lock • WASD move • Q/E turn • F enter</small>
+        <small>Click to lock • WASD move • Q/E turn • F enter • Esc menu</small>
       </div>
     </div>
     <div class="controls">
-      <button id="soundBtn" class="pill" type="button" aria-pressed="false">Sound: Off</button>
+      <button id="exitBtn" class="pill" type="button">Exit</button>
       <button id="qualityBtn" class="pill" type="button" aria-pressed="true">Quality: Ultra</button>
       <a class="pill cta" href="shop.html">Order</a>
     </div>
@@ -354,28 +268,26 @@
 
   <div id="hint">
     <div class="k">Click to lock</div>
-    <div class="s">WASD move • Q/E turn • Mouse look • F enter • Stay in the clearing</div>
+    <div class="s">Move in 3D. Walk to a totem. Press F.</div>
   </div>
 
-  <div id="totems"></div>
-
-  <footer id="dock">
+  <div id="dock">
     <div>
-      <b id="dockTitle">Forest Portal</b><br/>
-      <small id="dockSub" style="color:rgba(255,255,255,.72);font-weight:700;">Walk towards a totem.</small>
+      <b id="dockTitle">Forest Clearing</b><br/>
+      <small id="dockSub" style="color:rgba(255,255,255,.72);font-weight:750;">Find a totem.</small>
     </div>
     <div class="chips">
       <span class="chip" id="fpsChip">FPS: --</span>
       <span class="chip" id="stateChip">Click to lock</span>
     </div>
-  </footer>
+  </div>
 
-  <div id="crosshair" aria-hidden="true"></div>
+  <div id="crosshair"></div>
 
   <div id="minimapHUD" aria-hidden="true">
     <div class="mmTop">
       <b>MAP</b>
-      <span class="mmHint">Clearing only. Forest is infinite.</span>
+      <span class="mmHint">Clearing boundaries.</span>
     </div>
     <canvas id="mm" width="220" height="220"></canvas>
     <div class="mmBottom">
@@ -389,104 +301,366 @@
     <button id="useBtn" type="button">USE</button>
   </div>
 
-  <script>
+  <div id="menu" aria-hidden="true">
+    <div id="menuCard">
+      <h2>Pause Menu</h2>
+      <p>Resume, reset, or leave the forest.</p>
+      <div class="menuRow">
+        <button id="resumeBtn" class="menuBtn primary" type="button">Resume</button>
+        <button id="resetBtn" class="menuBtn" type="button">Reset position</button>
+        <button id="leaveBtn" class="menuBtn" type="button">Leave game</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+    import { PointerLockControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/PointerLockControls.js";
+
+    // ===== Packs =====
     const PACKS = [
-      { key:"fresh",  name:"FRESH",  tag:"Clean energy. Zero noise.",         page:"fresh.html",   poster:"assets/fresh.jpg",   video:"assets/fresh.mp4" },
-      { key:"gaming", name:"GAMING", tag:"Locked focus. Long sessions.",       page:"gaming.html",  poster:"assets/gaming.jpg",  video:"assets/gaming.mp4" },
-      { key:"gym",    name:"GYM",    tag:"Explosive drive. Controlled burn.",  page:"gym.html",     poster:"assets/gym.jpg",     video:"assets/gym.mp4" },
-      { key:"work",   name:"WORK",   tag:"Calm clarity. Get it done.",         page:"work.html",    poster:"assets/work.jpg",    video:"assets/work.mp4" },
-      { key:"lockin", name:"LOCK-IN",tag:"Tunnel vision. No distractions.",    page:"lock-in.html", poster:"assets/lockin.jpg",  video:"assets/lockin.mp4" }
+      { key:"fresh",  name:"FRESH",   tag:"Clean energy. Zero noise.",        page:"fresh.html",   poster:"assets/fresh.jpg",   video:"assets/fresh.mp4" },
+      { key:"gaming", name:"GAMING",  tag:"Locked focus. Long sessions.",      page:"gaming.html",  poster:"assets/gaming.jpg",  video:"assets/gaming.mp4" },
+      { key:"gym",    name:"GYM",     tag:"Explosive drive. Controlled burn.", page:"gym.html",     poster:"assets/gym.jpg",     video:"assets/gym.mp4" },
+      { key:"work",   name:"WORK",    tag:"Calm clarity. Get it done.",        page:"work.html",    poster:"assets/work.jpg",    video:"assets/work.mp4" },
+      { key:"lockin", name:"LOCK-IN", tag:"Tunnel vision. No distractions.",   page:"lock-in.html", poster:"assets/lockin.jpg",  video:"assets/lockin.mp4" }
     ];
 
-    const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
-    const reduce = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const mobile = coarse || innerWidth < 820;
-
-    const bg = document.getElementById("bg");
-    const fx = document.getElementById("fx");
-    const fxCtx = fx.getContext("2d");
-    const floorC = document.getElementById("floor");
-    const floorCtx = floorC.getContext("2d");
-    const totemsHost = document.getElementById("totems");
-
-    const soundBtn = document.getElementById("soundBtn");
+    // ===== UI refs =====
+    const canvas = document.getElementById("stage");
+    const exitBtn = document.getElementById("exitBtn");
     const qualityBtn = document.getElementById("qualityBtn");
-    const fpsChip = document.getElementById("fpsChip");
-    const stateChip = document.getElementById("stateChip");
     const dockTitle = document.getElementById("dockTitle");
     const dockSub = document.getElementById("dockSub");
+    const fpsChip = document.getElementById("fpsChip");
+    const stateChip = document.getElementById("stateChip");
+
+    const menu = document.getElementById("menu");
+    const resumeBtn = document.getElementById("resumeBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const leaveBtn = document.getElementById("leaveBtn");
 
     const mm = document.getElementById("mm");
     const mmCtx = mm.getContext("2d");
     const mmPos = document.getElementById("mmPos");
     const mmNear = document.getElementById("mmNear");
 
+    const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
+    const reduce = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const mobile = coarse || innerWidth < 820;
+
     const joy = document.getElementById("joy");
     const joyKnob = document.getElementById("joyKnob");
     const useBtn = document.getElementById("useBtn");
     document.getElementById("mobileUI").style.display = mobile ? "flex" : "none";
 
-    const quality = {
+    // ===== Quality =====
+    const QUALITY = {
       ultra: !mobile && !reduce,
-      fxEvery: (!mobile && !reduce) ? 1 : 3,
-      motes: (!mobile && !reduce) ? 46 : 16
+      set(v){
+        this.ultra = v;
+        qualityBtn.setAttribute("aria-pressed", String(v));
+        qualityBtn.textContent = `Quality: ${v ? "Ultra" : "Lite"}`;
+        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, v ? 2 : 1.25));
+        fogNear = v ? 26 : 18;
+        fogFar  = v ? 78 : 54;
+        scene.fog.near = fogNear;
+        scene.fog.far  = fogFar;
+      }
     };
 
-    let DPR = Math.min(devicePixelRatio || 1, 2);
-    function resize(){
-      DPR = Math.min(devicePixelRatio || 1, 2);
-      fx.width = Math.floor(innerWidth * DPR);
-      fx.height = Math.floor(innerHeight * DPR);
-      fxCtx.setTransform(DPR,0,0,DPR,0,0);
+    // ===== World bounds (so you can't get lost) =====
+    const BOUNDS = { minX:-45, maxX:45, minZ:-70, maxZ:20 };
 
-      floorC.width = Math.floor(innerWidth * DPR);
-      floorC.height = Math.floor(innerHeight * DPR);
-      floorCtx.setTransform(DPR,0,0,DPR,0,0);
+    // ===== Noise (fast, deterministic) =====
+    function hash2(x,z){
+      // small hash for terrain. stable.
+      let n = x * 374761393 + z * 668265263;
+      n = (n ^ (n >> 13)) * 1274126177;
+      n = (n ^ (n >> 16));
+      return (n >>> 0) / 4294967295;
     }
-    addEventListener("resize", resize, {passive:true});
-    resize();
-
-    // Player / camera
-    const cam = { x:0, z:0, yaw:0, pitch:-0.06, vyaw:0, vpitch:0, speed:1.05 };
-
-    // The "clearing" (gameplay arena). Forest video stays infinite.
-    const BOUNDS = { minX:-9, maxX:9, minZ:-24, maxZ:2 };
-
-    const world = {
-      spawnX: 0, spawnZ: 0,
-      totems: [
-        {x:-4.8,z:-10.8},{x:4.9,z:-10.2},{x:-2.9,z:-16.4},{x:2.7,z:-15.9},{x:0.1,z:-13.2}
-      ]
-    };
-
-    function resetPosition(){
-      cam.x = world.spawnX;
-      cam.z = world.spawnZ;
-      cam.yaw = 0;
-      cam.pitch = -0.06;
-      stateChip.textContent = locked ? "WASD • Q/E • F" : "Click to lock";
+    function smoothstep(t){ return t*t*(3-2*t); }
+    function valueNoise(x,z){
+      const xi = Math.floor(x), zi = Math.floor(z);
+      const xf = x - xi, zf = z - zi;
+      const a = hash2(xi,zi);
+      const b = hash2(xi+1,zi);
+      const c = hash2(xi,zi+1);
+      const d = hash2(xi+1,zi+1);
+      const u = smoothstep(xf);
+      const v = smoothstep(zf);
+      const ab = a + (b-a)*u;
+      const cd = c + (d-c)*u;
+      return ab + (cd-ab)*v;
+    }
+    function fbm(x,z){
+      let f=0, amp=1, freq=0.04;
+      for(let i=0;i<5;i++){
+        f += (valueNoise(x*freq, z*freq)-0.5)*2 * amp;
+        amp *= 0.55;
+        freq *= 2.0;
+      }
+      return f;
+    }
+    function heightAt(x,z){
+      // "clearing" centre is flatter, edges more rough
+      const base = fbm(x,z);
+      const r = Math.sqrt(x*x + (z+16)*(z+16));
+      const clearing = Math.max(0, 1 - (r/42));
+      const flat = base * (1 - clearing*0.85);
+      const micro = fbm(x*1.9, z*1.9) * 0.15;
+      return flat*4.2 + micro;
     }
 
-    // Pointer lock
-    let locked = false;
-    function tryLock(){ if(!mobile) document.body.requestPointerLock?.(); }
-    document.addEventListener("pointerlockchange", ()=>{
-      locked = (document.pointerLockElement === document.body);
-      stateChip.textContent = locked ? "WASD • Q/E • F" : "Click to lock";
-    });
-    addEventListener("mousemove", (e)=>{
-      if(!locked) return;
-      cam.vyaw += (e.movementX||0) * 0.00185;
-      cam.vpitch += (e.movementY||0) * 0.00145;
-    }, {passive:true});
+    // ===== Three.js Setup =====
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha:false });
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, QUALITY.ultra ? 2 : 1.25));
+    renderer.setClearColor(0x020302, 1);
 
-    addEventListener("click", (e)=>{
-      const t = e.target;
-      if(t && t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#mobileUI"))) return;
-      if(!locked && !mobile) tryLock();
+    const scene = new THREE.Scene();
+    let fogNear = QUALITY.ultra ? 26 : 18;
+    let fogFar  = QUALITY.ultra ? 78 : 54;
+    scene.fog = new THREE.Fog(0x050705, fogNear, fogFar);
+
+    const camera = new THREE.PerspectiveCamera(70, innerWidth/innerHeight, 0.1, 300);
+    camera.position.set(0, 2.2, 0);
+
+    const controls = new PointerLockControls(camera, document.body);
+    const clock = new THREE.Clock();
+
+    // Lighting
+    const hemi = new THREE.HemisphereLight(0xbfe7c0, 0x0b0d0b, 0.75);
+    scene.add(hemi);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 0.70);
+    sun.position.set(-12, 18, 10);
+    scene.add(sun);
+
+    // Skybox: big foggy dome (cheap but looks deep)
+    const skyGeo = new THREE.SphereGeometry(160, 32, 24);
+    const skyMat = new THREE.MeshBasicMaterial({
+      color: 0x0a120a,
+      side: THREE.BackSide
+    });
+    const sky = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(sky);
+
+    // ===== Terrain =====
+    const size = 160;
+    const seg = QUALITY.ultra ? 220 : 140;
+    const terrainGeo = new THREE.PlaneGeometry(size, size, seg, seg);
+    terrainGeo.rotateX(-Math.PI/2);
+
+    const pos = terrainGeo.attributes.position;
+    const colors = [];
+    for(let i=0;i<pos.count;i++){
+      const x = pos.getX(i);
+      const z = pos.getZ(i);
+      const h = heightAt(x,z);
+      pos.setY(i, h);
+
+      // vertex colour blend (mossy greens + dark)
+      const moss = THREE.MathUtils.clamp((h+2)/6, 0, 1);
+      const shade = THREE.MathUtils.clamp(0.55 + moss*0.45, 0, 1);
+      const g = 0.18 + shade*0.55;
+      const r = 0.10 + shade*0.22;
+      const b = 0.10 + shade*0.18;
+      colors.push(r,g,b);
+    }
+    terrainGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors,3));
+    terrainGeo.computeVertexNormals();
+
+    const terrainMat = new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      roughness: 1.0,
+      metalness: 0.0
     });
 
-    // Keyboard
+    const terrain = new THREE.Mesh(terrainGeo, terrainMat);
+    terrain.receiveShadow = false;
+    scene.add(terrain);
+
+    // ===== Trees (instanced) =====
+    const treeCount = QUALITY.ultra ? 1200 : 650;
+    const trunkGeo = new THREE.CylinderGeometry(0.10, 0.16, 2.2, 6);
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x2a1b12, roughness: 1.0 });
+
+    const leafGeo = new THREE.ConeGeometry(0.9, 2.6, 7);
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x0b2a12, roughness: 1.0 });
+
+    const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, treeCount);
+    const leaves = new THREE.InstancedMesh(leafGeo, leafMat, treeCount);
+
+    const dummy = new THREE.Object3D();
+    const treeColliders = []; // simple circles so you can't walk through nearby trees
+    function inClearing(x,z){
+      const r = Math.sqrt(x*x + (z+16)*(z+16));
+      return r < 26; // keep centre open
+    }
+
+    let ti=0;
+    while(ti<treeCount){
+      const x = THREE.MathUtils.randFloatSpread(120);
+      const z = THREE.MathUtils.randFloatSpread(120);
+      if(inClearing(x,z)) continue;
+
+      const y = heightAt(x,z);
+      const s = THREE.MathUtils.randFloat(0.85, 1.65);
+
+      dummy.position.set(x, y+1.1*s, z);
+      dummy.rotation.y = THREE.MathUtils.randFloat(0, Math.PI*2);
+      dummy.scale.set(s, s, s);
+      dummy.updateMatrix();
+      trunks.setMatrixAt(ti, dummy.matrix);
+
+      dummy.position.set(x, y+2.55*s, z);
+      dummy.scale.set(s, s, s);
+      dummy.updateMatrix();
+      leaves.setMatrixAt(ti, dummy.matrix);
+
+      // only store colliders for trees in playable range
+      if(Math.abs(x) < 55 && z > -90 && z < 30){
+        treeColliders.push({x, z, r: 0.65*s});
+      }
+
+      ti++;
+    }
+
+    scene.add(trunks, leaves);
+
+    // ===== Totems (real 3D, clickable + F enter) =====
+    const loader = new THREE.TextureLoader();
+    const totems = [];
+
+    function makeTotemCard(p, i, x, z){
+      const group = new THREE.Group();
+      const y = heightAt(x,z);
+
+      group.position.set(x, y+1.7, z);
+
+      // frame
+      const frameGeo = new THREE.BoxGeometry(2.0, 2.8, 0.10);
+      const frameMat = new THREE.MeshStandardMaterial({
+        color: 0x0c0f0c,
+        roughness: 0.55,
+        metalness: 0.0
+      });
+      const frame = new THREE.Mesh(frameGeo, frameMat);
+      frame.position.set(0, 0, 0);
+      group.add(frame);
+
+      // screen plane
+      const screenGeo = new THREE.PlaneGeometry(1.75, 2.45);
+      const posterTex = loader.load(p.poster);
+      posterTex.colorSpace = THREE.SRGBColorSpace;
+      const screenMat = new THREE.MeshStandardMaterial({
+        map: posterTex,
+        roughness: 0.85,
+        metalness: 0.0,
+        emissive: new THREE.Color(0x0c1a0c),
+        emissiveIntensity: 0.35
+      });
+      const screen = new THREE.Mesh(screenGeo, screenMat);
+      screen.position.set(0, 0, 0.056);
+      group.add(screen);
+
+      // glow ring
+      const ringGeo = new THREE.TorusGeometry(0.32, 0.06, 10, 22);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0xcfff8c });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.position.set(-0.68, 1.08, 0.08);
+      group.add(ring);
+
+      // title (canvas texture)
+      const titleCanvas = document.createElement("canvas");
+      titleCanvas.width = 512;
+      titleCanvas.height = 256;
+      const tctx = titleCanvas.getContext("2d");
+      function drawTitle(active=false){
+        tctx.clearRect(0,0,512,256);
+        // glass
+        tctx.fillStyle = "rgba(0,0,0,0.45)";
+        roundRect(tctx, 16, 18, 480, 220, 26);
+        tctx.fill();
+
+        // border
+        tctx.strokeStyle = active ? "rgba(205,255,140,0.85)" : "rgba(255,255,255,0.16)";
+        tctx.lineWidth = 4;
+        roundRect(tctx, 16, 18, 480, 220, 26);
+        tctx.stroke();
+
+        tctx.fillStyle = active ? "rgba(205,255,140,0.92)" : "rgba(255,255,255,0.92)";
+        tctx.font = "900 48px system-ui, -apple-system, Segoe UI, Roboto";
+        tctx.fillText(p.name, 46, 96);
+
+        tctx.fillStyle = "rgba(255,255,255,0.72)";
+        tctx.font = "800 22px system-ui, -apple-system, Segoe UI, Roboto";
+        wrapText(tctx, p.tag, 46, 132, 420, 28);
+
+        tctx.fillStyle = "rgba(255,255,255,0.78)";
+        tctx.font = "900 20px system-ui, -apple-system, Segoe UI, Roboto";
+        tctx.fillText("Walk closer • Press F", 46, 212);
+      }
+      function roundRect(ctx,x,y,w,h,r){
+        const rr = Math.min(r, w/2, h/2);
+        ctx.beginPath();
+        ctx.moveTo(x+rr, y);
+        ctx.arcTo(x+w, y, x+w, y+h, rr);
+        ctx.arcTo(x+w, y+h, x, y+h, rr);
+        ctx.arcTo(x, y+h, x, y, rr);
+        ctx.arcTo(x, y, x+w, y, rr);
+        ctx.closePath();
+      }
+      function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+        const words = text.split(" ");
+        let line = "";
+        for(let n=0;n<words.length;n++){
+          const test = line + words[n] + " ";
+          const metrics = ctx.measureText(test);
+          if(metrics.width > maxWidth && n > 0){
+            ctx.fillText(line, x, y);
+            line = words[n] + " ";
+            y += lineHeight;
+          } else {
+            line = test;
+          }
+        }
+        ctx.fillText(line, x, y);
+      }
+      drawTitle(false);
+
+      const titleTex = new THREE.CanvasTexture(titleCanvas);
+      titleTex.colorSpace = THREE.SRGBColorSpace;
+      const titleMat = new THREE.MeshBasicMaterial({ map: titleTex, transparent:true });
+      const titlePlane = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 1.05), titleMat);
+      titlePlane.position.set(0, -1.7, 0.06);
+      group.add(titlePlane);
+
+      // store
+      totems.push({
+        p, i,
+        group, screen, screenMat,
+        titleCanvas, titleTex, drawTitle,
+        x, z
+      });
+
+      scene.add(group);
+    }
+
+    // Place totems in a ring around the clearing
+    const totemPositions = [
+      {x:-12, z:-22},
+      {x: 12, z:-22},
+      {x:-8,  z:-34},
+      {x:  8, z:-34},
+      {x:  0, z:-28}
+    ];
+    PACKS.forEach((p,i)=> makeTotemCard(p,i, totemPositions[i].x, totemPositions[i].z));
+
+    // ===== Controls / movement =====
     const keys = {w:false,a:false,s:false,d:false,q:false,e:false,shift:false};
     addEventListener("keydown",(ev)=>{
       const k = ev.key.toLowerCase();
@@ -497,7 +671,9 @@
       if(k==="q") keys.q=true;
       if(k==="e") keys.e=true;
       if(k==="shift") keys.shift=true;
-      if(k==="f") tryUse();
+
+      if(k==="f") tryEnterFocused();
+      if(k==="escape") openMenu();
       if(k==="r") resetPosition();
     });
     addEventListener("keyup",(ev)=>{
@@ -511,7 +687,7 @@
       if(k==="shift") keys.shift=false;
     });
 
-    // Mobile joystick + swipe look
+    // Mobile joystick
     const joyState = {active:false,id:null,cx:0,cy:0,dx:0,dy:0};
     if(joy){
       joy.addEventListener("pointerdown",(e)=>{
@@ -537,6 +713,7 @@
       joy.addEventListener("pointercancel",end);
     }
 
+    // Mobile look
     let look = {on:false,x:0,y:0};
     addEventListener("pointerdown",(e)=>{
       if(!mobile) return;
@@ -547,205 +724,108 @@
       if(!mobile || !look.on) return;
       const dx=e.clientX-look.x, dy=e.clientY-look.y;
       look.x=e.clientX; look.y=e.clientY;
-      cam.vyaw += dx*0.0023;
-      cam.vpitch += dy*0.00175;
+      camera.rotation.y -= dx*0.0030;
+      camera.rotation.x -= dy*0.0020;
+      camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x, -0.75, 0.55);
     },{passive:true});
     addEventListener("pointerup",()=>{ look.on=false; },{passive:true});
-    useBtn.addEventListener("click", tryUse);
+    useBtn.addEventListener("click", tryEnterFocused);
 
-    // Build totems
-    const totems = [];
-    function makeTotem(p,i){
-      const el=document.createElement("div");
-      el.className="totem";
-      el.innerHTML = `
-        <div class="cap">
-          <div>
-            <div class="name">${p.name}</div>
-            <div class="tag">${p.tag}</div>
-          </div>
-          <div class="orb"></div>
-        </div>
-        <div class="window">
-          <img src="${p.poster}" alt="${p.name} preview">
-          <video muted playsinline loop preload="metadata"></video>
-        </div>
-        <div class="foot">
-          <div class="hint2">Walk up + F</div>
-          <div class="enter">Enter</div>
-        </div>
-      `;
-      const img=el.querySelector("img");
-      const vid=el.querySelector("video");
-      let hovered=false, timer=null;
+    // Pointer lock entry
+    addEventListener("click",(e)=>{
+      const t=e.target;
+      if(t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#minimapHUD") || t.closest("#menu") || t.closest("#mobileUI"))) return;
+      if(!mobile) controls.lock();
+    });
 
-      async function prime(){
-        if(vid.dataset.ready==="1") return true;
-        vid.src=p.video; vid.dataset.ready="1";
-        try{ await vid.play(); vid.pause(); vid.currentTime=0; return true; }
-        catch{ return false; }
-      }
-      function showPoster(){ vid.style.opacity="0"; img.style.opacity="1"; try{vid.pause();}catch{} }
-      function showVideo(){ vid.style.opacity="1"; img.style.opacity="0"; try{vid.play().catch(()=>{});}catch{} }
+    controls.addEventListener("lock", ()=> stateChip.textContent = "WASD • Q/E • F");
+    controls.addEventListener("unlock", ()=> stateChip.textContent = "Click to lock");
 
-      el.addEventListener("mouseenter",()=>{
-        hovered=true; showPoster();
-        timer=setTimeout(async ()=>{
-          if(!hovered) return;
-          const ok=await prime();
-          if(ok && hovered) showVideo();
-        },140);
-      });
-      el.addEventListener("mouseleave",()=>{
-        hovered=false; if(timer) clearTimeout(timer);
-        showPoster();
-      });
-
-      el.addEventListener("click",()=>{
-        const dist = getDist(i);
-        if(dist < 2.2) location.href=p.page;
-        else if(!locked && !mobile) tryLock();
-      });
-
-      const wp=world.totems[i];
-      totems.push({el,p,wx:wp.x,wz:wp.z,wob:Math.random()*10});
-      totemsHost.appendChild(el);
+    // ===== Menu =====
+    function openMenu(){
+      menu.style.display="flex";
+      try{ controls.unlock(); }catch{}
     }
-    PACKS.forEach(makeTotem);
-
-    function getDist(i){
-      const t=totems[i];
-      return Math.hypot(t.wx-cam.x, t.wz-cam.z);
+    function closeMenu(){
+      menu.style.display="none";
+      if(!mobile) controls.lock();
     }
+    exitBtn.addEventListener("click", openMenu);
+    resumeBtn.addEventListener("click", closeMenu);
+    resetBtn.addEventListener("click", ()=>{ resetPosition(); closeMenu(); });
+    leaveBtn.addEventListener("click", ()=>{ location.href="shop.html"; });
 
-    // Projection (2.5D)
-    const F = 820;
-    function project(wx,wz){
-      const dx=wx-cam.x;
-      const dz=wz-cam.z;
-      const c=Math.cos(-cam.yaw), s=Math.sin(-cam.yaw);
-      const rx=dx*c - dz*s;
-      const rz=dx*s + dz*c;
-      return {x:rx,z:rz};
-    }
+    // ===== Focus / interaction (raycast) =====
+    const raycaster = new THREE.Raycaster();
+    let focused = -1;
 
-    let focused=-1;
     function updateFocus(){
-      focused=-1;
-      let best=Infinity;
-      for(let i=0;i<totems.length;i++){
-        const rel=project(totems[i].wx, totems[i].wz);
-        const dist=Math.hypot(rel.x, rel.z);
-        const centre=Math.abs(rel.x);
-        const score=centre + dist*0.10;
-        if(score<best){ best=score; focused=i; }
+      focused = -1;
+      // ray from centre
+      raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
+      const objects = totems.map(t=>t.screen); // screen planes only
+      const hits = raycaster.intersectObjects(objects, false);
+      if(hits.length){
+        const hit = hits[0].object;
+        const idx = objects.indexOf(hit);
+        if(idx >= 0) focused = idx;
       }
     }
 
-    function tryUse(){
-      if(focused<0) return;
-      const dist=getDist(focused);
-      if(dist < 2.2) location.href=totems[focused].p.page;
-      else stateChip.textContent = `Too far (${dist.toFixed(1)}m)`;
+    function tryEnterFocused(){
+      if(focused < 0) return;
+      const t = totems[focused];
+      const dx = camera.position.x - t.x;
+      const dz = camera.position.z - t.z;
+      const d = Math.hypot(dx,dz);
+      if(d < 4.2){
+        location.href = t.p.page;
+      } else {
+        dockSub.textContent = `Walk closer (${d.toFixed(1)}m)`;
+      }
     }
 
-    // Collision + soft boundary push (no hard clamp snapping)
-    function softBounds(){
-      const pad = 0.6;
-      const k = 0.20;
-      if(cam.x < BOUNDS.minX+pad) cam.x += (BOUNDS.minX+pad - cam.x)*k;
-      if(cam.x > BOUNDS.maxX-pad) cam.x -= (cam.x - (BOUNDS.maxX-pad))*k;
-      if(cam.z < BOUNDS.minZ+pad) cam.z += (BOUNDS.minZ+pad - cam.z)*k;
-      if(cam.z > BOUNDS.maxZ-pad) cam.z -= (cam.z - (BOUNDS.maxZ-pad))*k;
+    // ===== Physics-ish =====
+    const velocity = new THREE.Vector3();
+    const dir = new THREE.Vector3();
+    const up = new THREE.Vector3(0,1,0);
+
+    function clampBounds(pos){
+      pos.x = THREE.MathUtils.clamp(pos.x, BOUNDS.minX, BOUNDS.maxX);
+      pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ);
     }
-    function resolveTotemCollision(){
-      const R = 1.35;
-      for(const t of totems){
-        const dx = cam.x - t.wx;
-        const dz = cam.z - t.wz;
+
+    function resolveTreeCollisions(pos){
+      // gentle push out of tree circles
+      for(let i=0;i<treeColliders.length;i++){
+        const c = treeColliders[i];
+        const dx = pos.x - c.x;
+        const dz = pos.z - c.z;
         const d = Math.hypot(dx,dz);
+        const R = c.r;
         if(d > 0.0001 && d < R){
           const push = (R - d);
-          cam.x += (dx / d) * push;
-          cam.z += (dz / d) * push;
+          pos.x += (dx / d) * push;
+          pos.z += (dz / d) * push;
         }
       }
     }
 
-    // FX motes
-    let seed=1337;
-    const rnd=()=> (seed=(seed*16807)%2147483647)/2147483647;
-    let motes=[];
-    function seedMotes(){
-      motes=[];
-      for(let i=0;i<quality.motes;i++){
-        motes.push({x:rnd()*innerWidth,y:rnd()*innerHeight,z:0.15+rnd()*0.85,r:1+rnd()*2.6,p:rnd()*1000});
-      }
-    }
-    seedMotes();
-
-    soundBtn.addEventListener("click",()=>{
-      const on = soundBtn.getAttribute("aria-pressed")!=="true";
-      soundBtn.setAttribute("aria-pressed", String(on));
-      soundBtn.textContent = `Sound: ${on ? "On" : "Off"}`;
-      bg.muted = !on;
-      bg.play().catch(()=>{});
-    });
-
-    qualityBtn.addEventListener("click",()=>{
-      quality.ultra = !quality.ultra;
-      quality.fxEvery = quality.ultra ? 1 : 3;
-      quality.motes = quality.ultra ? 46 : 16;
-      qualityBtn.setAttribute("aria-pressed", String(quality.ultra));
-      qualityBtn.textContent = `Quality: ${quality.ultra ? "Ultra" : "Lite"}`;
-      seedMotes();
-    });
-
-    // Procedural floor: draws a “clearing” that scrolls with cam.x/cam.z
-    function drawFloor(){
-      const w = innerWidth, h = innerHeight;
-      floorCtx.clearRect(0,0,w,h);
-
-      // ground plane gradient
-      const g = floorCtx.createLinearGradient(0,h*0.55,0,h);
-      g.addColorStop(0, "rgba(0,0,0,0)");
-      g.addColorStop(0.28, "rgba(0,0,0,0.18)");
-      g.addColorStop(1, "rgba(0,0,0,0.88)");
-      floorCtx.fillStyle = g;
-      floorCtx.fillRect(0,0,w,h);
-
-      // fake “terrain noise” scrolling
-      const baseY = h*0.66;
-      const amp = 56;
-      const scrollX = cam.x*48;
-      const scrollZ = cam.z*46;
-
-      floorCtx.globalAlpha = 0.55;
-      for(let i=0;i<140;i++){
-        const x = ((i*29 + scrollX) % (w+220)) - 110;
-        const y = baseY + Math.sin((i*0.7) + scrollZ*0.03)*amp + (i%7)*2;
-        const r = 80 + (i%9)*14;
-        const a = 0.02 + (i%6)*0.004;
-        floorCtx.fillStyle = `rgba(205,255,140,${a})`;
-        floorCtx.beginPath();
-        floorCtx.ellipse(x,y, r, r*0.48, 0, 0, Math.PI*2);
-        floorCtx.fill();
-      }
-
-      // path stripe (centred, helps you not get lost)
-      floorCtx.globalAlpha = 0.70;
-      const pathW = Math.min(720, w*0.86);
-      const px = (w-pathW)/2;
-      const py = h*0.72;
-      const pg = floorCtx.createLinearGradient(px,0,px+pathW,0);
-      pg.addColorStop(0,"rgba(0,0,0,0)");
-      pg.addColorStop(0.5,"rgba(255,255,255,0.10)");
-      pg.addColorStop(1,"rgba(0,0,0,0)");
-      floorCtx.fillStyle = pg;
-      floorCtx.fillRect(px, py, pathW, 120);
+    function snapToGround(pos){
+      const h = heightAt(pos.x, pos.z);
+      pos.y = h + 2.2; // camera height
     }
 
-    // Minimap draw
+    // ===== Start position =====
+    function resetPosition(){
+      camera.position.set(0, heightAt(0,0)+2.2, 0);
+      velocity.set(0,0,0);
+      dockTitle.textContent = "Forest Clearing";
+      dockSub.textContent = "Find a totem.";
+    }
+    resetPosition();
+
+    // ===== Minimap =====
     function mmWorldToMap(wx,wz){
       const nx = (wx - BOUNDS.minX) / (BOUNDS.maxX - BOUNDS.minX);
       const nz = (wz - BOUNDS.minZ) / (BOUNDS.maxZ - BOUNDS.minZ);
@@ -785,9 +865,11 @@
       mmRoundRect(mmCtx,0.5,0.5,W-1,H-1,18); mmCtx.stroke();
 
       const pad=18;
-      for(let i=0;i<world.totems.length;i++){
-        const t=world.totems[i];
-        const m=mmWorldToMap(t.x,t.z);
+
+      // totems
+      for(let i=0;i<totems.length;i++){
+        const t=totems[i];
+        const m=mmWorldToMap(t.x, t.z);
         const x=pad + m.x*(W-2*pad);
         const y=pad + m.y*(H-2*pad);
         const isFocus = (i===focused);
@@ -803,7 +885,8 @@
         mmCtx.arc(x,y,2.6,0,Math.PI*2); mmCtx.fill();
       }
 
-      const mp=mmWorldToMap(cam.x,cam.z);
+      // player
+      const mp=mmWorldToMap(camera.position.x, camera.position.z);
       const px=pad + mp.x*(W-2*pad);
       const py=pad + mp.y*(H-2*pad);
 
@@ -815,7 +898,8 @@
       mmCtx.fillStyle="rgba(255,255,255,0.92)";
       mmCtx.beginPath(); mmCtx.arc(px,py,4.2,0,Math.PI*2); mmCtx.fill();
 
-      const ang = cam.yaw - Math.PI/2;
+      // facing
+      const ang = camera.rotation.y - Math.PI/2;
       mmCtx.strokeStyle="rgba(255,255,255,0.80)";
       mmCtx.lineWidth=2;
       mmCtx.beginPath();
@@ -823,153 +907,131 @@
       mmCtx.lineTo(px + Math.cos(ang)*18, py + Math.sin(ang)*18);
       mmCtx.stroke();
 
-      mmPos.textContent = `x ${cam.x.toFixed(1)} • z ${cam.z.toFixed(1)}`;
+      mmPos.textContent = `x ${camera.position.x.toFixed(1)} • z ${camera.position.z.toFixed(1)}`;
+
+      // nearest
       let best={i:-1,d:1e9};
-      for(let i=0;i<world.totems.length;i++){
-        const t=world.totems[i];
-        const d=Math.hypot(t.x-cam.x, t.z-cam.z);
+      for(let i=0;i<totems.length;i++){
+        const t=totems[i];
+        const d=Math.hypot(t.x-camera.position.x, t.z-camera.position.z);
         if(d<best.d) best={i,d};
       }
       mmNear.textContent = best.i>=0 ? `Nearest: ${PACKS[best.i].name} (${best.d.toFixed(1)}m)` : "Nearest: —";
     }
 
-    // Loop
-    let last=performance.now(), frames=0, fpsLast=performance.now(), fxFrame=0;
+    // ===== Billboard behaviour (totems face you) =====
+    function faceTotems(){
+      for(const t of totems){
+        t.group.lookAt(camera.position.x, t.group.position.y, camera.position.z);
+      }
+    }
 
-    function tick(t){
-      // hard cap dt to stop jank teleports
-      const dt = Math.min(22, t-last);
-      last = t;
-
-      // smooth look
-      cam.yaw += cam.vyaw;
-      cam.pitch += cam.vpitch;
-      cam.vyaw *= 0.78;
-      cam.vpitch *= 0.78;
-      cam.pitch = Math.max(-0.35, Math.min(0.20, cam.pitch));
-
-      // Q/E turning
-      const turnRate = 0.95;
-      if(keys.q) cam.yaw -= turnRate * (dt*0.001);
-      if(keys.e) cam.yaw += turnRate * (dt*0.001);
-
-      // movement
-      let mx=0, mz=0;
-      const sp = cam.speed * (keys.shift ? 1.25 : 1.0);
-
-      if(keys.w) mz -= 1;
-      if(keys.s) mz += 1;
-      if(keys.a) mx -= 1;
-      if(keys.d) mx += 1;
-
-      if(mobile){ mx += joyState.dx; mz += joyState.dy; }
-
-      const len = Math.hypot(mx,mz) || 1;
-      mx/=len; mz/=len;
-
-      const sin=Math.sin(cam.yaw), cos=Math.cos(cam.yaw);
-      const step = 0.0062;
-      cam.x += (mx*cos - mz*sin) * sp * dt * step;
-      cam.z += (mx*sin + mz*cos) * sp * dt * step;
-
-      resolveTotemCollision();
-      softBounds();
-
-      // background parallax (keeps infinite vibe)
-      const bx = Math.sin(cam.yaw) * 18;
-      const by = cam.pitch * 38;
-      bg.style.transform = `translate(${bx}px,${by}px) scale(${quality.ultra?1.12:1.08})`;
-
-      // Focus + draw totems (NEVER DISAPPEAR)
-      updateFocus();
-      const cx=innerWidth*0.5, cy=innerHeight*0.52;
+    // ===== Update UI for focused totem =====
+    function updateTotemUI(){
+      dockTitle.textContent = focused >= 0 ? PACKS[focused].name : "Forest Clearing";
+      if(focused >= 0){
+        const t = totems[focused];
+        const d = Math.hypot(camera.position.x - t.x, camera.position.z - t.z);
+        dockSub.textContent = d < 4.2 ? "Press F to enter" : `Walk closer (${d.toFixed(1)}m)`;
+      } else {
+        dockSub.textContent = "Find a totem.";
+      }
 
       for(let i=0;i<totems.length;i++){
-        const o=totems[i];
-        const rel=project(o.wx,o.wz);
+        const tt = totems[i];
+        const isFocus = (i===focused);
+        tt.drawTitle(isFocus);
+        tt.titleTex.needsUpdate = true;
+      }
+    }
 
-        // If behind camera, show as ghost marker at screen edge instead of disappearing.
-        const behind = (rel.z > -0.25);
+    // ===== Resize =====
+    addEventListener("resize", ()=>{
+      renderer.setSize(innerWidth, innerHeight);
+      camera.aspect = innerWidth/innerHeight;
+      camera.updateProjectionMatrix();
+    }, {passive:true});
 
-        // compute normal projection even if behind (we'll clamp)
-        const safeZ = behind ? -0.55 : rel.z;
-        const inv = 1/(-safeZ);
+    // ===== Quality button =====
+    qualityBtn.addEventListener("click", ()=>{
+      QUALITY.set(!QUALITY.ultra);
+    });
+    QUALITY.set(QUALITY.ultra);
 
-        let sx = cx + rel.x*inv*F;
-        let sy = cy + cam.pitch*120;
+    // ===== Main loop =====
+    let frames=0, fpsLast=performance.now();
 
-        const wob = Math.sin(t*0.0012 + o.wob) * 6;
+    function animate(){
+      requestAnimationFrame(animate);
 
-        // scale/alpha
-        let scale = Math.max(0.35, Math.min(1.35, inv*2.15));
-        let alpha = Math.max(0.18, Math.min(1.0, inv*1.15));
+      const dt = Math.min(0.033, clock.getDelta()); // cap dt
 
-        // ghost behaviour
-        if(behind){
-          alpha = 0.22;
-          scale = 0.42;
-          // clamp to edges so you can “find” them again
-          sx = Math.max(60, Math.min(innerWidth-320, sx));
-          sy = Math.max(140, Math.min(innerHeight-460, sy));
-        }
+      // Q/E turn (extra, on top of mouse look)
+      if(keys.q) camera.rotation.y += 1.25 * dt;
+      if(keys.e) camera.rotation.y -= 1.25 * dt;
 
-        // face player
-        const face = Math.max(-18, Math.min(18, (-rel.x) * 6));
+      // Movement vector
+      dir.set(0,0,0);
+      const sp = (keys.shift ? 6.2 : 4.7) * (mobile ? 0.85 : 1);
 
-        o.el.style.opacity = String(alpha);
-        o.el.style.pointerEvents = behind ? "none" : "auto";
-        o.el.style.zIndex = String(Math.floor(scale*1000));
+      if(keys.w) dir.z -= 1;
+      if(keys.s) dir.z += 1;
+      if(keys.a) dir.x -= 1;
+      if(keys.d) dir.x += 1;
 
-        o.el.style.transform =
-          `translate(${(sx-130).toFixed(2)}px,${(sy-210+wob).toFixed(2)}px)
-           rotateY(${face.toFixed(2)}deg)
-           scale(${scale.toFixed(4)})`;
-
-        if(i===focused && !behind){
-          o.el.style.borderColor="rgba(255,255,255,.34)";
-          dockTitle.textContent=o.p.name;
-          const d=getDist(i);
-          dockSub.textContent = d<2.2 ? "Press F / USE to enter" : `Walk closer (${d.toFixed(1)}m)`;
-          stateChip.textContent = d<2.2 ? "Interact: F / USE" : "Move closer";
-        }else{
-          o.el.style.borderColor="rgba(255,255,255,.10)";
-        }
+      if(mobile){
+        dir.x += joyState.dx;
+        dir.z += joyState.dy;
       }
 
-      // draw floor + minimap
-      drawFloor();
+      if(dir.lengthSq() > 0) dir.normalize();
+
+      // Convert local movement to world direction
+      const forward = new THREE.Vector3();
+      camera.getWorldDirection(forward);
+      forward.y = 0; forward.normalize();
+      const right = new THREE.Vector3().crossVectors(forward, up).normalize().negate();
+
+      const move = new THREE.Vector3()
+        .addScaledVector(forward, dir.z)
+        .addScaledVector(right, dir.x);
+
+      // Apply
+      camera.position.addScaledVector(move, sp * dt);
+
+      // Boundaries + collisions + ground snap
+      clampBounds(camera.position);
+      resolveTreeCollisions(camera.position);
+      snapToGround(camera.position);
+
+      // Keep sky centred
+      sky.position.copy(camera.position);
+
+      // Totems face you
+      faceTotems();
+
+      // Focus & UI
+      updateFocus();
+      updateTotemUI();
+
+      // Render
+      renderer.render(scene, camera);
+
+      // Minimap
       drawMinimap();
-
-      // FX motes
-      fxFrame++;
-      if(!reduce && (fxFrame % quality.fxEvery === 0)){
-        fxCtx.clearRect(0,0,innerWidth,innerHeight);
-        fxCtx.globalCompositeOperation="screen";
-        for(const m of motes){
-          m.p += dt*0.0006;
-          const x = (m.x + Math.sin(m.p)*14 + Math.sin(cam.yaw)*80*(1-m.z)) % innerWidth;
-          const y = (m.y + Math.cos(m.p)*10 + cam.pitch*60*(1-m.z)) % innerHeight;
-          fxCtx.globalAlpha = 0.05 + m.z*0.18;
-          fxCtx.fillStyle="rgba(255,255,255,.90)";
-          fxCtx.beginPath(); fxCtx.arc(x,y,m.r,0,Math.PI*2); fxCtx.fill();
-        }
-      }
 
       // FPS
       frames++;
       const now=performance.now();
-      if(now-fpsLast>500){
-        fpsChip.textContent=`FPS: ${Math.round(frames*1000/(now-fpsLast))}`;
+      if(now - fpsLast > 500){
+        fpsChip.textContent = `FPS: ${Math.round(frames*1000/(now-fpsLast))}`;
         frames=0; fpsLast=now;
       }
-
-      requestAnimationFrame(tick);
     }
 
     // Start
-    bg.play().catch(()=>{});
-    resetPosition();
-    requestAnimationFrame(tick);
+    animate();
+
   </script>
 </body>
 </html>
