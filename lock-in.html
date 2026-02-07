@@ -2,143 +2,84 @@
 <html lang="en-GB">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Lock-In Packs — Snack Packz</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lock-In Packs • Snack Packz</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#07080c;--line:rgba(255,255,255,.12);--ink:#eef1f7;--mut:rgba(238,241,247,.72);--y:#ffd400;--o:#ff9f1a;--r:22px;--shadow:0 18px 70px rgba(0,0,0,.60);}
-    *{box-sizing:border-box}
-    body{margin:0;color:var(--ink);font-family:Inter,system-ui;background:
-      radial-gradient(900px 500px at 15% -10%, rgba(255,212,0,.18), transparent 55%),
-      radial-gradient(900px 500px at 110% 10%, rgba(120,170,255,.12), transparent 55%),
-      linear-gradient(180deg, #05060a, #090a16);}
+    :root{--bg:#05060a;--text:#eef1f7;--muted:#a4adbf;--line:rgba(255,255,255,.10);--yellow:#ffd400;--orange:#ff9f1a;--shadow:0 20px 70px rgba(0,0,0,.55);--r:22px}
+    *{box-sizing:border-box} body{margin:0;color:var(--text);font-family:Inter,system-ui;background:radial-gradient(900px 600px at 12% -10%, rgba(255,212,0,.18), transparent 55%),radial-gradient(900px 600px at 110% 0%, rgba(121,167,255,.14), transparent 55%),var(--bg)}
     a{color:inherit;text-decoration:none}
-    .wrap{max-width:1100px;margin:0 auto;padding:18px}
-    .top{position:sticky;top:0;z-index:50;padding:14px 0;background:linear-gradient(180deg, rgba(0,0,0,.65), rgba(0,0,0,0));backdrop-filter: blur(10px);}
-    .bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand{display:flex;gap:12px;align-items:center}
-    .mark{width:40px;height:40px;border-radius:16px;background:linear-gradient(135deg,var(--y),var(--o));box-shadow:0 14px 40px rgba(255,212,0,.18)}
-    .title{font-family:Anton,Impact;letter-spacing:1px;text-transform:uppercase;margin:0;font-size:24px;line-height:1}
-    .sub{margin:4px 0 0;color:var(--mut);font-size:12.5px}
-    .actions{display:flex;gap:10px;align-items:center}
-    .pill{display:inline-flex;gap:8px;align-items:center;justify-content:center;padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-weight:900;font-size:12px;user-select:none;box-shadow:0 10px 30px rgba(0,0,0,.25);}
+    .wrap{max-width:1120px;margin:0 auto;padding:18px}
+    .top{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:12px;z-index:10}
+    .brand{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(5,6,10,.35);backdrop-filter:blur(14px)}
+    .mark{width:36px;height:36px;border-radius:14px;background:linear-gradient(135deg,var(--yellow),var(--orange))}
+    .brand h1{margin:0;font-family:Anton,Impact;font-size:20px;letter-spacing:1px}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(5,6,10,.35);backdrop-filter:blur(14px);font-weight:900;font-size:12.5px}
     .pill.primary{border-color:rgba(255,212,0,.35);background:rgba(255,212,0,.14)}
-    .pill:active{transform:translateY(1px)}
-    .hero{position:relative;border:1px solid var(--line);border-radius:calc(var(--r) + 6px);overflow:hidden;box-shadow:var(--shadow);min-height:340px}
-    .hero-media{position:absolute; inset:0;}
-    .hero-img,.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.06);filter:saturate(1.05) contrast(1.05);}
-    .hero-img{opacity:.92; transition:opacity .35s ease;}
-    .hero-vid{opacity:0; transition:opacity .35s ease;}
-    .hero-media.video-ready .hero-vid{opacity:.92;}
-    .hero-media.video-ready .hero-img{opacity:0;}
-    .overlay{position:absolute;inset:0;background:radial-gradient(900px 420px at 15% 20%, rgba(255,212,0,.16), transparent 60%),linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.75));pointer-events:none;}
-    .inner{position:relative;z-index:2;padding:22px;display:grid;gap:10px;max-width:720px}
-    h1{margin:0;font-size:40px;line-height:1.05;letter-spacing:-.5px}
-    p{margin:0;color:rgba(238,241,247,.82);line-height:1.45;font-size:14px}
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
-    .chip{padding:8px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.25);color:rgba(238,241,247,.85);font-size:12px;font-weight:800}
+    .hero{margin-top:14px;border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:var(--shadow);position:relative;min-height:320px}
+    .hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .25s ease;transform:scale(1.03)}
+    .hero video[data-ready="1"]{opacity:.7}
+    .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg, rgba(5,6,10,.82), rgba(5,6,10,.35) 55%, rgba(5,6,10,.85))}
+    .heroBody{position:relative;padding:22px;max-width:70ch}
+    .heroBody h2{margin:0 0 8px;font-size:34px;line-height:1.05}
+    .heroBody p{margin:0;color:rgba(238,241,247,.75);line-height:1.45}
     .grid{margin-top:14px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
-    .card{grid-column:span 12;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));box-shadow:var(--shadow);overflow:hidden}
-    @media(min-width:860px){.card.span6{grid-column:span 6}.card.span4{grid-column:span 4}}
-    .pad{padding:16px}
-    .k{display:inline-flex;gap:8px;align-items:center;padding:7px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);font-size:12px;font-weight:900}
-    .name{margin:10px 0 6px;font-weight:1000;text-transform:uppercase;letter-spacing:.2px}
-    .desc{color:rgba(238,241,247,.76);font-size:13px;line-height:1.35}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
-    .price{font-weight:1000}
-    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,212,0,.35);background:rgba(255,212,0,.14);font-weight:1000;font-size:12px;text-transform:uppercase}
-    .btn.ghost{border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.05)}
-    .btn:active{transform:translateY(1px)}
+    .card{grid-column:span 12;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));box-shadow:var(--shadow);padding:16px}
+    @media(min-width:900px){.card.span4{grid-column:span 4}}
+    .card h3{margin:0 0 6px;font-size:16px}
+    .card p{margin:0;color:rgba(238,241,247,.72);font-size:13px;line-height:1.35}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,212,0,.35);background:rgba(255,212,0,.14);font-weight:900;font-size:12.5px}
+    .note{margin-top:12px;color:rgba(164,173,191,.9);font-size:12px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="top">
-      <div class="bar">
-        <div class="brand">
-          <div class="mark"></div>
-          <div>
-            <p class="title">Snack Packz</p>
-            <p class="sub"><a href="index.html">← Back</a></p>
-          </div>
-        </div>
-        <div class="actions">
-          <a class="pill" href="index.html#shop">Shop</a>
-          <a class="pill primary" href="https://wa.me/447483849357?text=Yo%20-%20lock-in%20packs%20today%3F" target="_blank" rel="noopener">Order</a>
-        </div>
-      </div>
+      <a class="brand" href="index.html"><div class="mark"></div><h1>SNACK PACKZ</h1></a>
+      <a class="pill primary" target="_blank" rel="noopener"
+         href="https://wa.me/447483849357?text=Yo%20Snack%20Packz%20-%20I%20want%20a%20LOCK-IN%20pack.%20What%20you%20got%20today%3F">Order</a>
     </div>
 
     <section class="hero">
-      <div class="hero-media">
-        <img class="hero-img" src="assets/lockin.jpg" alt="">
-        <video class="hero-vid" muted playsinline autoplay loop preload="metadata" poster="assets/lockin.jpg">
-          <source src="assets/lockin.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="overlay"></div>
-      <div class="inner">
-        <h1>Lock-In Packs</h1>
-        <p>Revision, grind, all-nighters. Focus mode activated. No distractions, just fuel.</p>
-        <div class="chips">
-          <span class="chip">🧠 Focus vibes</span>
-          <span class="chip">📚 Study fuel</span>
-          <span class="chip">🎟️ Prize draw entry</span>
-          <span class="chip">⚠️ No energy drinks to under 16s</span>
-        </div>
+      <video id="v" muted playsinline preload="metadata">
+        <source src="assets/lockin.mp4" type="video/mp4">
+        <source src="assets/lockin.mp4.mp4" type="video/mp4">
+      </video>
+      <div class="heroBody">
+        <h2>Lock-In Packs</h2>
+        <p>Revision fuel. All-nighter kit. Focus mode activated.</p>
+        <div class="note">⚠️ No energy drinks to under 16s.</div>
       </div>
     </section>
 
     <section class="grid">
-      <div class="card span6"><div class="pad">
-        <span class="k">📝 Revision</span>
-        <div class="name">Revision Rations</div>
-        <div class="desc">Cheap + effective. Snack + drink + little extra if we’ve got it.</div>
-        <div class="row"><div class="price">£4.00</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20Lock-In%20Revision%20Rations%20(%C2%A34)%20pls" target="_blank" rel="noopener">Order</a></div>
-      </div></div>
-
-      <div class="card span6"><div class="pad">
-        <span class="k">🔥 Exam SZN</span>
-        <div class="name">Exam SZN Pack</div>
-        <div class="desc">Heavier pack for long sessions. More fuel, less suffering.</div>
-        <div class="row"><div class="price">£6.50</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20Exam%20SZN%20Pack%20(%C2%A36.50)%20pls" target="_blank" rel="noopener">Order</a></div>
-      </div></div>
-
-      <div class="card span4"><div class="pad">
-        <span class="k">🌙 All-Nighter</span>
-        <div class="name">All-Nighter Kit</div>
-        <div class="desc">Late grind kit. Comfort snack + drink + “I’m still alive” vibes.</div>
-        <div class="row"><div class="price">£7.50</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20All-Nighter%20Kit%20(%C2%A37.50)%20pls" target="_blank" rel="noopener">Order</a></div>
-      </div></div>
-
-      <div class="card span4"><div class="pad">
-        <span class="k">🎧 Focus</span>
-        <div class="name">Focus Fuel</div>
-        <div class="desc">Clean snack choices. No sticky hands on the keyboard.</div>
-        <div class="row"><div class="price">£5.50</div><a class="btn" href="https://wa.me/447483849357?text=Yo%20-%20Focus%20Fuel%20(%C2%A35.50)%20pls" target="_blank" rel="noopener">Order</a></div>
-      </div></div>
-
-      <div class="card span4"><div class="pad">
-        <span class="k">🎲 RNG</span>
-        <div class="name">Random Boost</div>
-        <div class="desc">Same budget, random upgrades. Could be legendary.</div>
-        <div class="row"><div class="price">£6.00</div><a class="btn ghost" href="https://wa.me/447483849357?text=Yo%20-%20Random%20Boost%20RNG%20(%C2%A36)%20pls%20-%20surprise%20me" target="_blank" rel="noopener">Order</a></div>
-      </div></div>
+      <div class="card span4">
+        <h3>Revision Starter</h3>
+        <p>Clean, simple, keeps you going. No chaos.</p>
+        <div class="row"><span>£</span><a class="btn" target="_blank" rel="noopener" href="https://wa.me/447483849357?text=Lock-in%20Revision%20Starter%20please.%20Budget%3A%20%C2%A3__">Order</a></div>
+      </div>
+      <div class="card span4">
+        <h3>OG Lock-In</h3>
+        <p>The proper one. More bits, better mix.</p>
+        <div class="row"><span>££</span><a class="btn" target="_blank" rel="noopener" href="https://wa.me/447483849357?text=Lock-in%20OG%20please.%20Budget%3A%20%C2%A3__">Order</a></div>
+      </div>
+      <div class="card span4">
+        <h3>All-Nighter</h3>
+        <p>Long session support. You’re in the trenches.</p>
+        <div class="row"><span>£££</span><a class="btn" target="_blank" rel="noopener" href="https://wa.me/447483849357?text=Lock-in%20All-nighter%20please.%20Budget%3A%20%C2%A3__">Order</a></div>
+      </div>
     </section>
   </div>
 
   <script>
-    document.querySelectorAll(".hero-media").forEach(media => {
-      const v = media.querySelector("video");
-      if(!v) return;
-      const ready = () => media.classList.add("video-ready");
-      v.addEventListener("canplay", ready, { once:true });
-      v.addEventListener("loadeddata", ready, { once:true });
-      v.addEventListener("error", () => media.classList.remove("video-ready"));
-    });
+    const v=document.getElementById('v');
+    const ready=()=>v.setAttribute('data-ready','1');
+    v.addEventListener('loadeddata',ready,{once:true});
+    v.addEventListener('canplay',ready,{once:true});
+    v.play().catch(()=>{});
   </script>
 </body>
 </html>
-
