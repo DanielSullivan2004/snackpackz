@@ -9,20 +9,22 @@
   <style>
     :root{
       --txt:#EEF3FF;
-      --mut:rgba(238,243,255,.72);
+      --mut:rgba(238,243,255,.74);
       --line:rgba(255,255,255,.12);
-      --shadow: 0 24px 120px rgba(0,0,0,.62);
+      --glass:rgba(10,12,24,.34);
+      --glass2:rgba(10,12,24,.22);
+      --shadow: 0 28px 130px rgba(0,0,0,.66);
       --r:22px;
 
       --accent:#A5F0FF;
       --accent2:#B7A8FF;
 
-      --bg0:#050612;
-      --bg1:#06081A;
+      --bg0:#040512;
+      --bg1:#05071a;
 
       --hudW:min(36vw, 520px);
-      --stageW:min(1120px, 100%);
-      --sphereSize:min(58vmin, 620px);
+      --stageW:min(1180px, 100%);
+      --globeSize:min(78vmin, 860px); /* big */
     }
 
     *{ box-sizing:border-box; }
@@ -32,9 +34,9 @@
       color:var(--txt);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1400px 900px at 20% 15%, rgba(167,120,255,.18), transparent 60%),
-        radial-gradient(1200px 900px at 78% 18%, rgba(72,220,255,.14), transparent 60%),
-        radial-gradient(900px 700px at 50% 90%, rgba(120,255,209,.08), transparent 62%),
+        radial-gradient(1400px 900px at 22% 12%, rgba(167,120,255,.20), transparent 60%),
+        radial-gradient(1200px 900px at 78% 14%, rgba(72,220,255,.14), transparent 60%),
+        radial-gradient(900px 700px at 50% 92%, rgba(120,255,209,.08), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
     }
@@ -44,7 +46,7 @@
     /* ===== NAV ===== */
     .nav{
       position:fixed; left:0; right:0; top:0;
-      z-index:50;
+      z-index:80;
       padding: 14px 18px;
       display:flex;
       align-items:center;
@@ -142,14 +144,14 @@
       .navLinks{ display:none; }
     }
 
-    /* ===== HERO CARD ===== */
+    /* ===== LEFT HERO ===== */
     .left{
       padding: clamp(12px, 2vw, 18px);
       display:flex;
       align-items:center;
       justify-content:center;
     }
-    .heroCard{
+    .hero{
       width: var(--stageW);
       border-radius: var(--r);
       border:1px solid rgba(255,255,255,.10);
@@ -161,15 +163,26 @@
       position:relative;
       min-height: 74vh;
     }
-    .heroCard:before{
+    .hero:before{
       content:"";
       position:absolute; inset:-1px;
       background:
-        radial-gradient(900px 520px at 50% 18%, rgba(165,240,255,.16), transparent 62%),
-        radial-gradient(1100px 760px at 62% 70%, rgba(183,168,255,.12), transparent 64%),
-        radial-gradient(900px 700px at 38% 110%, rgba(120,255,209,.07), transparent 62%);
+        radial-gradient(1100px 560px at 50% 16%, rgba(165,240,255,.18), transparent 62%),
+        radial-gradient(1200px 840px at 60% 74%, rgba(183,168,255,.12), transparent 64%),
+        radial-gradient(900px 700px at 42% 110%, rgba(120,255,209,.07), transparent 62%);
       opacity:.98;
       pointer-events:none;
+    }
+
+    /* faint “city” style lines */
+    .gridLines{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(rgba(255,255,255,.06), rgba(255,255,255,0)) 0 0/100% 140px,
+        repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 140px) 0 0/100% 100%;
+      opacity:.10;
+      pointer-events:none;
+      mask-image: radial-gradient(600px 320px at 50% 10%, rgba(0,0,0,1), rgba(0,0,0,0) 70%);
     }
 
     .heroInner{
@@ -178,24 +191,21 @@
       height:100%;
       padding: clamp(18px, 2.4vw, 26px);
       display:grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 16px;
+      grid-template-rows: auto 1fr;
+      gap: 12px;
     }
 
-    /* ===== HEADLINE (collapses on engage — fixes the empty dead space) ===== */
-    .headlineWrap{
+    /* headline (like MoonChain) */
+    .headline{
       display:grid;
       justify-items:center;
       text-align:center;
-      overflow:hidden;
-      max-height: 320px;
-      transition: max-height 240ms ease, opacity 200ms ease, transform 200ms ease, filter 200ms ease;
-      opacity:1;
-      transform: translateY(0);
-      filter: blur(0);
-      will-change: max-height, opacity, transform, filter;
+      gap:10px;
+      padding-top: 10px;
+      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
+      will-change: opacity, transform, filter;
     }
-    .kicker{
+    .pill{
       display:inline-flex;
       align-items:center;
       gap:10px;
@@ -207,20 +217,18 @@
       color: rgba(238,243,255,.78);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      margin-bottom:10px;
     }
-    .kicker .dot{ width:8px;height:8px; }
-    .headlineWrap h2{
+    .headline h2{
       margin:0;
-      font-size: clamp(34px, 4.7vw, 58px);
-      line-height:1.03;
+      font-size: clamp(34px, 4.8vw, 62px);
+      line-height:1.02;
       font-weight: 980;
-      letter-spacing: -0.8px;
+      letter-spacing: -1.0px;
       text-shadow: 0 30px 70px rgba(0,0,0,.55);
       max-width: 22ch;
     }
-    .headlineWrap p{
-      margin:10px 0 0;
+    .headline p{
+      margin:0;
       color: rgba(238,243,255,.74);
       font-size: 13px;
       line-height: 1.45;
@@ -231,7 +239,7 @@
       gap:12px;
       flex-wrap:wrap;
       justify-content:center;
-      margin-top: 14px;
+      margin-top: 8px;
     }
     .ctaPrimary{
       padding: 11px 14px;
@@ -239,49 +247,77 @@
       border-color: rgba(165,240,255,.18);
     }
 
-    .heroCard.engaged .headlineWrap{
-      max-height: 0px;
-      opacity:0;
-      transform: translateY(-10px);
-      filter: blur(3px);
-      pointer-events:none;
-      margin:0;
+    /* stats like MoonChain */
+    .stats{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+      max-width: 980px;
+      width: 100%;
+      justify-self:center;
+      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
+    }
+    .stat{
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 14px;
+    }
+    .stat .n{ font-size: 26px; font-weight: 980; letter-spacing:-.3px; }
+    .stat .t{ margin-top:6px; font-size: 12px; color: rgba(238,243,255,.70); }
+
+    @media (max-width: 920px){
+      .stats{ grid-template-columns: 1fr; }
     }
 
-    /* ===== CENTREPIECE ===== */
-    .centreStage{
+    /* ===== THE MOMENT: globe half-off bottom + beam ===== */
+    .stage{
       position:relative;
       display:grid;
       place-items:center;
-      min-height: 520px;
-      overflow: visible; /* IMPORTANT: prevents option clipping */
+      align-items:end;
+      min-height: 0;
+      height: 100%;
+      overflow:hidden;
     }
 
-    /* vertical beam */
+    /* beam goes through globe */
     .beam{
       position:absolute;
-      z-index:0;
-      width: 18%;
-      height: 180%;
-      top: -40%;
-      left: 41%;
-      background: linear-gradient(180deg, rgba(165,240,255,0), rgba(165,240,255,.22), rgba(183,168,255,.14), rgba(0,0,0,0));
+      z-index:1;
+      width: 26%;
+      height: 200%;
+      left: 37%;
+      top: -60%;
+      background: linear-gradient(180deg,
+        rgba(165,240,255,0),
+        rgba(165,240,255,.22),
+        rgba(183,168,255,.16),
+        rgba(0,0,0,0)
+      );
       filter: blur(14px);
-      opacity:.75;
+      opacity:.85;
       pointer-events:none;
     }
 
+    /* 3D system */
     .spin3d{
-      width: var(--sphereSize);
-      height: var(--sphereSize);
-      position:relative;
+      position:absolute;
+      left: 50%;
+      bottom: calc(-1 * (var(--globeSize) * 0.46)); /* half off-screen like reference */
+      transform: translateX(-50%);
+      width: var(--globeSize);
+      height: var(--globeSize);
       display:grid;
       place-items:center;
+      perspective: 1100px;
       touch-action:none;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
-      perspective: 1100px;
-      transform: translateY(-8px); /* nudges centrepiece higher for hero feel */
+      z-index:2;
     }
 
     canvas#fx{
@@ -290,51 +326,37 @@
       width:170%;
       height:170%;
       z-index:0;
-      opacity:.85;
+      opacity:.80;
       pointer-events:none;
     }
 
-    .ringLine{
-      position:absolute;
-      inset:-18%;
-      border-radius:50%;
-      z-index:1;
-      pointer-events:none;
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), rgba(0,0,0,0) 60%),
-        radial-gradient(circle at 50% 50%, rgba(0,0,0,.10), rgba(0,0,0,0) 68%);
-      opacity:.9;
-    }
-
-    .sphere{
+    /* globe */
+    .globe{
       position:relative;
       width: 100%;
       height: 100%;
       border-radius: 50%;
       z-index:2;
       background:
-        radial-gradient(circle at 35% 28%, rgba(255,255,255,.22), rgba(255,255,255,0) 34%),
-        radial-gradient(circle at 60% 46%, rgba(165,240,255,.12), rgba(165,240,255,0) 46%),
-        radial-gradient(circle at 50% 62%, rgba(183,168,255,.10), rgba(183,168,255,0) 55%),
-        radial-gradient(circle at 50% 55%, rgba(0,0,0,.10), rgba(0,0,0,.62)),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.34));
+        radial-gradient(circle at 35% 26%, rgba(255,255,255,.20), rgba(255,255,255,0) 34%),
+        radial-gradient(circle at 60% 46%, rgba(165,240,255,.14), rgba(165,240,255,0) 48%),
+        radial-gradient(circle at 50% 62%, rgba(183,168,255,.12), rgba(183,168,255,0) 56%),
+        radial-gradient(circle at 50% 55%, rgba(0,0,0,.10), rgba(0,0,0,.70)),
+        linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.36));
       border: 1px solid rgba(255,255,255,.16);
       box-shadow:
-        0 40px 140px rgba(0,0,0,.68),
+        0 50px 180px rgba(0,0,0,.70),
         inset 0 0 0 1px rgba(255,255,255,.07);
-      transform: translateZ(0);
       cursor:pointer;
     }
-    .sphere:before{
+    .globe:before{
       content:"";
       position:absolute;
-      inset:-14%;
+      inset:-16%;
       border-radius:50%;
       background:
         radial-gradient(circle at 55% 50%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(circle at 40% 42%, rgba(165,240,255,.16), transparent 62%),
+        radial-gradient(circle at 40% 42%, rgba(165,240,255,.18), transparent 62%),
         radial-gradient(circle at 60% 58%, rgba(183,168,255,.12), transparent 62%);
       filter: blur(18px);
       opacity:.92;
@@ -342,6 +364,19 @@
       mix-blend-mode: screen;
     }
 
+    /* thin orbit ring */
+    .orbit{
+      position:absolute;
+      inset:-12%;
+      border-radius:50%;
+      z-index:2;
+      pointer-events:none;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+      opacity:.9;
+    }
+
+    /* options (hidden until engage) */
     .opts{
       position:absolute;
       inset:-26%;
@@ -352,7 +387,7 @@
       transition: opacity 180ms ease, transform 180ms ease;
       transform-style: preserve-3d;
     }
-    .heroCard.engaged .opts{
+    .hero.engaged .opts{
       opacity:1;
       transform: scale(1);
     }
@@ -364,7 +399,7 @@
       height: 40px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.24);
+      background: rgba(0,0,0,.22);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       display:flex;
@@ -381,12 +416,12 @@
     }
     .opt:hover{
       border-color: rgba(165,240,255,.30);
-      background: rgba(0,0,0,.30);
+      background: rgba(0,0,0,.28);
       box-shadow: 0 18px 90px rgba(0,0,0,.72);
     }
     .opt.active{
       border-color: rgba(165,240,255,.40);
-      background: rgba(0,0,0,.32);
+      background: rgba(0,0,0,.30);
     }
     .oDot{
       width:10px;height:10px;border-radius:50%;
@@ -397,10 +432,25 @@
     .oTxt{ font-weight:950; font-size:12px; letter-spacing:.55px; text-transform:uppercase; }
     .oSub{ margin-left:auto; font-size:11px; color:rgba(238,243,255,.66); letter-spacing:.2px; text-transform:uppercase; }
 
+    /* when engaged: fade headline+stats away (so you “see the globe”) */
+    .hero.engaged .headline{
+      opacity:0;
+      transform: translateY(-10px);
+      filter: blur(3px);
+      pointer-events:none;
+    }
+    .hero.engaged .stats{
+      opacity:0;
+      transform: translateY(10px);
+      filter: blur(2px);
+      pointer-events:none;
+    }
+
+    /* hint */
     .hint{
       position:absolute;
-      bottom: -46px;
-      left: 50%;
+      left:50%;
+      top: 14%;
       transform: translateX(-50%);
       font-size: 11px;
       color: rgba(238,243,255,.62);
@@ -409,38 +459,8 @@
       max-width: 56ch;
       pointer-events:none;
       opacity:.95;
+      z-index:10;
     }
-
-    /* bottom stats */
-    .stats{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 4px;
-      transition: opacity 200ms ease, transform 200ms ease, filter 200ms ease;
-      opacity:1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
-    .heroCard.engaged .stats{
-      opacity:0;
-      transform: translateY(10px);
-      filter: blur(2px);
-      pointer-events:none;
-    }
-    @media (max-width: 920px){
-      .stats{ grid-template-columns: 1fr; }
-    }
-    .stat{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      padding: 14px 14px;
-    }
-    .stat .n{ font-size: 24px; font-weight: 980; letter-spacing:-.3px; }
-    .stat .t{ margin-top:6px; font-size: 12px; color: rgba(238,243,255,.70); }
 
     /* ===== RIGHT PREVIEW ===== */
     .hud{
@@ -527,7 +547,6 @@
       box-shadow: 0 0 0 6px rgba(165,240,255,.10);
       border:1px solid rgba(255,255,255,.12);
     }
-
     .hudBottom{
       position:absolute; left:0; right:0; bottom:0;
       z-index:6;
@@ -551,6 +570,10 @@
       color:rgba(238,243,255,.70);
       line-height:1.25;
       text-shadow: 0 18px 50px rgba(0,0,0,.65);
+    }
+
+    @media (hover:none){
+      .hint{ top: 16%; }
     }
   </style>
 </head>
@@ -580,45 +603,42 @@
   </div>
 
   <div class="scene">
-    <!-- LEFT HERO -->
+    <!-- LEFT -->
     <div class="left">
-      <div class="heroCard" id="heroCard">
-        <div class="heroInner">
+      <div class="hero" id="hero">
+        <div class="gridLines" aria-hidden="true"></div>
 
-          <div class="headlineWrap" id="headlineWrap">
-            <div class="kicker"><span class="dot"></span> Hover the centre sphere to reveal vibes</div>
-            <h2>Pick your Snack Pack vibe with a 3D spin selector.</h2>
-            <p>Hover to reveal. Drag to spin. Scroll to flick. Preview loads clean (image → video). Enter and order.</p>
+        <div class="heroInner">
+          <div class="headline" id="headline">
+            <div class="pill"><span class="dot"></span> Web3-level hero layout • but it’s Snack Packz</div>
+            <h2>Snack Packs, but premium — picked with a 3D spin selector.</h2>
+            <p>Hover the globe to reveal the vibes. Spin fast. Preview loads clean (image → video). Enter to order.</p>
             <div class="ctaRow">
               <a class="btn ctaPrimary" href="#" onclick="document.getElementById('spin3d').scrollIntoView({behavior:'smooth'}); return false;">Discover</a>
               <a class="btn" id="waCta" href="#" rel="noopener">Order on WhatsApp</a>
             </div>
           </div>
 
-          <div class="centreStage">
+          <div class="stage">
             <div class="beam" aria-hidden="true"></div>
 
-            <div class="spin3d" id="spin3d" aria-label="3D selector">
+            <div class="hint">Hover centrepiece to reveal options. Drag to spin. Scroll to flick. Mobile: tap globe to reveal.</div>
+
+            <div class="spin3d" id="spin3d" aria-label="3D spin selector">
               <canvas id="fx" width="900" height="900" aria-hidden="true"></canvas>
 
-              <div class="ringLine" aria-hidden="true"></div>
-              <div class="sphere" id="sphere" role="button" aria-label="Reveal vibes"></div>
+              <div class="orbit" aria-hidden="true"></div>
+              <div class="globe" id="globe" role="button" aria-label="Reveal vibes"></div>
 
               <div class="opts" id="opts" aria-label="Vibe options"></div>
+            </div>
 
-              <div class="hint">
-                Desktop: hover sphere to reveal. Drag to spin. Scroll to flick.<br>
-                Mobile: tap sphere to reveal. Tap a vibe twice to enter.
-              </div>
+            <div class="stats" id="stats">
+              <div class="stat"><div class="n">Fast</div><div class="t">Drag + scroll. Snaps instantly.</div></div>
+              <div class="stat"><div class="n">Premium</div><div class="t">Image instantly → video fades in.</div></div>
+              <div class="stat"><div class="n">Simple</div><div class="t">Pick vibe. Enter. WhatsApp order.</div></div>
             </div>
           </div>
-
-          <div class="stats" id="stats">
-            <div class="stat"><div class="n">Fast</div><div class="t">Drag + scroll. Snaps to selection.</div></div>
-            <div class="stat"><div class="n">Clean</div><div class="t">Text disappears so options feel intentional.</div></div>
-            <div class="stat"><div class="n">Premium</div><div class="t">Image instantly → video fades in when ready.</div></div>
-          </div>
-
         </div>
       </div>
     </div>
@@ -649,7 +669,7 @@
             <div class="v" id="hudMeta">Image → Video</div>
           </div>
           <div class="hudTip">
-            Hover centre to reveal<br/>Drag to spin<br/>Tap twice on mobile
+            Hover globe to reveal<br/>Drag to spin<br/>Tap twice on mobile
           </div>
         </div>
       </div>
@@ -674,10 +694,10 @@
     document.getElementById("waTop").href = wa("Hi Snack Packz — I want to place an order.");
     document.getElementById("waCta").href = wa("Hi Snack Packz — I want to place an order.");
 
-    const heroCard = document.getElementById("heroCard");
-    const spin3d   = document.getElementById("spin3d");
-    const sphere   = document.getElementById("sphere");
-    const optsEl   = document.getElementById("opts");
+    const hero = document.getElementById("hero");
+    const spin3d = document.getElementById("spin3d");
+    const globe = document.getElementById("globe");
+    const optsEl = document.getElementById("opts");
 
     const hudMedia = document.getElementById("hudMedia");
     const hudImg   = document.getElementById("hudImg");
@@ -732,7 +752,7 @@
         const opt = document.createElement("div");
         opt.className = "opt";
         opt.dataset.index = String(i);
-        opt.style.width = (vibes[i].label.length > 6 ? 170 : 150) + "px";
+        opt.style.width = (vibes[i].label.length > 6 ? 172 : 152) + "px";
         opt.innerHTML = `
           <span class="oDot" aria-hidden="true"></span>
           <span class="oTxt">${vibes[i].label}</span>
@@ -749,6 +769,7 @@
           e.preventDefault();
           const idx = Number(opt.dataset.index);
 
+          // mobile: tap once preview, second tap enter
           if (window.matchMedia("(hover:none)").matches){
             if (activeIndex === idx && opt.classList.contains("active")){
               window.location.href = vibes[idx].page;
@@ -757,6 +778,7 @@
             setActive(idx, true);
             return;
           }
+
           setActive(idx, true);
         }, {passive:false});
 
@@ -778,7 +800,7 @@
       if (snap) snapToIndex(i);
     }
 
-    // ===== 3D wheel
+    // ===== 3D orbit
     let rot = 0;
     let vel = 0;
     let dragging = false;
@@ -806,24 +828,22 @@
       const rect = spin3d.getBoundingClientRect();
       const base = Math.min(rect.width, rect.height);
 
-      // BIGGER + closer = more “hero”
-      const radius = base * 0.72;
-      const depth  = base * 0.26;
+      const radius = base * 0.62;    // around globe
+      const depth  = base * 0.22;
 
       const items = optsEl.querySelectorAll(".opt");
       for(let i=0;i<items.length;i++){
         const a = ((i*step) + rot) * Math.PI/180;
 
         const x = Math.cos(a) * radius;
-        const y = Math.sin(a) * radius * 0.62; // slightly squashed to feel “orbit”
+        const y = Math.sin(a) * radius * 0.60;
         const z = (Math.cos(a) * depth);
 
         const z01 = (z/depth + 1)/2;
 
-        // Make everything readable (no disappearing)
-        const scale = 0.90 + z01*0.24;      // 0.90..1.14
-        const alpha = 0.60 + z01*0.40;      // 0.60..1.00
-        const blur  = (1 - z01) * 0.45;     // max 0.45px (subtle)
+        const scale = 0.92 + z01*0.22;
+        const alpha = 0.62 + z01*0.38;
+        const blur  = (1 - z01) * 0.40;
 
         items[i].style.transform =
           `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) scale(${scale})`;
@@ -834,7 +854,7 @@
     }
 
     function onWheel(e){
-      if (!heroCard.classList.contains("engaged")) return;
+      if (!hero.classList.contains("engaged")) return;
       e.preventDefault();
       const delta = e.deltaY || 0;
       const add = clamp(delta * 0.18, -40, 40);
@@ -865,7 +885,7 @@
     let lastT = 0;
 
     function onDown(e){
-      if (!heroCard.classList.contains("engaged")) return;
+      if (!hero.classList.contains("engaged")) return;
       dragging = true;
       pointerId = e.pointerId;
       spin3d.setPointerCapture?.(pointerId);
@@ -908,20 +928,22 @@
 
     // ===== Engage behaviour
     function setEngaged(on){
-      heroCard.classList.toggle("engaged", on);
+      hero.classList.toggle("engaged", on);
       if (on) layout3D();
     }
 
+    // Desktop: hover globe area
     spin3d.addEventListener("mouseenter", ()=>{
       if (window.matchMedia("(hover:hover)").matches) setEngaged(true);
     });
-    heroCard.addEventListener("mouseleave", ()=>{
+    hero.addEventListener("mouseleave", ()=>{
       if (window.matchMedia("(hover:hover)").matches) setEngaged(false);
     });
 
-    sphere.addEventListener("click", ()=>{
+    // Mobile: tap globe toggles engaged
+    globe.addEventListener("click", ()=>{
       if (window.matchMedia("(hover:none)").matches){
-        setEngaged(!heroCard.classList.contains("engaged"));
+        setEngaged(!hero.classList.contains("engaged"));
       }
     });
 
@@ -930,7 +952,7 @@
     window.addEventListener("pointerup", onUp, {passive:true});
     spin3d.addEventListener("wheel", onWheel, {passive:false});
 
-    // ===== FX canvas (subtle premium particles)
+    // ===== FX canvas (premium particles)
     const fx = document.getElementById("fx");
     const fctx = fx.getContext("2d");
     const parts = [];
@@ -945,13 +967,13 @@
 
     function seedParts(){
       parts.length = 0;
-      const n = 130;
+      const n = 140;
       for(let i=0;i<n;i++){
         parts.push({
           x: Math.random(),
           y: Math.random(),
           r: 0.7 + Math.random()*1.7,
-          a: 0.10 + Math.random()*0.20,
+          a: 0.09 + Math.random()*0.20,
           vx:(Math.random()-0.5)*0.00055,
           vy:(Math.random()-0.5)*0.00055
         });
@@ -1002,7 +1024,7 @@
       const dt = Math.min(0.05, (now-last)/1000);
       last = now;
 
-      if (heroCard.classList.contains("engaged") && !dragging){
+      if (hero.classList.contains("engaged") && !dragging){
         rot += vel * dt;
         vel *= Math.exp(-3.0 * dt);
 
