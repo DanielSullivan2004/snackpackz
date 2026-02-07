@@ -4,23 +4,28 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Snack Packz — Spin Select</title>
-  <meta name="theme-color" content="#050710"/>
+  <meta name="theme-color" content="#070812"/>
+
   <style>
     :root{
-      --bg0:#040611;
-      --bg1:#070A12;
-      --txt:#EAF0FF;
-      --mut:#9AA6C7;
+      --bg0:#050612;
+      --bg1:#070A14;
+      --txt:#EEF3FF;
+      --mut:rgba(238,243,255,.70);
       --line:rgba(255,255,255,.10);
-      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --glass:rgba(10,14,26,.55);
+      --shadow:0 18px 70px rgba(0,0,0,.55);
       --r:22px;
 
       --accent:#9BE7FF;
       --accent2:#B7A8FF;
       --hot:#FF6A3D;
+      --warm:#FFD27A;
+      --good:#76FFD1;
 
-      --wheelSize:min(68vmin, 560px);
       --hudW:min(42vw, 560px);
+      --stageW:min(100%, 980px);
+      --wheelSize:min(62vmin, 520px);
     }
 
     *{ box-sizing:border-box; }
@@ -30,65 +35,28 @@
       color:var(--txt);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1200px 700px at 18% 12%, rgba(155,231,255,.10), transparent 60%),
-        radial-gradient(1000px 800px at 82% 25%, rgba(183,168,255,.10), transparent 62%),
+        radial-gradient(1200px 700px at 18% 12%, rgba(155,231,255,.12), transparent 62%),
+        radial-gradient(1200px 700px at 82% 25%, rgba(183,168,255,.10), transparent 62%),
+        radial-gradient(900px 900px at 55% 110%, rgba(118,255,209,.06), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
     }
     a{ color:inherit; text-decoration:none; }
     button{ font:inherit; }
 
-    /* ===== BACKGROUND CAR ===== */
-    .bg{
-      position:fixed;
-      inset:0;
-      z-index:0;
-      overflow:hidden;
-      background: radial-gradient(1200px 700px at 30% 30%, rgba(155,231,255,.10), transparent 60%),
-                  radial-gradient(1000px 700px at 70% 30%, rgba(183,168,255,.08), transparent 60%),
-                  linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.55));
-    }
-    .bg img{
-      position:absolute;
-      right:-8vw;
-      bottom:-8vh;
-      width: min(1200px, 120vw);
-      max-width:none;
-      opacity:.75;
-      filter: drop-shadow(0 35px 90px rgba(0,0,0,.85));
-      transform: translateZ(0);
-      pointer-events:none;
-      user-select:none;
-    }
-    .bg:after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(900px 520px at 15% 10%, rgba(0,0,0,.10), transparent 60%),
-        radial-gradient(900px 680px at 70% 25%, rgba(0,0,0,.22), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,.62));
-      pointer-events:none;
-    }
-
-    /* ===== TOP BAR ===== */
+    /* Top bar */
     .topbar{
-      position:fixed;
-      left:0; right:0; top:0;
+      position:fixed; left:0; right:0; top:0;
       z-index:50;
-      padding: 14px 16px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
+      padding:14px 16px;
+      display:flex; align-items:center; justify-content:space-between;
       gap:14px;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.12));
+      background: linear-gradient(180deg, rgba(0,0,0,.58), rgba(0,0,0,.10));
       border-bottom:1px solid rgba(255,255,255,.08);
     }
-    .brand{
-      display:flex; align-items:center; gap:12px; min-width:0;
-    }
+    .brand{ display:flex; align-items:center; gap:12px; min-width:0; }
     .logo{
       width:40px;height:40px;border-radius:14px;
       background:
@@ -102,32 +70,27 @@
     .brandText{ min-width:0; }
     .brandText h1{
       margin:0;
-      font-size: 15px;
+      font-size:15px;
       letter-spacing:.5px;
-      font-weight: 900;
+      font-weight:950;
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
     .brandText p{
       margin:4px 0 0;
-      font-size: 12px;
-      color:rgba(234,240,255,.70);
+      font-size:12px;
+      color:rgba(238,243,255,.70);
       white-space:nowrap;
       overflow:hidden;
       text-overflow:ellipsis;
     }
-    .rightChips{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-    }
-    .chip, .btn{
+
+    .chips{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; align-items:center; }
+    .chip,.btn{
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.22);
-      color: rgba(234,240,255,.90);
+      color: rgba(238,243,255,.92);
       border-radius: 999px;
       padding: 9px 12px;
       font-size: 12px;
@@ -140,51 +103,40 @@
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      cursor:pointer;
     }
-    .chip:hover, .btn:hover{
-      transform: translateY(-1px);
-      background: rgba(0,0,0,.28);
-      border-color: rgba(255,255,255,.20);
-    }
-    .chip:active, .btn:active{ transform: translateY(0px) scale(.99); }
+    .chip:hover,.btn:hover{ transform: translateY(-1px); background: rgba(0,0,0,.28); border-color: rgba(255,255,255,.20); }
+    .chip:active,.btn:active{ transform: translateY(0px) scale(.99); }
     .dot{
       width:7px;height:7px;border-radius:50%;
       background: linear-gradient(180deg, var(--accent), var(--accent2));
       box-shadow: 0 0 0 4px rgba(155,231,255,.10);
     }
 
-    /* ===== LAYOUT ===== */
+    /* Layout */
     .scene{
-      position:fixed;
-      inset:0;
-      z-index:10;
-      padding-top: 72px;
+      position:fixed; inset:0;
+      padding-top:72px;
       display:grid;
       grid-template-columns: 1fr var(--hudW);
       gap: clamp(12px, 2.2vw, 22px);
       align-items:stretch;
+      z-index:10;
     }
     @media (max-width: 980px){
       body{ overflow:auto; }
       .scene{
         position:relative;
-        padding-top: 76px;
+        padding-top:76px;
         grid-template-columns: 1fr;
         overflow:auto;
       }
     }
 
-    /* ===== LEFT: WHEEL ===== */
-    .leftPane{
-      position:relative;
-      z-index:10;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: clamp(10px, 2vw, 18px);
-    }
+    /* Left card */
+    .left{ display:flex; align-items:center; justify-content:center; padding: clamp(10px, 2vw, 18px); }
     .card{
-      width: min(100%, 900px);
+      width: var(--stageW);
       border-radius: var(--r);
       border:1px solid rgba(255,255,255,.10);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
@@ -198,124 +150,138 @@
       content:"";
       position:absolute; inset:-1px;
       background:
-        radial-gradient(900px 350px at 20% 10%, rgba(155,231,255,.10), transparent 60%),
-        radial-gradient(900px 350px at 80% 20%, rgba(183,168,255,.10), transparent 62%),
-        radial-gradient(900px 450px at 50% 110%, rgba(118,255,209,.06), transparent 62%);
+        radial-gradient(900px 360px at 20% 10%, rgba(155,231,255,.10), transparent 60%),
+        radial-gradient(900px 360px at 80% 20%, rgba(183,168,255,.10), transparent 62%),
+        radial-gradient(900px 520px at 50% 110%, rgba(118,255,209,.06), transparent 62%);
       opacity:.9;
       pointer-events:none;
     }
-    .header{
-      position:relative;
-      z-index:2;
-      padding: 16px 16px 12px;
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
+
+    .head{
+      position:relative; z-index:2;
+      padding:16px 16px 12px;
+      display:flex; justify-content:space-between; align-items:flex-start;
       gap:14px;
       border-bottom:1px solid rgba(255,255,255,.06);
     }
-    .header h2{
-      margin:0;
-      font-size: 16px;
-      font-weight: 950;
-      letter-spacing:.5px;
+    .head h2{ margin:0; font-size:16px; font-weight:950; letter-spacing:.5px; }
+    .head p{ margin:6px 0 0; font-size:12.5px; color:rgba(238,243,255,.70); line-height:1.35; }
+    .tapHint{ display:none; margin-top:10px; font-size:12px; color:rgba(238,243,255,.72); }
+    @media (hover:none){ .tapHint{ display:block; } }
+    .miniBtns{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
+
+    .stageRow{
+      position:relative; z-index:2;
+      display:grid;
+      grid-template-columns: 1fr 280px;
+      gap:14px;
+      padding:14px 14px 16px;
+      align-items:stretch;
     }
-    .header p{
-      margin:6px 0 0;
-      font-size: 12.5px;
-      color: rgba(234,240,255,.70);
-      line-height:1.35;
-    }
-    .miniBtns{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:flex-end;
+    @media (max-width: 920px){
+      .stageRow{ grid-template-columns: 1fr; }
     }
 
-    .wheelWrap{
+    /* Scene stage */
+    .sceneStage{
       position:relative;
-      z-index:2;
-      padding: 14px 14px 16px;
-      display:grid;
-      grid-template-columns: 1fr 260px;
-      gap: 14px;
-      align-items:center;
-    }
-    @media (max-width: 900px){
-      .wheelWrap{ grid-template-columns: 1fr; }
+      border-radius: 20px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      overflow:hidden;
+      box-shadow: 0 20px 70px rgba(0,0,0,.45);
+      min-height: max(520px, calc(var(--wheelSize) + 170px));
     }
 
-    .wheelStage{
-      position:relative;
-      display:grid;
-      place-items:center;
-      min-height: calc(var(--wheelSize) + 20px);
-      touch-action:none;
+    /* Car background drawn via SVG */
+    .carSvg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      opacity:1;
+      pointer-events:none;
       user-select:none;
     }
-    .wheelCore{
-      position:relative;
+
+    /* Wheel zone */
+    .wheelZone{
+      position:absolute;
+      left: clamp(14px, 2.2vw, 26px);
+      bottom: clamp(18px, 2.4vw, 30px);
       width: var(--wheelSize);
       height: var(--wheelSize);
       display:grid;
       place-items:center;
-      transform: translateZ(0);
+      touch-action:none;
+      user-select:none;
+      z-index:6;
     }
-    .wheelShadow{
+
+    canvas#wheelCanvas{
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.04), rgba(0,0,0,.55));
+      box-shadow:
+        0 30px 90px rgba(0,0,0,.70),
+        inset 0 0 0 1px rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      transform: translateZ(0);
+      z-index:2;
+    }
+
+    .wheelHeat{
       position:absolute;
       inset:-10%;
       border-radius:50%;
-      background: radial-gradient(circle at 50% 55%, rgba(0,0,0,.55), transparent 60%);
-      filter: blur(10px);
-      opacity:.9;
-      z-index:0;
-      pointer-events:none;
-    }
-    .wheelImg{
-      position:relative;
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      transform: rotate(var(--rot, 0deg));
-      will-change: transform;
-      z-index:2;
-      filter: drop-shadow(0 28px 70px rgba(0,0,0,.80));
-      user-select:none;
-      pointer-events:none;
-    }
-
-    /* subtle rim glow that ramps with speed (not tacky) */
-    .rimGlow{
-      position:absolute;
-      inset:-3%;
-      border-radius:50%;
-      z-index:1;
       background:
-        radial-gradient(circle at 50% 50%, transparent 52%, rgba(155,231,255,.10) 60%, transparent 75%),
-        radial-gradient(circle at 50% 50%, transparent 55%, rgba(183,168,255,.08) 64%, transparent 78%);
-      opacity: .55;
-      filter: blur(0px);
+        radial-gradient(circle at 55% 50%, rgba(255,106,61,.35), transparent 60%),
+        radial-gradient(circle at 45% 45%, rgba(255,210,122,.20), transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(155,231,255,.12), transparent 65%);
+      filter: blur(8px);
+      opacity:0;
+      transition: opacity .14s ease;
       pointer-events:none;
-      transition: opacity .12s ease;
+      z-index:1;
+      mix-blend-mode: screen;
     }
+    .wheelHeat.on{ opacity:1; }
 
-    /* markers around wheel */
+    .sparks{
+      position:absolute;
+      inset:-18%;
+      border-radius:50%;
+      opacity:0;
+      transition: opacity .14s ease;
+      pointer-events:none;
+      z-index:3;
+      -webkit-mask: radial-gradient(circle at 50% 50%, transparent 44%, #000 50%, #000 82%, transparent 88%);
+              mask: radial-gradient(circle at 50% 50%, transparent 44%, #000 50%, #000 82%, transparent 88%);
+      background:
+        repeating-conic-gradient(from 0deg,
+          rgba(255,106,61,.0) 0deg 6deg,
+          rgba(255,106,61,.16) 6deg 6.5deg
+        );
+      mix-blend-mode: screen;
+    }
+    .sparks.on{ opacity:.75; }
+
+    /* Markers */
     .markers{
       position:absolute;
-      width: var(--wheelSize);
-      height: var(--wheelSize);
+      width:100%;
+      height:100%;
       inset:0;
-      margin:auto;
-      z-index:5;
+      z-index:7;
       pointer-events:auto;
     }
     .marker{
       position:absolute;
       left:50%; top:50%;
-      height: 34px;
+      height:34px;
       transform-origin: 0% 50%;
-      border-radius: 999px;
+      border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.22);
       backdrop-filter: blur(10px);
@@ -328,16 +294,16 @@
       -webkit-tap-highlight-color: transparent;
       user-select:none;
       box-shadow: 0 16px 50px rgba(0,0,0,.42);
-      transition: transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+      transition: border-color .12s ease, background .12s ease, box-shadow .12s ease;
       white-space:nowrap;
     }
     .marker:hover{
-      border-color: rgba(255,255,255,.20);
+      border-color: rgba(255,255,255,.22);
       background: rgba(0,0,0,.28);
     }
     .marker.active{
-      border-color: rgba(155,231,255,.32);
-      box-shadow: 0 18px 60px rgba(0,0,0,.58);
+      border-color: rgba(155,231,255,.34);
+      box-shadow: 0 18px 64px rgba(0,0,0,.58);
     }
     .mDot{
       width:10px;height:10px;border-radius:50%;
@@ -346,105 +312,76 @@
       flex:0 0 auto;
     }
     .mTxt{
-      font-weight: 950;
-      font-size: 12px;
+      font-weight:950;
+      font-size:12px;
       letter-spacing:.55px;
       text-transform: uppercase;
     }
     .mSub{
       margin-left:auto;
-      font-size: 11px;
-      color: rgba(234,240,255,.68);
+      font-size:11px;
+      color: rgba(238,243,255,.66);
       letter-spacing:.2px;
       text-transform: uppercase;
     }
 
-    /* ===== SPEEDOMETER HUD (REAL IMAGE + LIVE NEEDLE + DIGITS) ===== */
+    /* Speedometer */
     .speedPanel{
-      align-self:stretch;
-      border-radius: 18px;
+      border-radius:20px;
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.18);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      padding: 14px 12px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.45);
+      padding:14px 12px 12px;
+      position:relative;
+      overflow:hidden;
       display:flex;
       flex-direction:column;
       gap:12px;
-      position:relative;
-      overflow:hidden;
     }
-    .speedPanel h3{
-      margin:0;
-      font-size: 12px;
-      letter-spacing:.35px;
-      color: rgba(234,240,255,.82);
-      font-weight: 950;
+    .speedPanel:before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(500px 250px at 20% 20%, rgba(155,231,255,.08), transparent 60%),
+        radial-gradient(500px 250px at 80% 30%, rgba(183,168,255,.08), transparent 62%),
+        radial-gradient(500px 350px at 50% 110%, rgba(255,106,61,.06), transparent 62%);
+      pointer-events:none;
+      opacity:.95;
+    }
+    .speedHead{
+      position:relative; z-index:2;
       display:flex;
-      align-items:center;
       justify-content:space-between;
+      align-items:baseline;
       gap:10px;
     }
-    .speedPanel h3 span{
-      color: rgba(234,240,255,.62);
-      font-weight: 800;
-      font-size: 11px;
+    .speedHead h3{
+      margin:0;
+      font-size:12px;
+      font-weight:950;
+      letter-spacing:.35px;
+      color: rgba(238,243,255,.85);
+    }
+    .rank{
+      font-size:11px;
+      color: rgba(238,243,255,.65);
+      font-weight:800;
       letter-spacing:.2px;
     }
-
-    .speedoStage{
-      position:relative;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.08);
-      background: rgba(0,0,0,.16);
-      overflow:hidden;
-      box-shadow: 0 18px 60px rgba(0,0,0,.40);
-      aspect-ratio: 16 / 10;
-      display:grid;
-      place-items:center;
-    }
-    .speedoStage img{
+    canvas#speedCanvas{
+      position:relative; z-index:2;
       width:100%;
-      height:100%;
-      object-fit: cover;
-      opacity:.95;
-      user-select:none;
-      pointer-events:none;
-      filter: contrast(1.05) saturate(1.05);
+      aspect-ratio: 16/10;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      box-shadow: 0 16px 55px rgba(0,0,0,.40);
     }
-
-    /* needle overlay */
-    .needle{
-      position:absolute;
-      left:50%;
-      top:58%;
-      width: 46%;
-      height: 3px;
-      transform-origin: 8% 50%;
-      transform: translate(-8%, -50%) rotate(var(--needle, -60deg));
-      background: linear-gradient(90deg, rgba(255,255,255,.85), rgba(255,106,61,.85));
-      box-shadow: 0 0 18px rgba(255,106,61,.22);
-      border-radius: 999px;
-      opacity:.92;
-    }
-    .needle:after{
-      content:"";
-      position:absolute;
-      left:6%;
-      top:50%;
-      width: 12px;
-      height: 12px;
-      transform: translate(-50%,-50%);
-      border-radius: 50%;
-      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), rgba(0,0,0,.55));
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow: 0 10px 24px rgba(0,0,0,.40);
-    }
-
-    /* digits panel (clean, not cheesy) */
     .digits{
+      position:relative; z-index:2;
       display:flex;
-      justify-content:space-between;
       gap:10px;
       flex-wrap:wrap;
     }
@@ -458,26 +395,11 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
-    .digitBox .k{
-      font-size: 11px;
-      color: rgba(234,240,255,.65);
-      letter-spacing:.2px;
-    }
-    .digitBox .v{
-      margin-top: 6px;
-      font-size: 20px;
-      font-weight: 950;
-      letter-spacing:.6px;
-      line-height:1;
-    }
-    .digitBox .u{
-      margin-top: 6px;
-      font-size: 11px;
-      color: rgba(234,240,255,.60);
-      letter-spacing:.2px;
-    }
-
+    .digitBox .k{ font-size:11px; color: rgba(238,243,255,.65); letter-spacing:.2px; }
+    .digitBox .v{ margin-top:6px; font-size:20px; font-weight:950; letter-spacing:.6px; line-height:1; }
+    .digitBox .u{ margin-top:6px; font-size:11px; color: rgba(238,243,255,.60); letter-spacing:.2px; }
     .panelBtns{
+      position:relative; z-index:2;
       display:flex;
       gap:10px;
       flex-wrap:wrap;
@@ -485,62 +407,29 @@
     .panelBtns .btn{
       flex:1;
       justify-content:center;
-      border-radius: 14px;
-      padding: 10px 12px;
-      font-weight: 900;
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:950;
+      letter-spacing:.2px;
     }
 
-    /* flame vfx - restrained + clean */
-    .flameFX{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      z-index:8;
-      opacity:0;
-      transition: opacity .16s ease;
-      mix-blend-mode: screen;
-    }
-    .flameFX.on{ opacity:1; }
-    .flameFX:before,
-    .flameFX:after{
-      content:"";
-      position:absolute;
-      left:50%; top:50%;
-      width: 42%;
-      height: 42%;
-      transform: translate(-50%,-50%);
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 50% 65%, rgba(255,106,61,.45), transparent 62%),
-        radial-gradient(circle at 45% 42%, rgba(255,210,122,.26), transparent 60%),
-        radial-gradient(circle at 55% 30%, rgba(255,255,255,.18), transparent 60%);
-      animation: spin 420ms linear infinite;
-      filter: blur(1px);
-      opacity:.9;
-    }
-    .flameFX:after{
-      width: 56%;
-      height: 56%;
-      filter: blur(8px);
-      opacity:.55;
-      animation-duration: 320ms;
-    }
-    @keyframes spin{
-      from{ transform: translate(-50%,-50%) rotate(0deg); }
-      to{ transform: translate(-50%,-50%) rotate(360deg); }
+    .foot{
+      position:relative; z-index:2;
+      padding: 10px 16px 14px;
+      border-top:1px solid rgba(255,255,255,.06);
+      font-size:11px;
+      color: rgba(238,243,255,.60);
     }
 
-    /* ===== RIGHT: PREVIEW HUD ===== */
+    /* Right preview HUD */
     .hud{
       position:relative;
-      z-index:10;
       border-left:1px solid rgba(255,255,255,.06);
       padding: clamp(10px, 2vw, 16px);
       display:flex;
       align-items:stretch;
     }
     @media (max-width: 980px){ .hud{ border-left:none; } }
-
     .hudCard{
       width:100%;
       border-radius: var(--r);
@@ -554,7 +443,6 @@
       min-height: 420px;
     }
     @media (max-width: 980px){ .hudCard{ min-height: 360px; } }
-
     .hudMedia{
       position:absolute; inset:0; z-index:2;
     }
@@ -563,7 +451,7 @@
       width:100%; height:100%;
       object-fit: cover;
       transform: scale(1.02);
-      filter: contrast(1.05) saturate(1.03);
+      filter: contrast(1.06) saturate(1.03);
     }
     .hudMedia img{ opacity:1; transition: opacity 220ms ease; }
     .hudMedia video{ opacity:0; transition: opacity 320ms ease; }
@@ -575,13 +463,12 @@
       background:
         radial-gradient(700px 380px at 20% 10%, rgba(0,0,0,.12), transparent 60%),
         radial-gradient(800px 520px at 70% 35%, rgba(0,0,0,.26), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.66));
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.70));
       pointer-events:none;
     }
-
     .hudTop{
       position:relative; z-index:5;
-      padding: 16px 16px 0;
+      padding:16px 16px 0;
       display:flex;
       justify-content:space-between;
       gap:12px;
@@ -589,20 +476,19 @@
     }
     .hudTitle h3{
       margin:0;
-      font-size: 18px;
-      font-weight: 950;
+      font-size:18px;
+      font-weight:950;
       letter-spacing:.5px;
       text-shadow: 0 18px 50px rgba(0,0,0,.65);
     }
     .hudTitle p{
       margin: 6px 0 0;
       font-size: 12.5px;
-      color: rgba(234,240,255,.78);
+      color: rgba(238,243,255,.78);
       line-height:1.35;
       text-shadow: 0 18px 50px rgba(0,0,0,.65);
       max-width: 46ch;
     }
-
     .enter{
       border-radius: 16px;
       padding: 10px 12px;
@@ -630,7 +516,6 @@
       box-shadow: 0 0 0 6px rgba(155,231,255,.10);
       border:1px solid rgba(255,255,255,.12);
     }
-
     .hudBottom{
       position:absolute;
       left:0; right:0; bottom:0;
@@ -650,42 +535,19 @@
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
     }
-    .hudStat .k{ font-size: 11px; color: rgba(234,240,255,.70); letter-spacing:.2px; }
+    .hudStat .k{ font-size: 11px; color: rgba(238,243,255,.70); letter-spacing:.2px; }
     .hudStat .v{ margin-top: 5px; font-size: 12.5px; font-weight: 950; letter-spacing:.25px; }
     .hudTip{
       text-align:right;
       font-size: 11px;
-      color: rgba(234,240,255,.70);
+      color: rgba(238,243,255,.70);
       line-height:1.25;
       text-shadow: 0 18px 50px rgba(0,0,0,.65);
-    }
-
-    .tapHint{
-      display:none;
-      margin-top: 10px;
-      font-size: 12px;
-      color: rgba(234,240,255,.72);
-    }
-    @media (hover:none){ .tapHint{ display:block; } }
-
-    .foot{
-      position:relative;
-      z-index:2;
-      padding: 10px 16px 14px;
-      border-top:1px solid rgba(255,255,255,.06);
-      font-size: 11px;
-      color: rgba(234,240,255,.60);
     }
   </style>
 </head>
 <body>
 
-  <!-- Background -->
-  <div class="bg" aria-hidden="true">
-    <img src="assets/car.png" alt=""/>
-  </div>
-
-  <!-- Top bar -->
   <div class="topbar">
     <div class="brand">
       <div class="logo"></div>
@@ -694,7 +556,7 @@
         <p>Spin the wheel. Flex the speed. Pick your vibe.</p>
       </div>
     </div>
-    <div class="rightChips">
+    <div class="chips">
       <div class="chip"><span class="dot"></span> Drag • Scroll • Snap</div>
       <a class="chip" id="waTop" href="#" rel="noopener">WhatsApp Order</a>
     </div>
@@ -702,12 +564,12 @@
 
   <div class="scene">
     <!-- LEFT -->
-    <div class="leftPane">
+    <div class="left">
       <div class="card">
-        <div class="header">
+        <div class="head">
           <div>
             <h2>Spin Select</h2>
-            <p>Real wheel + real speedometer. Try spin it fast — it’ll show your speed live.</p>
+            <p>Front wheel of the car. Real-time speedometer. Image preview instantly, then video fades in.</p>
             <div class="tapHint">Mobile: tap a vibe once to preview, tap again to enter.</div>
           </div>
           <div class="miniBtns">
@@ -716,26 +578,116 @@
           </div>
         </div>
 
-        <div class="wheelWrap">
-          <!-- Wheel stage -->
-          <div class="wheelStage" id="wheelStage">
-            <div class="wheelCore" id="wheelCore">
-              <div class="wheelShadow"></div>
-              <div class="rimGlow" id="rimGlow"></div>
-              <img class="wheelImg" id="wheelImg" src="assets/wheel.png" alt="Wheel"/>
-              <div class="markers" id="markers" aria-label="markers"></div>
+        <div class="stageRow">
+          <!-- Car + Wheel Stage -->
+          <div class="sceneStage" id="sceneStage">
+
+            <!-- Car background (vector) -->
+            <svg class="carSvg" viewBox="0 0 1400 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs>
+                <linearGradient id="floorG" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0" stop-color="rgba(0,0,0,.00)"/>
+                  <stop offset="1" stop-color="rgba(0,0,0,.55)"/>
+                </linearGradient>
+
+                <linearGradient id="carPaint" x1="0" x2="1">
+                  <stop offset="0" stop-color="rgba(255,255,255,.10)"/>
+                  <stop offset=".25" stop-color="rgba(155,231,255,.12)"/>
+                  <stop offset=".55" stop-color="rgba(183,168,255,.10)"/>
+                  <stop offset="1" stop-color="rgba(255,255,255,.10)"/>
+                </linearGradient>
+
+                <linearGradient id="glass" x1="0" x2="1">
+                  <stop offset="0" stop-color="rgba(155,231,255,.10)"/>
+                  <stop offset="1" stop-color="rgba(183,168,255,.08)"/>
+                </linearGradient>
+
+                <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="7" result="blur"/>
+                  <feColorMatrix in="blur" type="matrix"
+                    values="1 0 0 0 0
+                            0 1 0 0 0
+                            0 0 1 0 0
+                            0 0 0 0.55 0" result="glow"/>
+                  <feMerge>
+                    <feMergeNode in="glow"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+
+                <radialGradient id="headGlow" cx="70%" cy="50%" r="45%">
+                  <stop offset="0" stop-color="rgba(155,231,255,.16)"/>
+                  <stop offset="1" stop-color="rgba(155,231,255,0)"/>
+                </radialGradient>
+
+                <radialGradient id="heat" cx="50%" cy="55%" r="55%">
+                  <stop offset="0" stop-color="rgba(255,106,61,.14)"/>
+                  <stop offset=".55" stop-color="rgba(255,106,61,.05)"/>
+                  <stop offset="1" stop-color="rgba(255,106,61,0)"/>
+                </radialGradient>
+              </defs>
+
+              <!-- garage streak lights -->
+              <g opacity=".35">
+                <path d="M-200 120 L1600 0" stroke="rgba(155,231,255,.18)" stroke-width="6"/>
+                <path d="M-200 200 L1600 60" stroke="rgba(183,168,255,.14)" stroke-width="5"/>
+                <path d="M-200 300 L1600 140" stroke="rgba(255,255,255,.10)" stroke-width="4"/>
+                <path d="M-200 420 L1600 240" stroke="rgba(155,231,255,.12)" stroke-width="4"/>
+              </g>
+
+              <!-- floor -->
+              <path d="M0 560 C 350 480, 1050 480, 1400 560 L1400 800 L0 800 Z" fill="rgba(0,0,0,.28)"/>
+              <rect x="0" y="520" width="1400" height="280" fill="url(#floorG)"/>
+
+              <!-- car body (behind wheel) -->
+              <path filter="url(#softGlow)"
+                d="M260 520
+                   C300 420, 420 350, 610 340
+                   C700 250, 830 235, 980 265
+                   C1100 290, 1210 360, 1290 450
+                   C1360 455, 1390 485, 1395 520
+                   C1400 555, 1360 580, 1300 586
+                   L360 586
+                   C290 586, 250 560, 260 520 Z"
+                fill="url(#carPaint)" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+
+              <!-- windows -->
+              <path
+                d="M650 350
+                   C710 285, 800 260, 910 270
+                   C995 278, 1070 315, 1125 360
+                   L1010 360
+                   C965 325, 910 305, 850 300
+                   C770 295, 710 315, 675 350 Z"
+                fill="url(#glass)" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+
+              <!-- headlight area -->
+              <ellipse cx="1220" cy="465" rx="150" ry="120" fill="url(#headGlow)" opacity=".65"/>
+              <path d="M1180 450 C1215 450, 1250 470, 1258 495 C1225 508, 1195 510, 1165 503 Z"
+                fill="rgba(255,255,255,.10)" stroke="rgba(155,231,255,.20)" stroke-width="2"/>
+              <path d="M1175 480 C1210 480, 1236 490, 1252 503" stroke="rgba(155,231,255,.30)" stroke-width="3" fill="none"/>
+
+              <!-- subtle wheel heat aura behind wheel -->
+              <circle cx="430" cy="585" r="220" fill="url(#heat)" opacity=".75"/>
+            </svg>
+
+            <!-- Wheel area -->
+            <div class="wheelZone" id="wheelZone">
+              <div class="wheelHeat" id="wheelHeat"></div>
+              <div class="sparks" id="sparks"></div>
+              <canvas id="wheelCanvas" width="900" height="900" aria-label="Wheel"></canvas>
+              <div class="markers" id="markers" aria-label="Vibes"></div>
             </div>
           </div>
 
-          <!-- Speedo panel -->
+          <!-- Speed panel -->
           <div class="speedPanel">
-            <h3>SPIN SPEED <span id="rankTxt">Rank: Warm</span></h3>
-
-            <div class="speedoStage">
-              <img src="assets/speedo.png" alt="Speedometer"/>
-              <div class="needle" id="needle" style="--needle:-60deg;"></div>
-              <div class="flameFX" id="flameFX"></div>
+            <div class="speedHead">
+              <h3>SPIN SPEED</h3>
+              <div class="rank" id="rankTxt">Rank: Warm</div>
             </div>
+
+            <canvas id="speedCanvas" width="800" height="500" aria-label="Speedometer"></canvas>
 
             <div class="digits">
               <div class="digitBox">
@@ -757,7 +709,7 @@
           </div>
         </div>
 
-        <div class="foot">Tip: click/tap a vibe label to snap instantly. Drag the wheel to throw it.</div>
+        <div class="foot">Tip: click/tap a vibe label to snap instantly. Drag the wheel to throw it. Scroll to flick.</div>
       </div>
     </div>
 
@@ -796,7 +748,8 @@
 
   <script>
     // ========= CONFIG =========
-    const WHATSAPP_NUMBER = "447483849357"; // no + in wa.me
+    const WHATSAPP_NUMBER = "447483849357"; // wa.me format (no +)
+
     const vibes = [
       { key:"gym",     label:"GYM",     sub:"FOCUS", page:"gym.html",     img:"assets/gym.jpg",     vid:"assets/gym.mp4",     desc:"High focus. Clean fuel. No distractions.", meta:"Heavy session snack packs." },
       { key:"lockin",  label:"LOCK-IN", sub:"GRIND", page:"lock-in.html", img:"assets/lockin.jpg",  vid:"assets/lockin.mp4",  desc:"Tunnel vision mode. Phone down. Get it done.", meta:"Study / deep work packs." },
@@ -807,29 +760,32 @@
     ];
 
     const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+    const norm = (a)=>((a%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
 
     function waLink(text){
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     }
-
-    // ========= DOM =========
     document.getElementById("waTop").href = waLink("Hi Snack Packz — I want to place an order.");
 
-    const wheelStage = document.getElementById("wheelStage");
-    const wheelCore  = document.getElementById("wheelCore");
-    const wheelImg   = document.getElementById("wheelImg");
-    const markers    = document.getElementById("markers");
-    const rimGlow    = document.getElementById("rimGlow");
+    // ========= DOM =========
+    const wheelZone   = document.getElementById("wheelZone");
+    const wheelCanvas = document.getElementById("wheelCanvas");
+    const wctx        = wheelCanvas.getContext("2d");
+
+    const speedCanvas = document.getElementById("speedCanvas");
+    const sctx        = speedCanvas.getContext("2d");
+
+    const markers     = document.getElementById("markers");
+    const wheelHeat   = document.getElementById("wheelHeat");
+    const sparks      = document.getElementById("sparks");
 
     const resetBtn = document.getElementById("resetBtn");
     const boostBtn = document.getElementById("boostBtn");
     const brakeBtn = document.getElementById("brakeBtn");
     const autoBtn  = document.getElementById("autoBtn");
 
-    const needle  = document.getElementById("needle");
     const spdVal  = document.getElementById("spdVal");
     const peakVal = document.getElementById("peakVal");
-    const flameFX = document.getElementById("flameFX");
     const rankTxt = document.getElementById("rankTxt");
 
     const hudMedia = document.getElementById("hudMedia");
@@ -840,24 +796,8 @@
     const hudMeta  = document.getElementById("hudMeta");
     const enterBtn = document.getElementById("enterBtn");
 
-    // ========= STATE =========
-    const N = vibes.length;
-    const step = 360 / N;
-
-    let rot = 0;               // degrees
-    let vel = 0;               // deg/sec
-    let dragging = false;
-    let pointerId = null;
-    let lastAng = 0;
-    let lastT = 0;
-
-    let activeIndex = 0;
-    let autoSpin = false;
-
-    let peak = 0;              // peak "spin/sec"
-    let token = 0;
-
-    // ========= PREVIEW (image instant -> fade to video) =========
+    // ========= PREMIUM PREVIEW (image instantly → video fade when ready) =========
+    let videoToken = 0;
     function loadPreview(v){
       hudTitle.textContent = v.label;
       hudDesc.textContent = v.desc;
@@ -867,20 +807,20 @@
       hudMedia.classList.remove("ready");
       hudImg.src = v.img;
 
-      const t = ++token;
+      const token = ++videoToken;
       try{ hudVid.pause(); }catch(e){}
       hudVid.removeAttribute("src");
       hudVid.load();
       hudVid.src = v.vid;
 
       const onReady = () => {
-        if (t !== token) return;
+        if (token !== videoToken) return;
         hudMedia.classList.add("ready");
         hudMeta.textContent = "Video ready";
         try{ hudVid.play().catch(()=>{}); }catch(e){}
       };
       const onError = () => {
-        if (t !== token) return;
+        if (token !== videoToken) return;
         hudMedia.classList.remove("ready");
         hudMeta.textContent = "Video unavailable (image only)";
       };
@@ -891,31 +831,38 @@
       hudVid.load();
     }
 
-    // ========= SNAP MATH =========
-    function normDeg(d){
-      d %= 360;
-      if (d < 0) d += 360;
-      return d;
-    }
+    // ========= WHEEL PHYSICS =========
+    const N = vibes.length;
+    const step = (Math.PI*2)/N;
 
-    function nearestIndex(){
-      // want index to be at top (0deg). Marker positions are fixed at i*step - 90,
-      // so our "top snap" is just nearest multiple of step to rot.
-      // We'll treat "index 0 at top when rot is 0".
-      const r = normDeg(rot);
-      // index i is aligned when rot ≈ -i*step
-      let i = Math.round((-r) / step);
-      i = ((i % N) + N) % N;
-      return i;
+    let angle = 0;        // radians
+    let velocity = 0;     // rad/s
+    let dragging = false;
+    let pointerId = null;
+    let lastA = 0;
+    let lastT = 0;
+
+    let activeIndex = 0;
+    let autoSpin = false;
+
+    let peak = 0;
+
+    function targetAngleForIndex(i){ return -i * step; }
+    function nearestIndexFromAngle(a){
+      let raw = Math.round((-a)/step);
+      raw = ((raw%N)+N)%N;
+      return raw;
     }
 
     function snapToIndex(i){
-      const target = -i * step;
-      // shortest path diff
-      let diff = target - rot;
-      diff = ((diff + 540) % 360) - 180;
-      rot += diff;
-      vel = 0;
+      const target = targetAngleForIndex(i);
+      const cur = norm(angle);
+      const targ = norm(target);
+      let diff = targ - cur;
+      if (diff > Math.PI) diff -= Math.PI*2;
+      if (diff < -Math.PI) diff += Math.PI*2;
+      angle += diff;
+      velocity = 0;
     }
 
     function setActive(i, snap=true){
@@ -925,19 +872,19 @@
       if (snap) snapToIndex(i);
     }
 
-    // ========= MARKERS UI =========
+    // ========= MARKERS =========
     function buildMarkers(){
       markers.innerHTML = "";
-      const radiusPct = 48; // distance from centre
+      const radiusPct = 50.5; // around wheel
       for (let i=0; i<N; i++){
         const m = document.createElement("div");
         m.className = "marker";
         m.dataset.index = String(i);
 
-        const wide = vibes[i].label.length > 6 ? 148 : 128;
+        const wide = vibes[i].label.length > 6 ? 150 : 130;
         m.style.width = wide + "px";
 
-        const deg = (i * step) - 90; // put index 0 at top
+        const deg = (i*(360/N)) - 90;
         m.style.transform = `rotate(${deg}deg) translateX(${radiusPct}%)`;
 
         m.innerHTML = `
@@ -946,17 +893,19 @@
           <span class="mSub">${vibes[i].sub}</span>
         `;
 
+        // desktop hover preview
         m.addEventListener("mouseenter", ()=>{
           if (window.matchMedia("(hover:hover)").matches){
             setActive(i, false);
           }
         });
 
+        // click/tap behaviour
         m.addEventListener("click", (e)=>{
           e.preventDefault();
           const idx = Number(m.dataset.index);
 
-          // mobile: first tap preview, second tap enter
+          // mobile: tap once preview, second tap enter
           if (window.matchMedia("(hover:none)").matches){
             if (activeIndex === idx && m.classList.contains("active")){
               window.location.href = vibes[idx].page;
@@ -966,7 +915,6 @@
             return;
           }
 
-          // desktop snap
           setActive(idx, true);
         }, {passive:false});
 
@@ -981,42 +929,43 @@
       if (el) el.classList.add("active");
     }
 
-    // ========= INPUT (DRAG) =========
-    function angleFromEvent(e){
-      const rect = wheelCore.getBoundingClientRect();
+    // ========= INPUT =========
+    function pointerAngleFromEvent(e){
+      const rect = wheelCanvas.getBoundingClientRect();
       const cx = rect.left + rect.width/2;
       const cy = rect.top + rect.height/2;
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
-      return Math.atan2(dy, dx) * 180 / Math.PI;
+      return Math.atan2(dy, dx);
     }
 
     function onDown(e){
       dragging = true;
       pointerId = e.pointerId;
-      wheelStage.setPointerCapture?.(pointerId);
-      lastAng = angleFromEvent(e);
+      wheelZone.setPointerCapture?.(pointerId);
+      lastA = pointerAngleFromEvent(e);
       lastT = performance.now();
     }
 
     function onMove(e){
       if (!dragging || e.pointerId !== pointerId) return;
-      const a = angleFromEvent(e);
-      let da = a - lastAng;
-      if (da > 180) da -= 360;
-      if (da < -180) da += 360;
 
-      rot += da;
+      const a = pointerAngleFromEvent(e);
+      let da = a - lastA;
+      if (da > Math.PI) da -= Math.PI*2;
+      if (da < -Math.PI) da += Math.PI*2;
+
+      angle += da;
 
       const now = performance.now();
-      const dt = Math.max(1, (now - lastT)) / 1000;
+      const dt = Math.max(1, now - lastT) / 1000;
       const v = da / dt;
-      vel = vel * 0.75 + v * 0.25;
+      velocity = velocity*0.75 + v*0.25;
 
-      lastAng = a;
+      lastA = a;
       lastT = now;
 
-      const idx = nearestIndex();
+      const idx = nearestIndexFromAngle(angle);
       if (idx !== activeIndex){
         activeIndex = idx;
         updateMarkerActive();
@@ -1029,22 +978,20 @@
       dragging = false;
       pointerId = null;
 
-      // snap shortly after release (feels game-like)
       setTimeout(()=>{
-        const idx = nearestIndex();
+        const idx = nearestIndexFromAngle(angle);
         setActive(idx, true);
       }, 70);
     }
 
-    // wheel scroll flick
     function onWheel(e){
       e.preventDefault();
       const delta = e.deltaY || 0;
-      const add = clamp(delta * 0.16, -35, 35);
-      rot += add;
-      vel += add * 6;
+      const power = 0.0018; // rad per wheel unit
+      angle += delta * power;
+      velocity += delta * power * 2.2;
 
-      const idx = nearestIndex();
+      const idx = nearestIndexFromAngle(angle);
       if (idx !== activeIndex){
         activeIndex = idx;
         updateMarkerActive();
@@ -1053,84 +1000,313 @@
 
       clearTimeout(onWheel._t);
       onWheel._t = setTimeout(()=>{
-        const idx2 = nearestIndex();
+        const idx2 = nearestIndexFromAngle(angle);
         setActive(idx2, true);
       }, 110);
     }
 
-    // ========= SPEEDOMETER LOGIC =========
-    function setSpeedUI(spinPerSec){
-      const s = Math.max(0, spinPerSec);
-      spdVal.textContent = String(Math.round(s));
-      peak = Math.max(peak, s);
-      peakVal.textContent = String(Math.round(peak));
+    // ========= CANVAS: 3D WHEEL DRAW =========
+    function drawWheel(a){
+      const w = wheelCanvas.width, h = wheelCanvas.height;
+      const cx = w/2, cy = h/2;
+      const R = Math.min(w,h)*0.42;
 
-      // needle angle mapping: 0 -> -60deg, 100 -> +110deg
-      const needleDeg = -60 + clamp(s, 0, 100) * (170/100);
-      needle.style.setProperty("--needle", `${needleDeg}deg`);
+      wctx.clearRect(0,0,w,h);
 
-      // rank
-      let rank = "Warm";
-      if (s >= 25) rank = "Hot";
-      if (s >= 50) rank = "Flame";
-      if (s >= 75) rank = "Overdrive";
-      rankTxt.textContent = `Rank: ${rank}`;
+      // outer tyre
+      wctx.save();
+      wctx.translate(cx,cy);
 
-      // flame + rim glow ramp
-      const flameOn = s >= 45;
-      flameFX.classList.toggle("on", flameOn);
+      // tyre base
+      let tyre = wctx.createRadialGradient(-R*0.2, -R*0.25, R*0.2, 0,0,R*1.15);
+      tyre.addColorStop(0,"rgba(255,255,255,0.08)");
+      tyre.addColorStop(0.35,"rgba(0,0,0,0.55)");
+      tyre.addColorStop(1,"rgba(0,0,0,0.88)");
+      wctx.fillStyle = tyre;
+      wctx.beginPath(); wctx.arc(0,0,R*1.05,0,Math.PI*2); wctx.fill();
 
-      // subtle glow, not circus
-      rimGlow.style.opacity = (0.45 + clamp(s/120, 0, 0.55)).toFixed(2);
+      // tread hints
+      wctx.globalAlpha = 0.22;
+      wctx.strokeStyle = "rgba(155,231,255,0.22)";
+      wctx.lineWidth = Math.max(2, R*0.02);
+      for(let i=0;i<28;i++){
+        const ang = (i/28)*Math.PI*2;
+        wctx.save();
+        wctx.rotate(ang);
+        wctx.beginPath();
+        wctx.moveTo(R*0.90, -R*0.06);
+        wctx.lineTo(R*1.03, -R*0.02);
+        wctx.stroke();
+        wctx.restore();
+      }
+      wctx.globalAlpha = 1;
+
+      // rim ring
+      let rim = wctx.createRadialGradient(-R*0.15, -R*0.20, R*0.12, 0,0,R*0.95);
+      rim.addColorStop(0,"rgba(255,255,255,0.18)");
+      rim.addColorStop(0.45,"rgba(155,231,255,0.06)");
+      rim.addColorStop(1,"rgba(0,0,0,0.70)");
+      wctx.fillStyle = rim;
+      wctx.beginPath(); wctx.arc(0,0,R*0.82,0,Math.PI*2); wctx.fill();
+
+      // rotate for spokes
+      wctx.rotate(a);
+
+      // spokes
+      const spokes = 7;
+      for(let i=0;i<spokes;i++){
+        const ang = (i/spokes)*Math.PI*2;
+        wctx.save();
+        wctx.rotate(ang);
+
+        const g = wctx.createLinearGradient(-R*0.08, -R*0.05, R*0.10, R*0.70);
+        g.addColorStop(0,"rgba(255,255,255,0.16)");
+        g.addColorStop(0.45,"rgba(155,231,255,0.05)");
+        g.addColorStop(1,"rgba(0,0,0,0.45)");
+
+        wctx.fillStyle = g;
+        wctx.strokeStyle = "rgba(255,255,255,0.14)";
+        wctx.lineWidth = Math.max(2, R*0.012);
+
+        wctx.beginPath();
+        wctx.moveTo(-R*0.16, -R*0.06);
+        wctx.lineTo( R*0.16, -R*0.06);
+        wctx.lineTo( R*0.10,  R*0.68);
+        wctx.lineTo(-R*0.10,  R*0.68);
+        wctx.closePath();
+        wctx.fill();
+        wctx.stroke();
+
+        wctx.globalAlpha = 0.22;
+        wctx.strokeStyle = "rgba(255,255,255,0.35)";
+        wctx.beginPath();
+        wctx.moveTo(-R*0.06, 0);
+        wctx.lineTo(0, R*0.62);
+        wctx.stroke();
+        wctx.globalAlpha = 1;
+
+        wctx.restore();
+      }
+
+      // centre cap
+      let cap = wctx.createRadialGradient(-R*0.06, -R*0.08, R*0.02, 0,0,R*0.22);
+      cap.addColorStop(0,"rgba(255,255,255,0.22)");
+      cap.addColorStop(0.45,"rgba(155,231,255,0.09)");
+      cap.addColorStop(1,"rgba(0,0,0,0.65)");
+      wctx.fillStyle = cap;
+      wctx.beginPath(); wctx.arc(0,0,R*0.22,0,Math.PI*2); wctx.fill();
+
+      // lug dots
+      wctx.globalAlpha = 0.8;
+      for(let i=0;i<5;i++){
+        const ang = (i/5)*Math.PI*2;
+        const x = Math.cos(ang)*R*0.14;
+        const y = Math.sin(ang)*R*0.14;
+        wctx.beginPath();
+        wctx.arc(x,y,R*0.035,0,Math.PI*2);
+        wctx.fillStyle = "rgba(0,0,0,0.45)";
+        wctx.fill();
+        wctx.beginPath();
+        wctx.arc(x-R*0.01,y-R*0.01,R*0.018,0,Math.PI*2);
+        wctx.fillStyle = "rgba(255,255,255,0.16)";
+        wctx.fill();
+      }
+      wctx.globalAlpha = 1;
+
+      // glossy pass
+      wctx.rotate(-a);
+      const gloss = wctx.createLinearGradient(-R, -R, R, R);
+      gloss.addColorStop(0,"rgba(255,255,255,0.06)");
+      gloss.addColorStop(0.35,"rgba(155,231,255,0.03)");
+      gloss.addColorStop(0.60,"rgba(0,0,0,0)");
+      gloss.addColorStop(1,"rgba(0,0,0,0.18)");
+      wctx.fillStyle = gloss;
+      wctx.beginPath(); wctx.arc(0,0,R*1.03,0,Math.PI*2); wctx.fill();
+
+      wctx.restore();
     }
 
-    // ========= BUTTONS =========
-    resetBtn.addEventListener("click", ()=>{
-      autoSpin = false;
-      vel = 0;
-      peak = 0;
-      setActive(0, true);
-    });
+    // ========= CANVAS: SPEEDOMETER DRAW =========
+    function drawSpeedometer(speed, peakSpeed){
+      const w = speedCanvas.width, h = speedCanvas.height;
+      sctx.clearRect(0,0,w,h);
 
-    boostBtn.addEventListener("click", ()=>{
-      // quick extra fling
-      vel += 1800;
-    });
+      const cx = w*0.50;
+      const cy = h*0.64;
+      const R  = Math.min(w,h)*0.44;
 
-    brakeBtn.addEventListener("click", ()=>{
-      autoSpin = false;
-      vel *= 0.12;
-      setTimeout(()=>{
-        const idx = nearestIndex();
-        setActive(idx, true);
-      }, 80);
-    });
+      // background vignette
+      const bg = sctx.createRadialGradient(cx, cy, R*0.15, cx, cy, R*1.1);
+      bg.addColorStop(0, "rgba(255,255,255,0.06)");
+      bg.addColorStop(0.45, "rgba(0,0,0,0.30)");
+      bg.addColorStop(1, "rgba(0,0,0,0.65)");
+      sctx.fillStyle = bg;
+      sctx.beginPath();
+      sctx.roundRect?.(w*0.03,h*0.08,w*0.94,h*0.86, 22);
+      if (!sctx.roundRect){
+        sctx.rect(w*0.03,h*0.08,w*0.94,h*0.86);
+      }
+      sctx.fill();
 
-    autoBtn.addEventListener("click", ()=>{
-      autoSpin = !autoSpin;
-      autoBtn.textContent = autoSpin ? "Auto: ON" : "Auto";
-    });
+      const start = Math.PI * 0.78;   // ~140°
+      const end   = Math.PI * 2.22;   // ~400° (wrap-ish)
+      const span  = end - start;
 
-    // ========= ANIMATION LOOP =========
+      // track arc
+      sctx.lineCap = "round";
+      sctx.lineWidth = Math.max(10, R*0.075);
+      sctx.strokeStyle = "rgba(255,255,255,0.10)";
+      sctx.beginPath();
+      sctx.arc(cx,cy,R, start, end);
+      sctx.stroke();
+
+      // glow arc (speed)
+      const pct = clamp(speed/100, 0, 1);
+      const a1 = start;
+      const a2 = start + span * pct;
+
+      const grad = sctx.createLinearGradient(cx-R, cy, cx+R, cy);
+      grad.addColorStop(0, "rgba(155,231,255,0.85)");
+      grad.addColorStop(0.55, "rgba(183,168,255,0.75)");
+      grad.addColorStop(1, "rgba(255,106,61,0.85)");
+
+      sctx.strokeStyle = grad;
+      sctx.shadowColor = "rgba(255,106,61,0.18)";
+      sctx.shadowBlur = 24;
+      sctx.beginPath();
+      sctx.arc(cx,cy,R, a1, a2);
+      sctx.stroke();
+      sctx.shadowBlur = 0;
+
+      // tick marks
+      sctx.lineWidth = 3;
+      for(let i=0;i<=10;i++){
+        const t = i/10;
+        const a = start + span*t;
+        const x1 = cx + Math.cos(a)*R*0.86;
+        const y1 = cy + Math.sin(a)*R*0.86;
+        const x2 = cx + Math.cos(a)*R*0.98;
+        const y2 = cy + Math.sin(a)*R*0.98;
+
+        sctx.strokeStyle = (t<=pct) ? "rgba(255,255,255,0.30)" : "rgba(255,255,255,0.14)";
+        sctx.beginPath();
+        sctx.moveTo(x1,y1);
+        sctx.lineTo(x2,y2);
+        sctx.stroke();
+      }
+
+      // needle
+      const needleA = start + span*pct;
+      const nx = cx + Math.cos(needleA)*R*0.78;
+      const ny = cy + Math.sin(needleA)*R*0.78;
+
+      sctx.strokeStyle = "rgba(255,255,255,0.85)";
+      sctx.lineWidth = 5;
+      sctx.beginPath();
+      sctx.moveTo(cx,cy);
+      sctx.lineTo(nx,ny);
+      sctx.stroke();
+
+      // needle glow
+      sctx.strokeStyle = "rgba(255,106,61,0.22)";
+      sctx.lineWidth = 10;
+      sctx.beginPath();
+      sctx.moveTo(cx,cy);
+      sctx.lineTo(nx,ny);
+      sctx.stroke();
+
+      // centre cap
+      const cap = sctx.createRadialGradient(cx-8, cy-10, 4, cx, cy, 26);
+      cap.addColorStop(0,"rgba(255,255,255,0.24)");
+      cap.addColorStop(0.55,"rgba(155,231,255,0.09)");
+      cap.addColorStop(1,"rgba(0,0,0,0.65)");
+      sctx.fillStyle = cap;
+      sctx.beginPath();
+      sctx.arc(cx,cy, 22, 0, Math.PI*2);
+      sctx.fill();
+      sctx.strokeStyle = "rgba(255,255,255,0.18)";
+      sctx.lineWidth = 2;
+      sctx.beginPath();
+      sctx.arc(cx,cy, 22, 0, Math.PI*2);
+      sctx.stroke();
+
+      // digits (clean HUD)
+      const big = Math.round(speed);
+      sctx.fillStyle = "rgba(238,243,255,0.92)";
+      sctx.font = "900 74px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      sctx.textAlign = "left";
+      sctx.textBaseline = "middle";
+      sctx.fillText(String(big), w*0.10, h*0.28);
+
+      sctx.fillStyle = "rgba(238,243,255,0.62)";
+      sctx.font = "900 14px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      sctx.fillText("SPIN / SEC", w*0.10, h*0.36);
+
+      // little peak bar
+      const p = clamp(peakSpeed/100, 0, 1);
+      const barW = w*0.42, barH = 10;
+      const bx = w*0.10, by = h*0.44;
+      sctx.fillStyle = "rgba(255,255,255,0.10)";
+      sctx.beginPath(); sctx.roundRect?.(bx,by,barW,barH, 999); if(!sctx.roundRect) sctx.rect(bx,by,barW,barH); sctx.fill();
+      sctx.fillStyle = "rgba(255,106,61,0.55)";
+      sctx.beginPath(); sctx.roundRect?.(bx,by,barW*p,barH, 999); if(!sctx.roundRect) sctx.rect(bx,by,barW*p,barH); sctx.fill();
+
+      sctx.fillStyle = "rgba(238,243,255,0.65)";
+      sctx.font = "850 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      sctx.fillText("Peak", bx + barW + 10, by + barH/2);
+      sctx.fillStyle = "rgba(238,243,255,0.92)";
+      sctx.font = "950 16px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto";
+      sctx.fillText(String(Math.round(peakSpeed)), bx + barW + 46, by + barH/2);
+    }
+
+    // ========= RESIZE CANVASES (crisp) =========
+    function fitCanvasToCSS(canvas){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+    }
+
+    // ========= SPEED + VFX =========
+    function updateSpeedUI(speed){
+      spdVal.textContent = String(Math.round(speed));
+      peak = Math.max(peak, speed);
+      peakVal.textContent = String(Math.round(peak));
+
+      let rank = "Warm";
+      if (speed >= 25) rank = "Hot";
+      if (speed >= 50) rank = "Flame";
+      if (speed >= 75) rank = "Overdrive";
+      rankTxt.textContent = "Rank: " + rank;
+
+      const heatOn = speed >= 45;
+      wheelHeat.classList.toggle("on", heatOn);
+      sparks.classList.toggle("on", speed >= 60);
+    }
+
+    // ========= LOOP =========
     let lastFrame = performance.now();
     function tick(now){
-      const dt = Math.min(0.05, (now - lastFrame) / 1000);
+      const dt = Math.min(0.05, (now - lastFrame)/1000);
       lastFrame = now;
 
-      if (autoSpin) vel += 420 * dt;
+      if (autoSpin){
+        velocity += (1.35) * dt; // gentle auto
+      }
 
       if (!dragging){
-        rot += vel * dt;
-        // friction
-        vel *= Math.exp(-3.1 * dt);
+        angle += velocity * dt;
+        velocity *= Math.exp(-3.0 * dt);
 
-        // when nearly stopped, softly settle to snap
-        if (Math.abs(vel) < 20){
-          const idx = nearestIndex();
-          const target = -idx * step;
-          let diff = target - rot;
-          diff = ((diff + 540) % 360) - 180;
-          rot += diff * Math.min(1, dt * 8);
+        if (Math.abs(velocity) < 0.04){
+          const idx = nearestIndexFromAngle(angle);
+          const target = targetAngleForIndex(idx);
+          const cur = norm(angle);
+          const targ = norm(target);
+          let diff = targ - cur;
+          if (diff > Math.PI) diff -= Math.PI*2;
+          if (diff < -Math.PI) diff += Math.PI*2;
+          angle += diff * Math.min(1, dt*8);
 
           if (idx !== activeIndex){
             activeIndex = idx;
@@ -1140,26 +1316,66 @@
         }
       }
 
-      // apply rotation
-      wheelImg.style.setProperty("--rot", `${rot}deg`);
+      // draw wheel
+      drawWheel(angle);
 
-      // speed from deg/sec -> "spin/sec"
-      // 360 deg/sec = 1 spin/sec. Multiply for a more dramatic number.
-      const spinPerSec = Math.abs(vel) / 360 * 42;
-      setSpeedUI(spinPerSec);
+      // speed mapping: rad/s -> spins/s -> (gamey scale)
+      const spinsPerSec = Math.abs(velocity) / (Math.PI*2);
+      const speed = clamp(spinsPerSec * 85, 0, 100);
+
+      updateSpeedUI(speed);
+      drawSpeedometer(speed, peak);
 
       requestAnimationFrame(tick);
     }
 
+    // ========= BUTTONS =========
+    resetBtn.addEventListener("click", ()=>{
+      autoSpin = false;
+      velocity = 0;
+      peak = 0;
+      setActive(0, true);
+    });
+
+    boostBtn.addEventListener("click", ()=>{
+      velocity += 10.5; // rad/s kick
+    });
+
+    brakeBtn.addEventListener("click", ()=>{
+      autoSpin = false;
+      velocity *= 0.12;
+      setTimeout(()=>{
+        const idx = nearestIndexFromAngle(angle);
+        setActive(idx, true);
+      }, 80);
+    });
+
+    autoBtn.addEventListener("click", ()=>{
+      autoSpin = !autoSpin;
+      autoBtn.textContent = autoSpin ? "Auto: ON" : "Auto";
+    });
+
     // ========= INIT =========
     buildMarkers();
-    setActive(0, true);
-    requestAnimationFrame(tick);
+    loadPreview(vibes[0]);
 
-    wheelStage.addEventListener("pointerdown", onDown, {passive:true});
+    // crisp canvases
+    function onResize(){
+      fitCanvasToCSS(wheelCanvas);
+      fitCanvasToCSS(speedCanvas);
+    }
+    window.addEventListener("resize", onResize);
+    onResize();
+
+    // input
+    wheelZone.addEventListener("pointerdown", onDown, {passive:true});
     window.addEventListener("pointermove", onMove, {passive:true});
     window.addEventListener("pointerup", onUp, {passive:true});
-    wheelStage.addEventListener("wheel", onWheel, {passive:false});
+    wheelZone.addEventListener("wheel", onWheel, {passive:false});
+
+    // start
+    setActive(0, true);
+    requestAnimationFrame(tick);
   </script>
 </body>
 </html>
