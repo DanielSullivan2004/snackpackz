@@ -944,8 +944,20 @@
         frames=0; fpsLast=now;
       }
 
+      // Start minimap (desktop only)
+if(!mobile && window.Minimap){
+  window.Minimap.init({
+    packs: PACKS,
+    world,
+    cam,
+    bounds: BOUNDS,
+    focusedGetter: ()=>focused
+  });
+}
       requestAnimationFrame(tick);
     }
+
+    <script src="app/minimap.js"></script>
 
     // Start
     bg.play().catch(()=>{});
