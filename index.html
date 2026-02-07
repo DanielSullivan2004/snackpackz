@@ -1055,402 +1055,287 @@
 
 
 <script>
-/* ============================================================
-   Snack Packz — INDEX (PART 2/10)
-   - Motion engine: parallax depth, inertia, snap feel
-   - Magnetic UI + hover intent
-   - Pointer + touch unification
-   - Orbit drag hooks (Part 5 uses these)
-   - Keeps Part 1 layout exactly — no tacky re-style
-   ============================================================ */
+  /* ============================================================
+     PART 6/10 — Preview Dock Perfection
+     - Poster swap instantly
+     - Video preloading + cache
+     - Image -> video crossfade (no black flash)
+     - Desktop hover intent + click to lock
+     - Mobile tap once preview, tap again enter
+     ============================================================ */
 
-(() => {
-  "use strict";
+  const preview = {
+    current: "lockin",
+    pending: null,
+    hoverTimer: null,
+    hoverKey: null,
+    locked: false,
 
-  /* -----------------------
-     Pack metadata (shared)
-     ----------------------- */
-  const PACKS = {
-    fresh:  { name:"FRESH",  tagline:"Clean energy",       page:"fresh.html",   poster:"assets/fresh.jpg",   video:"assets/fresh.mp4"   },
-    gaming: { name:"GAMING", tagline:"Focus + fuel",       page:"gaming.html",  poster:"assets/gaming.jpg",  video:"assets/gaming.mp4"  },
-    gym:    { name:"GYM",    tagline:"Power mode",         page:"gym.html",     poster:"assets/gym.jpg",     video:"assets/gym.mp4"     },
-    work:   { name:"WORK",   tagline:"Get it done",        page:"work.html",    poster:"assets/work.jpg",    video:"assets/work.mp4"    },
-    lockin: { name:"LOCK-IN",tagline:"Tunnel vision mode", page:"lock-in.html", poster:"assets/lockin.jpg",  video:"assets/lockin.mp4"  },
-    mystery:{ name:"MYSTERY",tagline:"Unbox the unknown",  page:"mystery.html", poster:"assets/mystery.jpg", video:"assets/mystery.mp4" }
+    // video cache: packKey -> HTMLVideoElement
+    cache: new Map(),
+    // limit how many videos we keep “warm”
+    cacheLimit: 3,
+
+    // crossfade control
+    fadeMs: 380,
+    primed: false
   };
 
-  /* -----------------------
-     DOM handles
-     ----------------------- */
-  const $ = (q, el=document) => el.querySelector(q);
-  const $$ = (q, el=document) => Array.from(el.querySelectorAll(q));
-
-  const bgVideo   = $("#bgVideo");
-  const fxCanvas  = $("#fx");
-  const fxCtx     = fxCanvas.getContext("2d");
-
-  const posterEl  = $("#poster");
-  const dockVideo = $("#dockVideo");
-  const panelTitle= $("#panelTitle");
-  const panelDesc = $("#panelDesc");
-  const hudState  = $("#hudState");
-  const enterBtn  = $("#enterBtn");
-  const revealBtn = $("#revealBtn");
-  const soundToggle = $("#soundToggle");
-  const soundState  = $("#soundState");
-  const previewEl   = $("#preview");
-
-  const packDots = $$(".packDot");
-  const cards = $$(".card");
-  const nav = $(".nav");
-
-  /* -----------------------
-     State
-     ----------------------- */
-  let currentPack = "lockin";
-
-  // Motion state
-  const motion = {
-    // pointer position in viewport [0..1]
-    px: 0.5, py: 0.5,
-    // smoothed pointer
-    spx: 0.5, spy: 0.5,
-    // velocity + inertia
-    vx: 0, vy: 0,
-    // scroll influence
-    sy: 0, ssy: 0,
-    // drag
-    dragging: false,
-    dragX: 0, dragY: 0,
-    // reduced motion
-    reduce: window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  };
-
-  // Hover intent
-  let hoverTimer = null;
-  let hoveredPack = null;
-  let lockedPack = null; // when clicked (Part 5 expands this)
-
-  // RAF
-  let rafId = 0;
-  let lastT = performance.now();
-
-  // Device pixel ratio
-  let DPR = Math.min(window.devicePixelRatio || 1, 2);
-
-  /* -----------------------
-     Utilities
-     ----------------------- */
-  const clamp = (v,min,max) => Math.max(min, Math.min(max, v));
-  const lerp = (a,b,t) => a + (b-a)*t;
-
-  function setFXSize(){
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
-    fxCanvas.width = Math.floor(window.innerWidth * DPR);
-    fxCanvas.height = Math.floor(window.innerHeight * DPR);
-    fxCanvas.style.width = "100%";
-    fxCanvas.style.height = "100%";
-    fxCtx.setTransform(DPR,0,0,DPR,0,0);
+  function setHUD(text){
+    if(hudState) hudState.textContent = text;
   }
 
-  function setSound(on){
-    soundToggle.setAttribute("aria-pressed", String(on));
-    soundState.textContent = on ? "On" : "Off";
-    // Part 4 will actually start/stop ambience safely (mobile rules).
+  function stopDockVideo(){
+    try { dockVideo.pause(); } catch(_){}
+    dockVideo.removeAttribute("src");
+    dockVideo.load?.();
+    dockVideo.style.opacity = 0;
   }
 
-  function setPack(packKey){
+  function setDockPoster(packKey){
     const p = PACKS[packKey] || PACKS.lockin;
-    currentPack = packKey;
+    posterEl.src = p.poster;
+    posterEl.style.opacity = 1;
+    setHUD("Image ready");
+  }
+
+  // Create (or reuse) a preloaded video element for pack
+  function getPreloadVideo(packKey){
+    const p = PACKS[packKey] || PACKS.lockin;
+    if(preview.cache.has(packKey)){
+      return preview.cache.get(packKey);
+    }
+
+    const v = document.createElement("video");
+    v.muted = true;
+    v.playsInline = true;
+    v.loop = true;
+    v.preload = "auto";
+    v.src = p.video;
+    v.crossOrigin = "anonymous"; // safe if same-origin
+    v.setAttribute("playsinline", "");
+    v.setAttribute("muted", "");
+    v.style.display = "none";
+
+    // Try to warm it
+    const tryPlay = () => v.play().then(()=>{ v.pause(); }).catch(()=>{});
+    v.addEventListener("canplay", tryPlay, { once:true });
+
+    preview.cache.set(packKey, v);
+
+    // cache eviction: remove oldest inserted
+    if(preview.cache.size > preview.cacheLimit){
+      const firstKey = preview.cache.keys().next().value;
+      const firstVid = preview.cache.get(firstKey);
+      try { firstVid.pause(); } catch(_){}
+      firstVid.removeAttribute("src");
+      preview.cache.delete(firstKey);
+    }
+
+    return v;
+  }
+
+  // Ensure the dock video element is ready to show the pack
+  async function primeDockVideo(packKey){
+    const p = PACKS[packKey] || PACKS.lockin;
+
+    // If already showing same src, skip
+    if(dockVideo.getAttribute("data-pack") === packKey && dockVideo.src.includes(p.video)){
+      return true;
+    }
+
+    // Pull from cache / create
+    const preloadV = getPreloadVideo(packKey);
+
+    // Swap src on dock element
+    dockVideo.pause();
+    dockVideo.src = p.video;
+    dockVideo.setAttribute("data-pack", packKey);
+    dockVideo.muted = true;
+    dockVideo.playsInline = true;
+    dockVideo.loop = true;
+    dockVideo.preload = "auto";
+
+    // Wait for enough data to avoid black frame
+    const ok = await new Promise(resolve => {
+      let done = false;
+      const finish = (v)=>{ if(done) return; done = true; resolve(v); };
+
+      const t = setTimeout(()=> finish(false), 1600);
+
+      dockVideo.addEventListener("loadeddata", ()=>{ clearTimeout(t); finish(true); }, { once:true });
+      dockVideo.addEventListener("canplay",    ()=>{ clearTimeout(t); finish(true); }, { once:true });
+      dockVideo.addEventListener("error",      ()=>{ clearTimeout(t); finish(false); }, { once:true });
+
+      // Kick load
+      dockVideo.load?.();
+      // Attempt play (muted so allowed)
+      dockVideo.play().then(()=>{}).catch(()=>{});
+    });
+
+    // Also warm preload element in background (helps future)
+    try { preloadV.load?.(); } catch(_){}
+    return ok;
+  }
+
+  async function crossfadeToVideo(packKey){
+    setHUD("Video loading…");
+
+    const ok = await primeDockVideo(packKey);
+
+    if(!ok){
+      // fallback: keep poster only
+      stopDockVideo();
+      setHUD("Image ready");
+      return;
+    }
+
+    // Ensure playback running for the dock
+    try { await dockVideo.play(); } catch(_){}
+
+    // Crossfade: poster -> video
+    dockVideo.style.transition = `opacity ${preview.fadeMs}ms cubic-bezier(.2,.8,.2,1)`;
+    posterEl.style.transition  = `opacity ${preview.fadeMs}ms cubic-bezier(.2,.8,.2,1)`;
+
+    dockVideo.style.opacity = 1;
+    posterEl.style.opacity  = 0;
+
+    setHUD("Video ready");
+  }
+
+  function selectPack(packKey, { lock=false, fromHover=false } = {}){
+    const p = PACKS[packKey] || PACKS.lockin;
+    preview.current = packKey;
 
     panelTitle.textContent = p.name;
     panelDesc.textContent  = p.tagline;
 
-    posterEl.src = p.poster;
-    posterEl.style.opacity = 1;
+    // Always set poster instantly
+    setDockPoster(packKey);
 
-    // Part 6: perfect poster -> video fade + preload.
-    dockVideo.pause();
-    dockVideo.removeAttribute("src");
-    dockVideo.style.opacity = 0;
+    // lock behaviour
+    preview.locked = !!lock;
+    lockedPack = lock ? packKey : lockedPack;
 
-    hudState.textContent = "Image ready";
-  }
-
-  function goEnter(){
-    const p = PACKS[currentPack] || PACKS.lockin;
-    window.location.href = p.page;
-  }
-
-  /* -----------------------
-     Pointer + touch handling
-     ----------------------- */
-  function updatePointerFromEvent(e){
-    const x = (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX) ?? window.innerWidth*0.5);
-    const y = (e.clientY ?? (e.touches && e.touches[0] && e.touches[0].clientY) ?? window.innerHeight*0.5);
-
-    const nx = clamp(x / window.innerWidth, 0, 1);
-    const ny = clamp(y / window.innerHeight, 0, 1);
-
-    // velocity estimate
-    motion.vx += (nx - motion.px) * 0.06;
-    motion.vy += (ny - motion.py) * 0.06;
-
-    motion.px = nx;
-    motion.py = ny;
-  }
-
-  window.addEventListener("mousemove", updatePointerFromEvent, {passive:true});
-  window.addEventListener("touchstart", updatePointerFromEvent, {passive:true});
-  window.addEventListener("touchmove", updatePointerFromEvent, {passive:true});
-
-  // drag hooks (Part 5 uses for orbit spin)
-  window.addEventListener("pointerdown", (e)=>{
-    motion.dragging = true;
-    motion.dragX = e.clientX;
-    motion.dragY = e.clientY;
-  }, {passive:true});
-  window.addEventListener("pointerup", ()=>{
-    motion.dragging = false;
-  }, {passive:true});
-
-  window.addEventListener("pointermove", (e)=>{
-    if(!motion.dragging) return;
-    // store drag deltas (Part 5 reads this)
-    const dx = e.clientX - motion.dragX;
-    const dy = e.clientY - motion.dragY;
-    motion.dragX = e.clientX;
-    motion.dragY = e.clientY;
-
-    // feed into velocity for "physical" feel
-    motion.vx += (dx / window.innerWidth) * 0.22;
-    motion.vy += (dy / window.innerHeight) * 0.22;
-  }, {passive:true});
-
-  /* -----------------------
-     Scroll influence (cinema drift)
-     ----------------------- */
-  let lastScrollY = window.scrollY;
-  window.addEventListener("scroll", ()=>{
-    const y = window.scrollY;
-    const dy = y - lastScrollY;
-    lastScrollY = y;
-    motion.sy += dy * 0.0014;
-    motion.sy = clamp(motion.sy, -1.2, 1.2);
-  }, {passive:true});
-
-  /* -----------------------
-     Hover intent (premium feel)
-     - hover only triggers after a short dwell
-     - prevents flicker/tacky
-     ----------------------- */
-  function clearHoverIntent(){
-    if(hoverTimer) clearTimeout(hoverTimer);
-    hoverTimer = null;
-    hoveredPack = null;
-  }
-
-  function scheduleHover(packKey){
-    clearHoverIntent();
-    hoveredPack = packKey;
-    hoverTimer = setTimeout(()=>{
-      if(lockedPack) return;
-      setPack(packKey);
-    }, 90); // small but deliberate
-  }
-
-  /* -----------------------
-     Magnetic UI (subtle)
-     ----------------------- */
-  function magnet(el, strength=0.16){
-    if(!el) return;
-    let mx=0, my=0, smx=0, smy=0;
-    const rect = () => el.getBoundingClientRect();
-
-    function onMove(e){
-      const r = rect();
-      const cx = r.left + r.width/2;
-      const cy = r.top + r.height/2;
-      const dx = (e.clientX - cx) / r.width;
-      const dy = (e.clientY - cy) / r.height;
-      mx = clamp(dx, -1, 1) * strength;
-      my = clamp(dy, -1, 1) * strength;
-    }
-    function onLeave(){
-      mx = 0; my = 0;
+    // If hover preview (desktop), only fade video after short stable intent
+    if(fromHover){
+      // start loading but delay crossfade
+      preview.pending = packKey;
+      return;
     }
 
-    window.addEventListener("mousemove", onMove, {passive:true});
-    el.addEventListener("mouseleave", onLeave, {passive:true});
-
-    function step(){
-      smx = lerp(smx, mx, 0.12);
-      smy = lerp(smy, my, 0.12);
-      el.style.transform = `translate(${smx*100}%, ${smy*100}%)`;
-      requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
+    // direct selection = show video quicker
+    crossfadeToVideo(packKey);
   }
 
-  /* -----------------------
-     Apply hover/click handlers to pack dots
-     ----------------------- */
-  packDots.forEach(dot => {
+  /* ---------- Hover intent (premium, stable) ---------- */
+  function clearPreviewHover(){
+    if(preview.hoverTimer) clearTimeout(preview.hoverTimer);
+    preview.hoverTimer = null;
+    preview.hoverKey = null;
+  }
+
+  function schedulePreviewHover(packKey){
+    if(preview.locked) return;
+    clearPreviewHover();
+    preview.hoverKey = packKey;
+
+    // Immediate poster swap (fast feedback)
+    selectPack(packKey, { fromHover:true });
+
+    // After intent delay, crossfade to video if still hovered
+    preview.hoverTimer = setTimeout(()=>{
+      if(preview.locked) return;
+      if(preview.hoverKey !== packKey) return;
+      crossfadeToVideo(packKey);
+    }, 160);
+  }
+
+  /* ---------- Mobile tap rules ---------- */
+  function isMobileLike(){
+    return (matchMedia && matchMedia("(pointer: coarse)").matches) || window.innerWidth < 820;
+  }
+
+  // Tap once = preview, tap again (same pack) = enter
+  function handleMobileTap(packKey){
+    if(preview.current === packKey){
+      // second tap -> enter
+      const p = PACKS[packKey] || PACKS.lockin;
+      window.location.href = p.page;
+      return;
+    }
+    // first tap preview
+    preview.locked = true;
+    lockedPack = packKey;
+    selectPack(packKey, { lock:true });
+  }
+
+  /* ---------- Wire pack dots to new preview system ---------- */
+  orbitDots.forEach(dot=>{
     const key = dot.dataset.pack;
-    dot.addEventListener("mouseenter", ()=> scheduleHover(key));
-    dot.addEventListener("mouseleave", ()=> clearHoverIntent());
 
-    dot.addEventListener("click", ()=>{
+    dot.addEventListener("mouseenter", ()=>{
+      if(isMobileLike()) return;
+      schedulePreviewHover(key);
+    });
+
+    dot.addEventListener("mouseleave", ()=>{
+      if(isMobileLike()) return;
+      clearPreviewHover();
+    });
+
+    dot.addEventListener("click", (e)=>{
+      // Desktop: click locks selection and plays video
+      if(isMobileLike()){
+        handleMobileTap(key);
+        return;
+      }
+
+      preview.locked = true;
       lockedPack = key;
-      setPack(key);
-      // tiny feedback
+      selectPack(key, { lock:true });
+
+      // tiny feedback pulse
       dot.animate([
-        { transform:"translateY(0px) scale(1)" },
-        { transform:"translateY(-3px) scale(1.02)" },
-        { transform:"translateY(0px) scale(1)" }
+        { transform: dot.style.transform || "translate(0,0) scale(1)" },
+        { transform: (dot.style.transform || "translate(0,0)") + " scale(1.03)" },
+        { transform: dot.style.transform || "translate(0,0) scale(1)" }
       ], { duration: 260, easing: "cubic-bezier(.16,1,.3,1)" });
     });
-
-    dot.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        lockedPack = key;
-        setPack(key);
-      }
-    });
   });
 
-  // Enter button
-  enterBtn.addEventListener("click", goEnter);
-
-  // Reveal scroll
-  revealBtn.addEventListener("click", ()=>{
-    document.getElementById("packs").scrollIntoView({behavior:"smooth", block:"start"});
+  // Enter button always uses current selection
+  enterBtn.addEventListener("click", ()=>{
+    const p = PACKS[preview.current] || PACKS.lockin;
+    window.location.href = p.page;
   });
 
-  // Sound toggle (actual audio added in Part 4)
-  setSound(false);
-  soundToggle.addEventListener("click", ()=> setSound(soundState.textContent !== "On"));
-  soundToggle.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter" || e.key === " "){
-      e.preventDefault();
-      setSound(soundState.textContent !== "On");
-    }
-  });
-
-  /* -----------------------
-     Keyboard shortcuts (cinema)
-     ----------------------- */
+  // If user hits ESC, unlock hover again
   window.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter"){
-      // if focus is on a button/link let default happen
-      const tag = (document.activeElement && document.activeElement.tagName || "").toLowerCase();
-      if(tag === "button" || tag === "a" || tag === "input" || tag === "textarea") return;
-      goEnter();
-    }
     if(e.key.toLowerCase() === "escape"){
+      preview.locked = false;
       lockedPack = null;
-      setPack("lockin");
+      clearPreviewHover();
+      selectPack("lockin", { lock:false });
     }
   });
 
-  /* -----------------------
-     Cinematic parallax + depth
-     - moves background slightly with smoothed pointer
-     - adds subtle depth motion to cards + preview
-     ----------------------- */
-  function applyParallax(dt){
-    // smoothing
-    const t = motion.reduce ? 1 : clamp(dt * 0.0065, 0.04, 0.18);
-    motion.spx = lerp(motion.spx, motion.px, t);
-    motion.spy = lerp(motion.spy, motion.py, t);
-
-    // decay velocity
-    motion.vx *= 0.92;
-    motion.vy *= 0.92;
-
-    // scroll smoothing
-    motion.ssy = lerp(motion.ssy, motion.sy, 0.06);
-    motion.sy *= 0.985;
-
-    // normalized -1..1
-    const nx = (motion.spx - 0.5) * 2;
-    const ny = (motion.spy - 0.5) * 2;
-
-    // background drift
-    if(bgVideo && !motion.reduce){
-      const bx = nx * 10 + motion.vx * 240;
-      const by = ny * 6  + motion.vy * 190 + motion.ssy * 10;
-      bgVideo.style.transform = `translate(${bx}px, ${by}px) scale(1.05)`;
-    } else if(bgVideo) {
-      bgVideo.style.transform = "scale(1.03)";
-    }
-
-    // Cards micro depth
-    cards.forEach((c, i) => {
-      const depth = (i===0 ? 12 : 10);
-      const rx = (-ny * depth) + (motion.vy * 120);
-      const ry = ( nx * depth) + (motion.vx * 120);
-      const ty = motion.ssy * 4;
-      c.style.transform = motion.reduce
-        ? "translateZ(0)"
-        : `translateY(${ty}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-      c.style.transformStyle = "preserve-3d";
-      c.style.willChange = "transform";
-    });
-
-    // Preview panel extra depth
-    if(previewEl && !motion.reduce){
-      const px = nx * 6;
-      const py = ny * 6;
-      previewEl.style.transform = `translate(${px}px, ${py}px)`;
-      previewEl.style.willChange = "transform";
-    } else if(previewEl) {
-      previewEl.style.transform = "translate(0,0)";
-    }
+  /* ---------- Warm start (loads default pack video quietly) ---------- */
+  // Call once during init (we'll hook it below safely)
+  function initPreviewSystem(){
+    // Ensure dockVideo has correct baseline attributes
+    dockVideo.muted = true;
+    dockVideo.loop = true;
+    dockVideo.playsInline = true;
+    dockVideo.preload = "auto";
+    stopDockVideo();
+    selectPack("lockin", { lock:false });
+    // Warm default video a bit after first frame so it doesn't fight page load
+    setTimeout(()=> {
+      if(!motion.reduce) crossfadeToVideo("lockin");
+    }, 420);
   }
 
-  /* -----------------------
-     FX canvas stub (Part 3 will go crazy)
-     For now: gentle depth haze so it already feels alive.
-     ----------------------- */
-  function drawFX(dt){
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    fxCtx.clearRect(0,0,w,h);
-
-    // Soft moving haze (not cheesy particles yet)
-    if(motion.reduce) return;
-
-    const nx = (motion.spx - 0.5) * 2;
-    const ny = (motion.spy - 0.5) * 2;
-    const time = performance.now() * 0.00006;
-
-    fxCtx.globalCompositeOperation = "screen";
-    for(let i=0;i<6;i++){
-      const r = 280 + i*90;
-      const x = (w*0.15) + Math.sin(time + i*0.8) * 120 + nx * 60;
-      const y = (h*0.25) + Math.cos(time + i*0.6) * 80  + ny * 40;
-      const g = fxCtx.createRadialGradient(x,y, 10, x,y, r);
-      g.addColorStop(0, "rgba(183,255,106,0.030)");
-      g.addColorStop(0.6, "rgba(255,216,106,0.014)");
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      fxCtx.fillStyle = g;
-      fxCtx.beginPath();
-      fxCtx.arc(x,y,r,0,Math.PI*2);
-      fxCtx.fill();
-    }
-    fxCtx.globalCompositeOperation = "source-over";
-  }
-
-  /* -----------------------
-     RAF loop (performance-safe)
-     ----------------------- */
-  function tick(t){
-    const dt = Math.min(40, t - lastT);
-    lastT = t;
-
-      applyParallax(dt);
        /* ============================================================
      PART 3/10 — Nature FX Layer (Canvas)
      - Cinematic butterflies/insects (near + mid depth)
