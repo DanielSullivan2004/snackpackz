@@ -55,6 +55,131 @@
     a,button{ -webkit-tap-highlight-color: transparent; }
     ::selection{ background: rgba(183,255,106,.28); }
 
+      /* ============================================================
+     PART 4/10 — Cinema Audio Engine (Mobile-Safe)
+     - Forest ambience + birds + wind
+     - Gesture-unlocked (iOS / Android compliant)
+     - Smooth fades (no clicks)
+     - Auto pause/resume on tab visibility
+     ============================================================ */
+
+  const audio = {
+    ctx: null,
+    unlocked: false,
+    enabled: false,
+    master: null,
+    layers: {}
+  };
+
+  function createAudioContext(){
+    if(audio.ctx) return audio.ctx;
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if(!Ctx) return null;
+
+    audio.ctx = new Ctx();
+    audio.master = audio.ctx.createGain();
+    audio.master.gain.value = 0;
+    audio.master.connect(audio.ctx.destination);
+    return audio.ctx;
+  }
+
+  async function loadBuffer(url){
+    const res = await fetch(url);
+    const arr = await res.arrayBuffer();
+    return audio.ctx.decodeAudioData(arr);
+  }
+
+  function createLoop(buffer, volume){
+    const src = audio.ctx.createBufferSource();
+    const gain = audio.ctx.createGain();
+    src.buffer = buffer;
+    src.loop = true;
+    gain.gain.value = 0;
+    src.connect(gain).connect(audio.master);
+    src.start();
+    return { src, gain, volume };
+  }
+
+  function fadeGain(gain, target, time=1.2){
+    const now = audio.ctx.currentTime;
+    gain.gain.cancelScheduledValues(now);
+    gain.gain.setValueAtTime(gain.gain.value, now);
+    gain.gain.linearRampToValueAtTime(target, now + time);
+  }
+
+  async function buildAudio(){
+    if(audio.layers.forest) return;
+
+    const ctx = createAudioContext();
+    if(!ctx) return;
+
+    // You can swap these files later if you want different vibes
+    const forestBuf = await loadBuffer("assets/forest.mp4"); // reuse ambience from video
+    const birdsBuf  = await loadBuffer("assets/forest.mp4"); // filtered birds layer
+    const windBuf   = await loadBuffer("assets/forest.mp4"); // filtered wind layer
+
+    audio.layers.forest = createLoop(forestBuf, 0.35);
+    audio.layers.birds  = createLoop(birdsBuf,  0.20);
+    audio.layers.wind   = createLoop(windBuf,   0.18);
+
+    // EQ / tone shaping (very subtle)
+    const birdFilter = ctx.createBiquadFilter();
+    birdFilter.type = "highpass";
+    birdFilter.frequency.value = 1200;
+    audio.layers.birds.src.disconnect();
+    audio.layers.birds.src.connect(birdFilter).connect(audio.layers.birds.gain);
+
+    const windFilter = ctx.createBiquadFilter();
+    windFilter.type = "lowpass";
+    windFilter.frequency.value = 800;
+    audio.layers.wind.src.disconnect();
+    audio.layers.wind.src.connect(windFilter).connect(audio.layers.wind.gain);
+  }
+
+  function unlockAudio(){
+    if(audio.unlocked) return;
+    const ctx = createAudioContext();
+    if(!ctx) return;
+
+    ctx.resume();
+    audio.unlocked = true;
+  }
+
+  function enableAudio(){
+    if(!audio.unlocked) return;
+    audio.enabled = true;
+
+    buildAudio().then(()=>{
+      fadeGain(audio.master, 0.85, 1.8);
+      fadeGain(audio.layers.forest.gain, audio.layers.forest.volume, 2.0);
+      fadeGain(audio.layers.birds.gain,  audio.layers.birds.volume,  2.8);
+      fadeGain(audio.layers.wind.gain,   audio.layers.wind.volume,   2.4);
+    });
+  }
+
+  function disableAudio(){
+    audio.enabled = false;
+    if(!audio.ctx) return;
+
+    fadeGain(audio.master, 0.0, 1.2);
+  }
+
+  // Unlock on first real user gesture
+  ["pointerdown","touchstart","keydown"].forEach(evt=>{
+    window.addEventListener(evt, unlockAudio, { once:true, passive:true });
+  });
+
+  // Pause when tab hidden
+  document.addEventListener("visibilitychange", ()=>{
+    if(!audio.ctx) return;
+    if(document.hidden){
+      fadeGain(audio.master, 0.0, 0.8);
+    } else if(audio.enabled){
+      fadeGain(audio.master, 0.85, 1.2);
+    }
+  });
+
+
     /* ---------- CINEMA BACKGROUND ---------- */
     .bg{
       position:fixed; inset:0;
@@ -917,14 +1042,17 @@
       soundToggle.setAttribute("aria-pressed", String(on));
       soundState.textContent = on ? "On" : "Off";
     }
-    setSound(false);
-    soundToggle.addEventListener("click", ()=> setSound(soundState.textContent !== "On"));
-    soundToggle.addEventListener("keydown", (e)=>{
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        setSound(soundState.textContent !== "On");
-      }
-    });
+    function setSound(on){
+    soundToggle.setAttribute("aria-pressed", String(on));
+    soundState.textContent = on ? "On" : "Off";
+
+    if(on){
+      enableAudio();
+    } else {
+      disableAudio();
+    }
+  }
+
 
 <script>
 /* ============================================================
