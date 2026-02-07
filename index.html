@@ -3,1035 +3,640 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snack Packz</title>
-  <meta name="description" content="Snack Packz — futuristic packs, daily drops. Order fast via WhatsApp." />
-
+  <title>Snack Packz — Snack Core</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#05060a;
-      --bg2:#070915;
-      --text:#eef2ff;
-      --muted: rgba(238,242,255,.68);
-      --line: rgba(255,255,255,.10);
-      --glass: rgba(255,255,255,.06);
-      --glass2: rgba(255,255,255,.10);
-      --yellow:#ffd400;
-      --orange:#ff9f1a;
-      --cyan:#35d6ff;
-      --violet:#9a7bff;
-      --shadow: 0 28px 120px rgba(0,0,0,.68);
-      --shadow2: 0 14px 50px rgba(0,0,0,.45);
-      --r: 22px;
-      --r2: 30px;
-      --max: 1220px;
+      --bg0:#05060a;
+      --bg1:#070815;
+      --ink:#eef2ff;
+      --mut:rgba(238,242,255,.72);
+      --line:rgba(255,255,255,.10);
+      --glass:rgba(255,255,255,.06);
+      --glass2:rgba(255,255,255,.10);
+
+      --y:#ffd400;
+      --o:#ff9f1a;
+      --c:#33d6ff;
+      --v:#9a7bff;
+      --g:#32ff92;
+
+      --r:22px;
+      --shadow: 0 30px 120px rgba(0,0,0,.75);
+      --shadow2: 0 14px 60px rgba(0,0,0,.55);
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      color:var(--text);
+      color:var(--ink);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 12% -10%, rgba(255,212,0,.18), transparent 60%),
-                  radial-gradient(1100px 700px at 110% 10%, rgba(53,214,255,.14), transparent 55%),
-                  radial-gradient(1000px 650px at 60% 120%, rgba(154,123,255,.11), transparent 60%),
-                  linear-gradient(180deg, var(--bg), var(--bg2));
-      overflow-x:hidden;
-    }
-    a{color:inherit; text-decoration:none}
-    button,input{font:inherit}
-    .wrap{max-width:var(--max); margin:0 auto; padding: 18px}
-
-    /* ---- Futuristic background layers ---- */
-    .bgfx{
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:-2;
+      background:
+        radial-gradient(1100px 680px at 12% -10%, rgba(255,212,0,.18), transparent 60%),
+        radial-gradient(1000px 700px at 110% 10%, rgba(51,214,255,.14), transparent 60%),
+        radial-gradient(1200px 700px at 55% 120%, rgba(154,123,255,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
     }
-    .aurora{
-      position:absolute; inset:-20%;
-      background:
-        radial-gradient(closest-side at 20% 20%, rgba(255,212,0,.20), transparent 55%),
-        radial-gradient(closest-side at 80% 30%, rgba(53,214,255,.16), transparent 55%),
-        radial-gradient(closest-side at 55% 85%, rgba(154,123,255,.16), transparent 60%),
-        radial-gradient(closest-side at 15% 80%, rgba(255,159,26,.10), transparent 55%);
-      filter: blur(60px) saturate(1.2);
-      opacity:.95;
-      animation: drift 18s ease-in-out infinite;
-      transform: translate3d(0,0,0);
-    }
-    @keyframes drift{
-      0%{transform: translate(-2%, -2%) scale(1.02)}
-      50%{transform: translate(2%, 1%) scale(1.05)}
-      100%{transform: translate(-2%, -2%) scale(1.02)}
-    }
+    a{color:inherit; text-decoration:none}
+    button{font:inherit}
 
-    .gridfx{
-      position:absolute; inset:0;
-      background:
-        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px);
-      background-size: 60px 60px;
-      opacity:.10;
-      mask-image: radial-gradient(closest-side at 50% 40%, #000 0%, transparent 78%);
+    /* Top bar */
+    .top{
+      position: fixed; top:0; left:0; right:0;
+      z-index: 50;
+      padding: 14px 18px;
+      display:flex; align-items:center; justify-content:space-between;
+      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,0));
+      backdrop-filter: blur(10px);
     }
-
-    /* ---- Topbar ---- */
-    .topbar{
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      backdrop-filter: blur(18px);
-      background: linear-gradient(180deg, rgba(5,6,10,.82), rgba(5,6,10,.35));
-      border-bottom: 1px solid rgba(255,255,255,.06);
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 0;
     }
-    .topinner{
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 12px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-    }
-    .brand{display:flex; align-items:center; gap:12px; min-width:0;}
     .mark{
       width:42px; height:42px; border-radius:16px;
-      background: linear-gradient(135deg, var(--yellow), var(--orange));
-      box-shadow: 0 22px 70px rgba(255,212,0,.16), 0 14px 40px rgba(0,0,0,.45);
-      flex:0 0 auto;
+      background: linear-gradient(135deg, var(--y), var(--o));
+      box-shadow: 0 16px 60px rgba(255,212,0,.18);
+      flex: 0 0 auto;
     }
     .titleblock{min-width:0}
     .title{
-      margin:0;
       font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      font-size: 28px;
       letter-spacing: 1px;
-      line-height: 1;
       text-transform: uppercase;
-      text-shadow: 0 18px 40px rgba(0,0,0,.60);
+      font-size: 26px;
+      line-height: 1;
+      margin:0;
     }
     .subtitle{
       margin:4px 0 0;
-      color: rgba(238,242,255,.65);
+      color:var(--mut);
       font-size: 12.5px;
-      white-space:nowrap;
+      white-space: nowrap;
       overflow:hidden;
-      text-overflow:ellipsis;
+      text-overflow: ellipsis;
     }
-    @media (max-width: 940px){ .subtitle{display:none} }
-
-    .navright{display:flex; align-items:center; gap:10px; flex:0 0 auto;}
+    .top-actions{
+      display:flex; align-items:center; gap:10px;
+    }
     .pill{
       display:inline-flex; align-items:center; gap:8px;
-      padding: 9px 10px;
+      padding:10px 12px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid var(--line);
       background: rgba(255,255,255,.04);
-      color: rgba(238,242,255,.86);
-      font-weight: 900;
-      font-size: 12.5px;
-      cursor:pointer;
-      transition: transform .18s ease, border-color .18s ease, background .18s ease;
-      user-select:none;
-    }
-    .pill:hover{
-      transform: translateY(-1px);
-      border-color: rgba(53,214,255,.25);
-      background: rgba(53,214,255,.06);
-    }
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 14px;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      font-weight: 900;
-      letter-spacing:.2px;
-      cursor:pointer;
-      user-select:none;
-      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-    .btn.primary{
-      border-color: rgba(255,212,0,.60);
-      background: linear-gradient(180deg, rgba(255,212,0,.22), rgba(255,212,0,.10));
-      box-shadow: 0 18px 55px rgba(0,0,0,.45), 0 0 28px rgba(255,212,0,.12);
-    }
-    .btn.primary:hover{
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 28px 90px rgba(0,0,0,.60), 0 0 44px rgba(255,212,0,.18);
-    }
-    .btn:active{transform: translateY(0) scale(.99)}
-
-    /* ---- Hero ---- */
-    .hero{
-      margin-top: 18px;
-      border-radius: var(--r2);
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position: relative;
-      min-height: 520px;
-      background: rgba(255,255,255,.02);
-      isolation:isolate;
-    }
-    .heroMedia{
-      position:absolute; inset:0;
-      background:#070915;
-    }
-    /* fallback image always visible */
-    .heroMedia::before{
-      content:"";
-      position:absolute; inset:0;
-      background-image: url("./assets/hero.jpg");
-      background-size: cover;
-      background-position: center;
-      opacity: .40;
-      filter: saturate(1.15) contrast(1.10);
-      transform: scale(1.04);
-    }
-    .heroMedia video{
-      position:absolute; inset:0;
-      width:100%; height:100%;
-      object-fit: cover;
-      opacity: 0;
-      transition: opacity .35s ease;
-      filter: saturate(1.10) contrast(1.10);
-      transform: scale(1.04);
-    }
-    .heroMedia video.is-on{ opacity: .65; }
-
-    /* expensive overlays */
-    .heroOverlay{
-      position:absolute; inset:0;
-      background:
-        radial-gradient(900px 320px at 18% 10%, rgba(255,212,0,.26), transparent 60%),
-        radial-gradient(900px 320px at 92% 20%, rgba(53,214,255,.14), transparent 60%),
-        radial-gradient(900px 320px at 62% 90%, rgba(154,123,255,.14), transparent 60%),
-        linear-gradient(90deg, rgba(5,6,10,.90), rgba(5,6,10,.16) 60%, rgba(5,6,10,.88)),
-        linear-gradient(180deg, rgba(5,6,10,.12), rgba(5,6,10,.92));
-      pointer-events:none;
-      z-index:1;
-    }
-
-    .heroInner{
-      position:relative;
-      z-index:2;
-      padding: 34px;
-      display:grid;
-      grid-template-columns: 1.45fr .75fr;
-      gap: 16px;
-      align-items: end;
-    }
-    @media (max-width: 980px){
-      .hero{min-height: 620px;}
-      .heroInner{grid-template-columns:1fr; padding: 20px;}
-    }
-
-    .heroH{
-      margin:0 0 10px;
-      font-size: clamp(30px, 4.0vw, 56px);
-      line-height: 1.02;
-      letter-spacing: -.4px;
-      text-shadow: 0 18px 45px rgba(0,0,0,.65);
-    }
-    .heroP{
-      margin:0 0 16px;
-      color: rgba(238,242,255,.84);
-      font-size: 15.5px;
-      line-height: 1.55;
-      max-width: 64ch;
-    }
-    .chiprow{display:flex; flex-wrap:wrap; gap:10px; margin-top: 14px;}
-    .chip{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:9px 11px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
       color: rgba(238,242,255,.86);
       font-weight: 800;
-      font-size: 12.5px;
-      backdrop-filter: blur(12px);
-    }
-
-    .ctaRow{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top: 14px;}
-    .miniNote{color: rgba(238,242,255,.62); font-size: 12.8px;}
-
-    /* right hero panel */
-    .panel{
-      border-radius: 22px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      box-shadow: var(--shadow2);
-      padding: 14px;
-      backdrop-filter: blur(14px);
-    }
-    .panelTop{display:flex; align-items:baseline; justify-content:space-between; gap:10px;}
-    .panelTitle{
-      margin:0;
-      font-weight: 900;
-      font-size: 13px;
-      letter-spacing:.2px;
-      text-transform: uppercase;
-      color: rgba(238,242,255,.92);
-    }
-    .panelHint{margin:0; font-size: 12px; color: rgba(238,242,255,.62);}
-    .searchRow{margin-top: 10px; display:flex; gap:10px;}
-    .search{
-      flex:1 1 auto;
-      border-radius: 14px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.26);
-      padding: 12px 12px;
-      color: var(--text);
-      outline:none;
-    }
-    .search::placeholder{color: rgba(238,242,255,.55)}
-    .go{
-      border-radius: 14px;
-      border:1px solid rgba(53,214,255,.30);
-      background: rgba(53,214,255,.10);
-      padding: 12px 12px;
-      font-weight: 900;
-      text-transform: uppercase;
       font-size: 12px;
-      cursor:pointer;
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
-    }
-    .go:hover{transform: translateY(-1px); background: rgba(53,214,255,.14); border-color: rgba(53,214,255,.42)}
-    .go:active{transform: translateY(0)}
-
-    .dropBox{
-      margin-top: 12px;
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-      padding: 12px;
-      position: relative;
-      overflow:hidden;
-    }
-    .dropBox::before{
-      content:"";
-      position:absolute; inset:-1px;
-      background:
-        radial-gradient(520px 220px at 20% 0%, rgba(255,212,0,.18), transparent 62%),
-        radial-gradient(520px 220px at 90% 30%, rgba(53,214,255,.12), transparent 62%),
-        radial-gradient(520px 220px at 60% 120%, rgba(154,123,255,.10), transparent 62%);
-      opacity:.95;
-      pointer-events:none;
-    }
-    .dropLine{position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 8px; font-size: 12.6px; color: rgba(238,242,255,.78);}
-    .dropBadge{
-      position:relative;
-      display:inline-flex; align-items:center; gap:8px;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
-      font-weight: 900;
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-
-    /* ---- Section heading ---- */
-    .sectionHead{
-      margin-top: 20px;
-      display:flex; align-items:flex-end; justify-content:space-between;
-      gap: 14px;
-      padding: 10px 4px 6px;
-    }
-    .sectionHead h3{
-      margin:0;
-      font-size: 15px;
-      letter-spacing:.2px;
-      text-transform: uppercase;
-      color: rgba(238,242,255,.90);
-    }
-    .sectionHead p{margin:0; color: rgba(238,242,255,.62); font-size: 13px;}
-    .dividerLine{
-      height:1px; margin-top: 8px;
-      background: linear-gradient(90deg, transparent, rgba(255,212,0,.22), rgba(53,214,255,.16), rgba(154,123,255,.12), transparent);
-      opacity:.95;
-    }
-
-    /* ---- Cards grid ---- */
-    .grid{
-      margin-top: 14px;
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 14px;
-    }
-    .card{
-      grid-column: span 12;
-      border-radius: var(--r);
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
-      box-shadow: var(--shadow2);
-      position: relative;
-      min-height: 240px;
-      overflow:hidden;
-      transform: translateZ(0);
-      transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
       user-select:none;
-      cursor:pointer;
-      isolation:isolate;
     }
-    @media (min-width: 900px){
-      .card.span6{grid-column: span 6;}
-      .card.span4{grid-column: span 4;}
+    .pill.primary{
+      border-color: rgba(255,212,0,.35);
+      background: rgba(255,212,0,.14);
+    }
+    .pill:active{transform: translateY(1px)}
+
+    /* Stage */
+    .stage{
+      position: relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding-top: 82px;
     }
 
-    .media{position:absolute; inset:0; background:#070915;}
-    .media::before{
-      content:"";
-      position:absolute; inset:0;
-      background-image: var(--poster);
-      background-size: cover;
-      background-position: center;
-      opacity: .96;
-      filter: saturate(1.10) contrast(1.08);
-      transform: scale(1.04);
-      transition: transform 1.05s ease;
-    }
-    .overlay{
-      position:absolute; inset:0;
+    /* subtle grid */
+    .gridline{
+      position:absolute; inset:-40%;
       background:
-        radial-gradient(800px 260px at 18% 10%, rgba(255,212,0,.12), transparent 60%),
-        radial-gradient(800px 260px at 92% 20%, rgba(53,214,255,.10), transparent 60%),
-        linear-gradient(180deg, rgba(5,6,10,.10), rgba(5,6,10,.80));
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size: 62px 62px;
+      transform: rotate(12deg);
+      opacity:.05;
+      mask-image: radial-gradient(circle at 50% 45%, #000 0 40%, transparent 68%);
       pointer-events:none;
-      z-index:1;
     }
-    /* premium edge glow */
-    .card::after{
+
+    /* Core container gives real 3D feel */
+    .core-wrap{
+      position: relative;
+      width: min(520px, 86vw);
+      height: min(520px, 86vw);
+      display:grid;
+      place-items:center;
+      transform-style: preserve-3d;
+      perspective: 1100px;
+      user-select:none;
+    }
+
+    /* Holo ring behind core */
+    .halo{
+      position:absolute;
+      width: 120%;
+      height: 120%;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.12), transparent 55%),
+        conic-gradient(from 0deg,
+          rgba(255,212,0,.00),
+          rgba(255,212,0,.60),
+          rgba(51,214,255,.45),
+          rgba(154,123,255,.40),
+          rgba(255,159,26,.55),
+          rgba(255,212,0,.00));
+      filter: blur(0px) drop-shadow(0 0 18px rgba(255,212,0,.18)) drop-shadow(0 0 28px rgba(51,214,255,.12));
+      opacity:.55;
+      transform: translateZ(-80px);
+      animation: haloSpin 10s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes haloSpin{ to{ transform: translateZ(-80px) rotate(360deg);} }
+
+    /* The "snack" (donut) */
+    .snack{
+      position: relative;
+      width: 58%;
+      height: 58%;
+      border-radius: 50%;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 40px 90px rgba(0,0,0,.70));
+    }
+
+    /* Donut face */
+    .donut{
+      position:absolute; inset:0;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.28), transparent 35%),
+        radial-gradient(circle at 70% 65%, rgba(0,0,0,.35), transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,.30) 0 22%, transparent 23%),
+        radial-gradient(circle at 50% 50%, rgba(255,212,0,.85), rgba(255,159,26,.55), rgba(154,123,255,.30));
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.14),
+        inset 0 -30px 60px rgba(0,0,0,.35);
+      transform: translateZ(22px);
+    }
+
+    /* Donut side thickness illusion */
+    .donut::after{
       content:"";
       position:absolute; inset:0;
-      border-radius: var(--r);
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0 22%, rgba(0,0,0,.55) 23% 26%, transparent 27%),
+        linear-gradient(180deg, rgba(0,0,0,.45), rgba(255,255,255,.08));
+      transform: translateZ(-22px) scale(1.02);
+      filter: blur(.2px);
+      opacity:.9;
+    }
+
+    /* glossy frosting band */
+    .frost{
+      position:absolute; inset: -6%;
+      border-radius:50%;
+      background:
+        conic-gradient(from 220deg,
+          rgba(255,255,255,.00),
+          rgba(255,255,255,.20),
+          rgba(255,255,255,.00),
+          rgba(255,255,255,.12),
+          rgba(255,255,255,.00));
+      transform: translateZ(32px);
+      mix-blend-mode: screen;
+      opacity:.65;
       pointer-events:none;
-      opacity:0;
-      transition: opacity .22s ease;
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.06),
-        0 0 0 1px rgba(255,255,255,.06),
-        0 0 34px rgba(255,212,0,.10),
-        0 0 46px rgba(53,214,255,.08),
-        0 0 56px rgba(154,123,255,.06);
-      z-index:2;
     }
 
-    .content{
-      position:absolute; left:16px; right:16px; bottom:16px;
-      display:flex; align-items:flex-end; justify-content:space-between;
-      gap:10px;
-      z-index:3;
-      transition: transform .22s ease;
-    }
-    .kicker{
-      display:inline-flex; gap:8px; align-items:center;
-      padding:7px 10px;
+    /* Logo plaque */
+    .plaque{
+      position:absolute;
+      left:50%; top:50%;
+      transform: translate(-50%,-50%) translateZ(44px);
+      border-radius: 18px;
+      padding: 10px 14px;
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
-      border-radius: 999px;
-      font-size: 12px;
-      color: rgba(238,242,255,.92);
+      background: rgba(0,0,0,.28);
       backdrop-filter: blur(10px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.45);
+      text-align:center;
+      min-width: 160px;
     }
-    .name{
-      margin:10px 0 4px;
-      font-weight: 900;
-      font-size: 20px;
-      letter-spacing: .2px;
+    .plaque .p1{
+      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
       text-transform: uppercase;
-      text-shadow: 0 14px 30px rgba(0,0,0,.48);
-    }
-    .desc{
+      letter-spacing: 1px;
       margin:0;
-      color: rgba(238,242,255,.84);
-      font-size: 13.5px;
-      line-height: 1.35;
-      max-width: 52ch;
+      font-size: 20px;
     }
-    .enter{
-      flex: 0 0 auto;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(255,212,0,.42);
-      background: rgba(255,212,0,.12);
-      font-weight: 900;
-      text-transform: uppercase;
-      font-size: 12.2px;
-      box-shadow: 0 18px 40px rgba(0,0,0,.35);
-      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    .plaque .p2{
+      margin:4px 0 0;
+      color: rgba(238,242,255,.72);
+      font-weight: 800;
+      font-size: 12px;
     }
 
-    .card:hover{
-      transform: translateY(-3px);
-      border-color: rgba(53,214,255,.18);
-      box-shadow: 0 30px 120px rgba(0,0,0,.62);
-    }
-    .card:hover .media::before{transform: scale(1.12)}
-    .card:hover .content{transform: translateY(-2px)}
-    .card:hover .enter{transform: translateY(-1px); background: rgba(255,212,0,.18); border-color: rgba(255,212,0,.56)}
-    .card:hover::after{opacity:1}
-
-    .cardlink{position:absolute; inset:0; z-index:4;}
-
-    /* ---- Cart drawer (Shopify vibe, WhatsApp checkout) ---- */
-    .drawerBack{
-      position: fixed; inset:0;
-      background: rgba(0,0,0,.55);
-      opacity:0; pointer-events:none;
-      transition: opacity .2s ease;
-      z-index: 80;
-    }
-    .drawerBack.on{opacity:1; pointer-events:auto;}
-    .drawer{
-      position: fixed;
-      top:0; right:0;
-      width: min(420px, 92vw);
-      height: 100vh;
-      background: linear-gradient(180deg, rgba(10,12,22,.86), rgba(8,9,16,.86));
-      border-left: 1px solid rgba(255,255,255,.10);
-      backdrop-filter: blur(18px);
-      transform: translateX(103%);
-      transition: transform .25s ease;
-      z-index: 90;
-      padding: 14px;
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow: -30px 0 120px rgba(0,0,0,.60);
-    }
-    .drawer.on{transform: translateX(0);}
-
-    .dTop{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:10px;
-      padding: 10px 10px;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-    }
-    .dTitle{font-weight: 900; letter-spacing:.2px; text-transform: uppercase; font-size: 13px;}
-    .x{
-      width:36px; height:36px; border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      cursor:pointer;
-    }
-    .x:hover{border-color: rgba(53,214,255,.22); background: rgba(53,214,255,.06)}
-
-    .cartList{
-      flex: 1 1 auto;
-      overflow:auto;
-      padding: 6px 2px;
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .item{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 12px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 12px;
-    }
-    .itName{font-weight: 900; font-size: 13.5px;}
-    .itMeta{color: rgba(238,242,255,.65); font-size: 12.3px; margin-top: 4px;}
-    .qty{
-      display:flex; align-items:center; gap:8px;
-    }
-    .qbtn{
-      width:32px; height:32px; border-radius: 12px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.22);
-      cursor:pointer;
-      font-weight: 900;
-      color: rgba(238,242,255,.92);
-    }
-    .qbtn:hover{border-color: rgba(255,212,0,.26); background: rgba(255,212,0,.08)}
-    .qnum{min-width: 18px; text-align:center; font-weight: 900;}
-    .price{font-weight: 900; color: rgba(238,242,255,.92)}
-
-    .dBottom{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-      padding: 12px;
-      display:flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .row{display:flex; justify-content:space-between; gap:10px; color: rgba(238,242,255,.82); font-size: 13px;}
-    .row b{color: rgba(238,242,255,.98)}
-    .checkout{
-      width:100%;
-      padding: 12px 12px;
-      border-radius: 16px;
-      border:1px solid rgba(53,214,255,.36);
-      background: linear-gradient(180deg, rgba(53,214,255,.18), rgba(53,214,255,.08));
-      font-weight: 900;
-      text-transform: uppercase;
-      cursor:pointer;
-      transition: transform .18s ease, box-shadow .18s ease;
-      box-shadow: 0 20px 60px rgba(0,0,0,.45), 0 0 34px rgba(53,214,255,.10);
-    }
-    .checkout:hover{transform: translateY(-2px); box-shadow: 0 30px 90px rgba(0,0,0,.55), 0 0 48px rgba(53,214,255,.16)}
-    .small{color: rgba(238,242,255,.62); font-size: 12.2px; line-height: 1.35;}
-
-    /* ---- Footer ---- */
-    footer{
-      margin: 22px 0 12px;
-      border-top: 1px solid rgba(255,255,255,.08);
-      padding-top: 16px;
+    /* instructions */
+    .hint{
+      position:absolute;
+      bottom: -18px;
+      width: 100%;
+      text-align:center;
       color: rgba(238,242,255,.62);
       font-size: 12.5px;
     }
 
+    /* Orbit menu nodes */
+    .orbit{
+      position:absolute; inset:0;
+      pointer-events:none;
+      transform-style: preserve-3d;
+    }
+
+    .node{
+      position:absolute;
+      left:50%; top:50%;
+      width: 170px;
+      transform: translate(-50%,-50%);
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow2);
+      overflow:hidden;
+      opacity:0;
+      translate: 0 0;
+      pointer-events:none;
+      transition: opacity .35s ease, transform .55s cubic-bezier(.2,.9,.2,1);
+    }
+
+    .node::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background:
+        radial-gradient(220px 90px at 15% 20%, rgba(255,212,0,.22), transparent 60%),
+        radial-gradient(220px 90px at 85% 0%, rgba(51,214,255,.16), transparent 60%);
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .node .topline{
+      position:absolute; left:10px; top:10px; right:10px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px;
+      z-index:2;
+    }
+
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      color: rgba(238,242,255,.88);
+      font-weight: 900;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .go{
+      display:inline-flex; align-items:center; justify-content:center;
+      width: 38px; height: 38px;
+      border-radius: 14px;
+      border:1px solid rgba(255,212,0,.35);
+      background: rgba(255,212,0,.12);
+      font-weight: 1000;
+      letter-spacing:.5px;
+    }
+
+    .node .body{
+      position:relative;
+      z-index:2;
+      padding: 56px 14px 14px;
+    }
+    .node h3{
+      margin:0 0 6px;
+      font-size: 16px;
+      letter-spacing:.2px;
+      text-transform: uppercase;
+      font-weight: 1000;
+    }
+    .node p{
+      margin:0;
+      color: rgba(238,242,255,.74);
+      font-size: 12.5px;
+      line-height: 1.35;
+    }
+
+    /* show orbit on hover/focus */
+    .core-wrap.is-open .node{
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    /* positions (left side + right side) */
+    .core-wrap.is-open .n-gym{    transform: translate(-50%,-50%) translate(-260px,-170px) rotate(-2deg); }
+    .core-wrap.is-open .n-lockin{ transform: translate(-50%,-50%) translate( 260px,-170px) rotate( 2deg); }
+    .core-wrap.is-open .n-work{   transform: translate(-50%,-50%) translate(-320px,  20px) rotate(-2deg); }
+    .core-wrap.is-open .n-gaming{ transform: translate(-50%,-50%) translate( 320px,  20px) rotate( 2deg); }
+    .core-wrap.is-open .n-myst{   transform: translate(-50%,-50%) translate(-260px, 200px) rotate(-2deg); }
+    .core-wrap.is-open .n-fresh{  transform: translate(-50%,-50%) translate( 260px, 200px) rotate( 2deg); }
+
+    /* hover polish */
+    .node:hover{
+      transform: translate(-50%,-50%) scale(1.03) !important;
+      border-color: rgba(255,255,255,.20);
+    }
+    .node:active{ transform: translate(-50%,-50%) scale(1.01) !important; }
+
+    /* Make nodes clickable with full overlay link */
+    .node a{
+      position:absolute; inset:0;
+      z-index:5;
+    }
+
+    /* Bottom mini footer */
+    .mini{
+      position: fixed;
+      left:0; right:0; bottom:0;
+      padding: 14px 18px;
+      display:flex; justify-content:space-between; align-items:center;
+      gap:12px;
+      color: rgba(238,242,255,.62);
+      font-size: 12px;
+      background: linear-gradient(0deg, rgba(0,0,0,.55), rgba(0,0,0,0));
+      backdrop-filter: blur(10px);
+    }
+    .mini .right{
+      display:flex; gap:10px; align-items:center;
+    }
+    .tag{
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* VFX sparkle */
+    .spark{
+      position: fixed;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      pointer-events:none;
+      background: radial-gradient(circle, rgba(255,212,0,1), rgba(255,212,0,0));
+      filter: drop-shadow(0 0 10px rgba(255,212,0,.35));
+      animation: pop .55s ease-out forwards;
+      z-index: 100;
+    }
+    @keyframes pop{
+      0%{ transform: translate(-50%,-50%) scale(.6); opacity: 1;}
+      100%{ transform: translate(-50%,-80%) scale(2.1); opacity: 0;}
+    }
+
+    /* Mobile: stack nodes vertically rather than off-screen */
+    @media (max-width: 860px){
+      .node{ width: 160px; }
+      .core-wrap.is-open .n-gym{    transform: translate(-50%,-50%) translate(-170px,-170px); }
+      .core-wrap.is-open .n-lockin{ transform: translate(-50%,-50%) translate( 170px,-170px); }
+      .core-wrap.is-open .n-work{   transform: translate(-50%,-50%) translate(-200px,  10px); }
+      .core-wrap.is-open .n-gaming{ transform: translate(-50%,-50%) translate( 200px,  10px); }
+      .core-wrap.is-open .n-myst{   transform: translate(-50%,-50%) translate(-170px, 190px); }
+      .core-wrap.is-open .n-fresh{  transform: translate(-50%,-50%) translate( 170px, 190px); }
+      .hint{ bottom:-26px }
+    }
+
+    /* reduced motion */
     @media (prefers-reduced-motion: reduce){
-      .aurora{animation:none !important}
-      .card,.media::before,.content,.enter,.btn,.pill{transition:none !important}
+      .halo{ animation:none }
+      .node{ transition:none }
     }
   </style>
 </head>
 
 <body>
-  <div class="bgfx" aria-hidden="true">
-    <div class="aurora"></div>
-    <div class="gridfx"></div>
-  </div>
-
-  <div class="topbar">
-    <div class="topinner">
-      <div class="brand">
-        <div class="mark" aria-hidden="true"></div>
-        <div class="titleblock">
-          <h1 class="title">Snack Packz</h1>
-          <p class="subtitle">Gym • Lock-In • Work • Gaming • Mystery • Fresh</p>
-        </div>
+  <div class="top">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div class="titleblock">
+        <h1 class="title">Snack Packz</h1>
+        <p class="subtitle">Gym • Lock-In • Work • Gaming • Mystery • Fresh</p>
       </div>
-
-      <div class="navright">
-        <button class="pill" id="soundToggle" aria-pressed="false">🔇 Sound: Off</button>
-        <button class="btn" id="cartBtn">🛒 Cart <span id="cartCount" style="opacity:.75;">(0)</span></button>
-        <a class="btn primary" id="orderBtn" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">
-          Order
-        </a>
-      </div>
+    </div>
+    <div class="top-actions">
+      <button class="pill" id="soundBtn" type="button">🔊 Sound: Off</button>
+      <a class="pill primary" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">Order</a>
     </div>
   </div>
 
-  <div class="wrap">
+  <main class="stage">
+    <div class="gridline" aria-hidden="true"></div>
 
-    <section class="hero">
-      <div class="heroMedia" aria-hidden="true">
-        <video id="heroVid" muted playsinline autoplay loop preload="auto">
-          <source src="./assets/hero.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="heroOverlay" aria-hidden="true"></div>
+    <div class="core-wrap" id="core" aria-label="Snack Core">
+      <div class="halo" aria-hidden="true"></div>
 
-      <div class="heroInner">
-        <div>
-          <h2 class="heroH">A futuristic store for real-life packs.</h2>
-          <p class="heroP">
-            Pick a vibe, pick a pack, message to order. Stock changes daily — but the experience stays elite.
-            Mystery drops happen randomly. Stickers inside. Prize draw entries. No dead sandwiches.
-          </p>
+      <div class="snack" id="snack">
+        <div class="donut" aria-hidden="true"></div>
+        <div class="frost" aria-hidden="true"></div>
 
-          <div class="ctaRow">
-            <a class="btn primary" href="./shop.html">Shop packs</a>
-            <button class="btn" id="randomDropBtn">🎲 Roll a drop</button>
-            <span class="miniNote">Tip: Mystery is a loot box. You might get a bonus.</span>
-          </div>
-
-          <div class="chiprow">
-            <span class="chip">🚚 Local delivery / meet-up</span>
-            <span class="chip">🎟️ Prize draw entry</span>
-            <span class="chip">🎲 RNG drops sometimes</span>
-            <span class="chip">⚠️ No energy drinks under 16s</span>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panelTop">
-            <p class="panelTitle">Find your vibe</p>
-            <p class="panelHint">Try: “fresh”, “cheap”, “og”.</p>
-          </div>
-          <div class="searchRow">
-            <input class="search" id="search" placeholder="Search categories…" />
-            <button class="go" id="searchBtn">Go</button>
-          </div>
-
-          <div class="dropBox" id="dropBox">
-            <div class="dropLine">
-              <span>Tonight’s picks:</span>
-              <span class="dropBadge">🔥 Trending</span>
-            </div>
-            <div class="dropLine" style="margin:0;">
-              <span style="opacity:.92;"><b>Gym OG</b> • <b>Fresh Reset</b> • <b>RNG Drop</b></span>
-              <span style="opacity:.70;">+ sticker</span>
-            </div>
-          </div>
-
-          <div class="small" style="margin-top:10px;">
-            This site is the menu + experience. Checkout is WhatsApp for speed. If you want to pay by card later we can switch to Shopify/Stripe.
-          </div>
+        <div class="plaque">
+          <p class="p1">SNACK PACKZ</p>
+          <p class="p2">Hover / tap to open</p>
         </div>
       </div>
-    </section>
 
-    <div class="sectionHead">
-      <div>
-        <h3>Shop by category</h3>
-        <p>Tap a vibe. It should feel expensive.</p>
+      <div class="orbit" aria-hidden="false">
+        <div class="node n-gym">
+          <a href="gym.html" aria-label="Gym Packs"></a>
+          <div class="topline"><span class="badge">🏋️ Gym</span><span class="go">→</span></div>
+          <div class="body"><h3>Gym Packs</h3><p>Starter • OG • Sweat Session • Afterburn.</p></div>
+        </div>
+
+        <div class="node n-lockin">
+          <a href="lock-in.html" aria-label="Lock-In Packs"></a>
+          <div class="topline"><span class="badge">🧠 Lock-In</span><span class="go">→</span></div>
+          <div class="body"><h3>Lock-In</h3><p>Revision fuel • all-nighter kit • focus mode.</p></div>
+        </div>
+
+        <div class="node n-work">
+          <a href="work.html" aria-label="Work Packs"></a>
+          <div class="topline"><span class="badge">🧰 Work</span><span class="go">→</span></div>
+          <div class="body"><h3>Shift Packs</h3><p>Cheaper than random shop runs. No dead meal deals.</p></div>
+        </div>
+
+        <div class="node n-gaming">
+          <a href="gaming.html" aria-label="Gaming Packs"></a>
+          <div class="topline"><span class="badge">🎮 Gaming</span><span class="go">→</span></div>
+          <div class="body"><h3>Gaming Packs</h3><p>Queue • clutch • late nights. Don’t tilt hungry.</p></div>
+        </div>
+
+        <div class="node n-myst">
+          <a href="mystery.html" aria-label="Mystery Drops"></a>
+          <div class="topline"><span class="badge">🎲 Mystery</span><span class="go">→</span></div>
+          <div class="body"><h3>RNG Drops</h3><p>Loot box vibes. Lucky dip. Could be elite.</p></div>
+        </div>
+
+        <div class="node n-fresh">
+          <a href="fresh.html" aria-label="Fresh Packs"></a>
+          <div class="topline"><span class="badge">🧼 Fresh</span><span class="go">→</span></div>
+          <div class="body"><h3>Fresh Packs</h3><p>Deo • wipes • mints • smell-good reset.</p></div>
+        </div>
       </div>
+
+      <div class="hint">Drag the snack to spin. Hover/tap to open categories.</div>
     </div>
-    <div class="dividerLine"></div>
+  </main>
 
-    <section class="grid">
-
-      <div class="card span6" style="--poster:url('./assets/gym.jpg');" data-cat="Gym">
-        <a class="cardlink" href="./shop.html#gym" aria-label="Gym Packs"></a>
-        <div class="media"></div><div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🏋️ Gym</span>
-            <div class="name">Gym Packs</div>
-            <p class="desc">Starter, OG, Sweat Session, Afterburn. Sort your bag in 10 seconds.</p>
-          </div>
-          <div class="enter">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span6" style="--poster:url('./assets/lockin.jpg');" data-cat="Lock-In">
-        <a class="cardlink" href="./shop.html#lockin" aria-label="Lock-In Packs"></a>
-        <div class="media"></div><div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🧠 Lock-In</span>
-            <div class="name">Lock-In Packs</div>
-            <p class="desc">Revision, grind, all-nighters. Focus mode activated.</p>
-          </div>
-          <div class="enter">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span4" style="--poster:url('./assets/work.jpg');" data-cat="Work">
-        <a class="cardlink" href="./shop.html#work" aria-label="Work Packs"></a>
-        <div class="media"></div><div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🧰 Work / Shift</span>
-            <div class="name">Shift Packs</div>
-            <p class="desc">Cheaper than random shop runs. No dead meal deals.</p>
-          </div>
-          <div class="enter">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span4" style="--poster:url('./assets/gaming.jpg');" data-cat="Gaming">
-        <a class="cardlink" href="./shop.html#gaming" aria-label="Gaming Packs"></a>
-        <div class="media"></div><div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🎮 Gaming</span>
-            <div class="name">Gaming Packs</div>
-            <p class="desc">Queue, clutch, late nights. Don’t tilt hungry.</p>
-          </div>
-          <div class="enter">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span4" style="--poster:url('./assets/mystery.jpg');" data-cat="Mystery">
-        <a class="cardlink" href="./shop.html#mystery" aria-label="Mystery Drops"></a>
-        <div class="media"></div><div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🎲 Mystery</span>
-            <div class="name">RNG Drops</div>
-            <p class="desc">Loot box vibes. Sometimes you get a bonus. Risk it.</p>
-          </div>
-          <div class="enter">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span6" style="--poster:url('./assets/fresh.jpg');" data-cat="Fresh">
-        <a class="cardlink" href="./shop.html#fresh" aria-label="Fresh Packs"></a>
-        <div class="media"></div><div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🧼 Fresh</span>
-            <div class="name">Fresh Packs</div>
-            <p class="desc">Deo, wipes, mints, smell-good. Reset your day.</p>
-          </div>
-          <div class="enter">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span6" style="--poster:linear-gradient(135deg, rgba(53,214,255,.14), rgba(154,123,255,.10));" data-cat="Custom">
-        <a class="cardlink" href="https://wa.me/44YOURNUMBERHERE?text=Yo%20-%20I%20want%20a%20custom%20pack.%20Budget%3A%20%C2%A3__%20%7C%20Vibe%3A%20__%20%7C%20Notes%3A%20__" target="_blank" rel="noopener" aria-label="Custom Pack"></a>
-        <div class="media"></div><div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">💬 Custom</span>
-            <div class="name">Build Me One</div>
-            <p class="desc">Tell me budget + vibe. I’ll build something elite from what’s in stock.</p>
-          </div>
-          <div class="enter">Message</div>
-        </div>
-      </div>
-
-    </section>
-
-    <footer>
-      <b>Snack Packz</b> — premium packs, daily drops, zero dead sandwich energy.<br/>
-      © <span id="year"></span> Snack Packz • ⚠️ No energy drinks to under 16s. Always check ingredients/allergens.
-    </footer>
+  <div class="mini">
+    <div>⚠️ No energy drinks to under 16s. Always check ingredients/allergens.</div>
+    <div class="right">
+      <span class="tag">✨ Futuristic UI</span>
+      <span class="tag">🎟️ Prize draw</span>
+      <span class="tag">🎲 RNG drops</span>
+    </div>
   </div>
-
-  <!-- CART DRAWER -->
-  <div class="drawerBack" id="drawerBack"></div>
-  <aside class="drawer" id="drawer" aria-label="Cart drawer">
-    <div class="dTop">
-      <div class="dTitle">Cart</div>
-      <button class="x" id="closeCart">✕</button>
-    </div>
-
-    <div class="cartList" id="cartList"></div>
-
-    <div class="dBottom">
-      <div class="row"><span>Subtotal</span><b id="subtotal">£0.00</b></div>
-      <div class="row"><span>Delivery</span><b id="delivery">TBD</b></div>
-      <button class="checkout" id="checkoutBtn">Checkout on WhatsApp</button>
-      <div class="small">This makes a clean WhatsApp order message. You can confirm payment + delivery in chat.</div>
-    </div>
-  </aside>
 
   <script>
-    // ====== CONFIG (CHANGE THESE) ======
-    const WHATSAPP_NUMBER = "44YOURNUMBERHERE"; // digits only
-    const DELIVERY_TEXT = "Local delivery / meet-up (confirm in chat)";
-
-    // Small pack catalog used for the cart demo (real products live on shop.html)
-    const DEMO_PRODUCTS = [
-      { id:"gym-og", name:"Gym — OG Pack", price:6.50 },
-      { id:"fresh-reset", name:"Fresh — Reset Pack", price:5.50 },
-      { id:"rng-drop", name:"Mystery — RNG Drop", price:6.00 }
-    ];
-
-    // ====== YEAR ======
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // ====== HERO VIDEO (bulletproof) ======
-    const heroVid = document.getElementById("heroVid");
-    if(heroVid){
-      const show = () => heroVid.classList.add("is-on");
-      const hide = () => heroVid.classList.remove("is-on");
-      heroVid.addEventListener("canplay", show, {once:true});
-      heroVid.addEventListener("playing", show, {once:true});
-      heroVid.addEventListener("error", hide);
-
-      heroVid.play().then(show).catch(() => {
-        hide();
-        // iOS/Safari sometimes needs a gesture:
-        const tryLater = () => heroVid.play().then(show).catch(hide);
-        document.addEventListener("click", tryLater, {once:true});
-        document.addEventListener("touchstart", tryLater, {once:true, passive:true});
-      });
-    }
-
-    // ====== SEARCH (scroll to category) ======
-    const search = document.getElementById("search");
-    const searchBtn = document.getElementById("searchBtn");
-    function runSearch(){
-      const q = (search.value || "").trim().toLowerCase();
-      if(!q) return;
-      const cards = [...document.querySelectorAll(".card")];
-      const hit = cards.find(c => (c.dataset.cat || "").toLowerCase().includes(q) || c.innerText.toLowerCase().includes(q));
-      if(hit) hit.scrollIntoView({behavior:"smooth", block:"center"});
-    }
-    searchBtn.addEventListener("click", runSearch);
-    search.addEventListener("keydown", (e)=>{ if(e.key==="Enter") runSearch(); });
-
-    // ====== FUN: “Roll a drop” adds a random item to cart ======
-    const randomDropBtn = document.getElementById("randomDropBtn");
-    randomDropBtn.addEventListener("click", ()=> {
-      const pick = DEMO_PRODUCTS[Math.floor(Math.random()*DEMO_PRODUCTS.length)];
-      addToCart(pick.id);
-      openCart();
-    });
-
-    // ====== SOUND FX (optional) ======
+    // ===== SOUND (clean + optional) =====
     let soundOn = false;
-    let audioCtx = null;
-    const soundToggle = document.getElementById('soundToggle');
+    const soundBtn = document.getElementById("soundBtn");
 
-    function setSoundUI(){
-      soundToggle.textContent = soundOn ? "🔊 Sound: On" : "🔇 Sound: Off";
-      soundToggle.setAttribute("aria-pressed", soundOn ? "true" : "false");
-    }
-    setSoundUI();
+    // tiny synth beeps (no file uploads)
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let ctx = null;
 
-    function ensureAudio(){
-      if(!audioCtx){
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-    }
-    function beep(type="tick"){
+    function beep(type="hover"){
       if(!soundOn) return;
-      ensureAudio();
-      const t = audioCtx.currentTime;
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.connect(g); g.connect(audioCtx.destination);
+      if(!ctx) ctx = new AudioCtx();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
 
-      if(type === "tick"){ o.type="triangle"; o.frequency.setValueAtTime(520, t); }
-      if(type === "pop"){ o.type="sine"; o.frequency.setValueAtTime(420, t); }
-      if(type === "loot"){ o.type="square"; o.frequency.setValueAtTime(260, t); }
+      const now = ctx.currentTime;
+      const f = type==="click" ? 520 : 820;
+      o.type = "triangle";
+      o.frequency.setValueAtTime(f, now);
+      o.frequency.exponentialRampToValueAtTime(f*0.72, now+0.06);
 
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.12, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + (type==="loot"?0.18:0.12));
-      o.start(t);
-      o.stop(t + (type==="loot"?0.20:0.14));
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.12, now+0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, now+0.10);
+
+      o.start(now);
+      o.stop(now+0.11);
     }
 
-    soundToggle.addEventListener("click", () => {
+    soundBtn.addEventListener("click", async () => {
       soundOn = !soundOn;
-      setSoundUI();
-      beep("pop");
-    });
-
-    document.querySelectorAll(".card, .btn, .pill").forEach(el=>{
-      el.addEventListener("pointerenter", ()=> beep("tick"));
-      el.addEventListener("pointerdown", ()=> beep("pop"), {passive:true});
-    });
-
-    // ====== CART ======
-    const cart = new Map(); // id -> qty
-    const cartBtn = document.getElementById("cartBtn");
-    const cartCount = document.getElementById("cartCount");
-    const drawerBack = document.getElementById("drawerBack");
-    const drawer = document.getElementById("drawer");
-    const closeCartBtn = document.getElementById("closeCart");
-    const cartList = document.getElementById("cartList");
-    const subtotalEl = document.getElementById("subtotal");
-    const deliveryEl = document.getElementById("delivery");
-    const checkoutBtn = document.getElementById("checkoutBtn");
-
-    deliveryEl.textContent = DELIVERY_TEXT;
-
-    function openCart(){ drawerBack.classList.add("on"); drawer.classList.add("on"); }
-    function closeCart(){ drawerBack.classList.remove("on"); drawer.classList.remove("on"); }
-
-    cartBtn.addEventListener("click", openCart);
-    drawerBack.addEventListener("click", closeCart);
-    closeCartBtn.addEventListener("click", closeCart);
-
-    function getProduct(id){ return DEMO_PRODUCTS.find(p=>p.id===id); }
-
-    function addToCart(id){
-      cart.set(id, (cart.get(id)||0) + 1);
-      renderCart();
-    }
-    function setQty(id, qty){
-      if(qty <= 0) cart.delete(id);
-      else cart.set(id, qty);
-      renderCart();
-    }
-
-    function renderCart(){
-      const items = [...cart.entries()];
-      const totalQty = items.reduce((a,[,q])=>a+q,0);
-      cartCount.textContent = `(${totalQty})`;
-
-      cartList.innerHTML = "";
-      let subtotal = 0;
-
-      if(items.length === 0){
-        cartList.innerHTML = `<div style="opacity:.8; padding:12px; border:1px solid rgba(255,255,255,.10); border-radius:18px; background:rgba(255,255,255,.04);">
-          Your cart is empty. Hit “Roll a drop” or add packs from the shop page.
-        </div>`;
-      } else {
-        for(const [id, qty] of items){
-          const p = getProduct(id);
-          if(!p) continue;
-          subtotal += p.price * qty;
-
-          const row = document.createElement("div");
-          row.className = "item";
-          row.innerHTML = `
-            <div>
-              <div class="itName">${p.name}</div>
-              <div class="itMeta">£${p.price.toFixed(2)} each</div>
-            </div>
-            <div style="display:flex; align-items:center; gap:12px;">
-              <div class="qty">
-                <button class="qbtn" data-act="dec" data-id="${id}">−</button>
-                <div class="qnum">${qty}</div>
-                <button class="qbtn" data-act="inc" data-id="${id}">+</button>
-              </div>
-              <div class="price">£${(p.price*qty).toFixed(2)}</div>
-            </div>
-          `;
-          cartList.appendChild(row);
-        }
+      soundBtn.textContent = soundOn ? "🔊 Sound: On" : "🔊 Sound: Off";
+      if(soundOn){
+        // ensure audio context can start
+        try{ if(!ctx) ctx = new AudioCtx(); await ctx.resume(); }catch(e){}
+        beep("click");
       }
+    });
 
-      subtotalEl.textContent = `£${subtotal.toFixed(2)}`;
+    // ===== OPEN/CLOSE ORBIT =====
+    const core = document.getElementById("core");
+    const snack = document.getElementById("snack");
 
-      cartList.querySelectorAll(".qbtn").forEach(b=>{
-        b.addEventListener("click", ()=>{
-          const id = b.dataset.id;
-          const act = b.dataset.act;
-          const q = cart.get(id) || 0;
-          if(act==="dec") setQty(id, q-1);
-          if(act==="inc") setQty(id, q+1);
-        });
-      });
-    }
-    renderCart();
+    // desktop hover
+    core.addEventListener("mouseenter", () => { core.classList.add("is-open"); beep("hover"); });
+    core.addEventListener("mouseleave", () => core.classList.remove("is-open"));
 
-    // Quick demo: clicking the hero chips adds a pack (feels “store-ish”)
-    document.querySelectorAll(".chip").forEach((c,i)=>{
-      c.addEventListener("click", ()=>{
-        const pick = DEMO_PRODUCTS[i % DEMO_PRODUCTS.length];
-        addToCart(pick.id);
-        beep(i===2 ? "loot" : "pop");
+    // mobile tap
+    core.addEventListener("touchstart", () => {
+      core.classList.add("is-open");
+      beep("hover");
+      setTimeout(() => core.classList.remove("is-open"), 1700);
+    }, {passive:true});
+
+    // node sfx + sparkle
+    document.querySelectorAll(".node").forEach(n => {
+      n.addEventListener("mouseenter", () => beep("hover"));
+      n.addEventListener("click", (e) => {
+        beep("click");
+        sparkle(e.clientX || (e.touches && e.touches[0].clientX) || window.innerWidth/2,
+                e.clientY || (e.touches && e.touches[0].clientY) || window.innerHeight/2);
       });
     });
 
-    // WhatsApp checkout message
-    checkoutBtn.addEventListener("click", ()=>{
-      if(cart.size === 0){ openCart(); return; }
+    function sparkle(x,y){
+      const s = document.createElement("div");
+      s.className = "spark";
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 650);
+    }
 
-      let msg = "Yo - Snack Packz order:\\n";
-      let subtotal = 0;
+    // ===== DRAG TO SPIN (clean, premium) =====
+    let dragging = false;
+    let rx = -10, ry = 18;
+    let vx = 0, vy = 0;
+    let lastX = 0, lastY = 0;
 
-      for(const [id, qty] of cart.entries()){
-        const p = getProduct(id);
-        if(!p) continue;
-        msg += `• ${p.name} x${qty} = £${(p.price*qty).toFixed(2)}\\n`;
-        subtotal += p.price*qty;
+    function apply(){
+      // smooth inertia
+      ry += vy;
+      rx += vx;
+      vx *= 0.92;
+      vy *= 0.92;
+
+      // clamp
+      rx = Math.max(-40, Math.min(40, rx));
+      snack.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      requestAnimationFrame(apply);
+    }
+    apply();
+
+    function down(x,y){
+      dragging = true;
+      lastX = x; lastY = y;
+      core.classList.add("is-open");
+      beep("hover");
+    }
+    function move(x,y){
+      if(!dragging) return;
+      const dx = x - lastX;
+      const dy = y - lastY;
+      lastX = x; lastY = y;
+      vy = dx * 0.18;
+      vx = -dy * 0.12;
+    }
+    function up(){
+      dragging = false;
+      setTimeout(() => core.classList.remove("is-open"), 900);
+    }
+
+    snack.addEventListener("mousedown", (e) => down(e.clientX, e.clientY));
+    window.addEventListener("mousemove", (e) => move(e.clientX, e.clientY));
+    window.addEventListener("mouseup", up);
+
+    snack.addEventListener("touchstart", (e) => {
+      const t = e.touches[0];
+      down(t.clientX, t.clientY);
+    }, {passive:true});
+    window.addEventListener("touchmove", (e) => {
+      const t = e.touches[0];
+      if(t) move(t.clientX, t.clientY);
+    }, {passive:true});
+    window.addEventListener("touchend", up);
+
+    // subtle cursor sparkle sometimes (fun but not childish)
+    let lastSpark = 0;
+    window.addEventListener("mousemove", (e) => {
+      if(!soundOn) return; // only when sound mode is on (feels like "fun mode")
+      const now = performance.now();
+      if(now - lastSpark > 220){
+        lastSpark = now;
+        sparkle(e.clientX, e.clientY);
       }
-      msg += `\\nSubtotal: £${subtotal.toFixed(2)}\\n`;
-      msg += `Delivery: ${DELIVERY_TEXT}\\n`;
-      msg += `\\nName: ____\\nAddress/meet-up: ____\\nTime: ____`;
-
-      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-      window.open(url, "_blank", "noopener");
-    });
+    }, {passive:true});
   </script>
 </body>
 </html>
