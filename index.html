@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Snack Packz</title>
-  <meta name="description" content="Snack Packz — quick packs, daily drops. Tap a vibe." />
+  <meta name="description" content="Snack Packz — spin the snack, pick a vibe, tap to enter." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,18 +12,19 @@
 
   <style>
     :root{
-      --bg:#05060b;
+      --bg:#05060a;
       --text:#eef1f7;
       --muted:#a4adbf;
       --line:rgba(255,255,255,.10);
-      --panel:rgba(255,255,255,.05);
-      --panel2:rgba(255,255,255,.08);
-      --y:#ffd400;
-      --o:#ff9f1a;
-      --c:#7ab7ff;
-      --g:#6dffb8;
-      --radius:18px;
-      --shadow: 0 18px 60px rgba(0,0,0,.6);
+      --glass:rgba(10,12,18,.55);
+      --glass2:rgba(10,12,18,.35);
+
+      --yellow:#ffd400;
+      --orange:#ff9f1a;
+      --blue:#79a7ff;
+
+      --radius:22px;
+      --shadow: 0 20px 70px rgba(0,0,0,.55);
     }
 
     *{box-sizing:border-box}
@@ -33,666 +34,685 @@
       color:var(--text);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(900px 520px at 20% -10%, rgba(255,212,0,.18), transparent 58%),
-        radial-gradient(700px 520px at 105% 0%, rgba(122,183,255,.14), transparent 55%),
-        radial-gradient(900px 700px at 55% 120%, rgba(109,255,184,.08), transparent 60%),
+        radial-gradient(900px 600px at 12% -10%, rgba(255,212,0,.18), transparent 55%),
+        radial-gradient(900px 600px at 110% 0%, rgba(121,167,255,.14), transparent 55%),
+        radial-gradient(900px 600px at 50% 120%, rgba(255,159,26,.10), transparent 55%),
         var(--bg);
       overflow:hidden;
     }
 
-    /* Top bar */
+    a{color:inherit;text-decoration:none}
+
+    /* ===== top bar ===== */
     .topbar{
-      position:fixed; inset:14px 14px auto 14px;
+      position:fixed; inset:16px 16px auto 16px;
       display:flex; align-items:center; justify-content:space-between;
       gap:12px;
       z-index:50;
-      pointer-events:none;
     }
-    .topbar > *{pointer-events:auto}
-
     .brand{
       display:flex; align-items:center; gap:12px;
       padding:10px 12px;
-      border:1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
       border-radius: 999px;
-      backdrop-filter: blur(10px);
-      box-shadow: var(--shadow);
+      border:1px solid var(--line);
+      background: rgba(5,6,10,.35);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 18px 60px rgba(0,0,0,.35);
+      max-width: 70vw;
     }
     .mark{
-      width:34px; height:34px; border-radius: 14px;
-      background: linear-gradient(135deg, var(--y), var(--o));
-      box-shadow: 0 16px 40px rgba(255,212,0,.16);
-      flex:0 0 auto;
+      width:36px; height:36px; border-radius:14px;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      box-shadow: 0 16px 60px rgba(255,212,0,.18);
+      flex: 0 0 auto;
     }
     .brand h1{
       margin:0;
       font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
       letter-spacing: 1px;
-      font-size: 20px;
+      font-size: 22px;
       line-height: 1;
       text-transform: uppercase;
-    }
-    .brand small{
-      display:block;
-      margin-top:3px;
-      color: var(--muted);
-      font-size: 12px;
       white-space:nowrap;
     }
-
-    .right{
-      display:flex; align-items:center; gap:10px;
+    .brand .sub{
+      margin:4px 0 0;
+      font-size:12px;
+      color:rgba(238,241,247,.72);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width: 55vw;
     }
 
+    .actions{display:flex; gap:10px; align-items:center}
     .pill{
       display:inline-flex; align-items:center; gap:8px;
       padding:10px 12px;
       border-radius: 999px;
       border:1px solid var(--line);
-      background: rgba(0,0,0,.25);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 14px 44px rgba(0,0,0,.35);
-      color: var(--text);
+      background: rgba(5,6,10,.35);
+      backdrop-filter: blur(14px);
       font-weight: 800;
       font-size: 12.5px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.25);
       user-select:none;
     }
-    .pill .dot{
-      width:8px; height:8px; border-radius:999px;
-      background: rgba(255,255,255,.35);
+    .pill small{opacity:.75; font-weight:700}
+    .pill.primary{
+      border-color: rgba(255,212,0,.35);
+      background: rgba(255,212,0,.14);
+    }
+    .pill:active{transform: translateY(1px)}
+
+    /* ===== hero stage ===== */
+    .stage{
+      position:absolute; inset:0;
+      display:grid;
+      place-items:center;
+      padding: 96px 20px 20px;
+    }
+
+    .heroWrap{
+      width:min(1100px, 100%);
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      align-items:center;
+    }
+    @media (max-width: 980px){
+      body{overflow:auto}
+      .stage{position:relative; min-height: 100vh; padding-top: 86px; overflow:hidden}
+      .heroWrap{grid-template-columns: 1fr; gap:14px}
+    }
+
+    .heroCard{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      min-height: 320px;
+    }
+
+    /* hero video background */
+    .heroMedia{
+      position:absolute; inset:0;
+      background:
+        radial-gradient(800px 420px at 18% 20%, rgba(255,212,0,.20), transparent 55%),
+        radial-gradient(700px 420px at 100% 0%, rgba(121,167,255,.14), transparent 55%),
+        rgba(8,10,16,.85);
+    }
+    .heroMedia::before{
+      content:"";
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(800px 420px at 18% 20%, rgba(255,212,0,.20), transparent 55%),
+        radial-gradient(700px 420px at 100% 0%, rgba(121,167,255,.14), transparent 55%);
+      opacity: .9;
+    }
+    .heroMedia video{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit: cover;
+      opacity: 0; /* stays hidden until loaded */
+      filter: saturate(1.05) contrast(1.05);
+      transform: scale(1.03);
+      transition: opacity .25s ease;
+    }
+    .heroMedia video[data-ready="1"]{opacity:.55}
+
+    .heroOverlay{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(90deg, rgba(5,6,10,.78), rgba(5,6,10,.34) 55%, rgba(5,6,10,.75)),
+        radial-gradient(700px 280px at 25% 20%, rgba(255,212,0,.14), transparent 60%),
+        radial-gradient(700px 280px at 90% 20%, rgba(121,167,255,.10), transparent 60%);
+    }
+
+    .heroBody{
+      position:relative;
+      padding: 26px;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .heroTitle{
+      margin:0;
+      font-size: clamp(30px, 4.6vw, 56px);
+      letter-spacing: -.8px;
+      line-height: 1.03;
+    }
+    .heroText{
+      margin:0;
+      max-width: 60ch;
+      color: rgba(238,241,247,.78);
+      line-height:1.45;
+      font-size: 14px;
+    }
+
+    .badges{
+      display:flex; flex-wrap:wrap; gap:8px;
+      margin-top: 2px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      backdrop-filter: blur(10px);
+      font-size: 12.5px;
+      color: rgba(238,241,247,.76);
+    }
+
+    /* ===== donut hub ===== */
+    .hubCard{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      min-height: 320px;
+      display:grid;
+      place-items:center;
+      padding: 22px;
+    }
+
+    .space{
+      position:absolute; inset:-60px;
+      background:
+        radial-gradient(1000px 700px at 50% 50%, rgba(255,255,255,.04), transparent 70%),
+        transparent;
+      pointer-events:none;
+      opacity:.8;
+    }
+
+    .stars{
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.35), transparent 55%),
+        radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,.25), transparent 55%),
+        radial-gradient(1px 1px at 80% 30%, rgba(255,255,255,.28), transparent 55%),
+        radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,.22), transparent 55%),
+        radial-gradient(1px 1px at 20% 70%, rgba(255,255,255,.20), transparent 55%);
+      opacity:.7;
+      pointer-events:none;
+    }
+
+    .hub{
+      width: min(420px, 100%);
+      aspect-ratio: 1/1;
+      position:relative;
+      display:grid;
+      place-items:center;
+      user-select:none;
+      touch-action:none;
+      filter: drop-shadow(0 40px 120px rgba(0,0,0,.55));
+    }
+
+    /* donut */
+    .donut{
+      width: 74%;
+      height: 74%;
+      border-radius: 999px;
+      position:relative;
+      transform: rotate(0deg);
+      will-change: transform;
+      cursor: grab;
+    }
+    .donut:active{cursor: grabbing}
+
+    .donut::before{
+      content:"";
+      position:absolute; inset:0;
+      border-radius:999px;
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(255,212,0,.0),
+          rgba(255,212,0,.95),
+          rgba(255,159,26,.95),
+          rgba(121,167,255,.80),
+          rgba(255,212,0,.95),
+          rgba(255,159,26,.95),
+          rgba(121,167,255,.80),
+          rgba(255,212,0,.0)
+        );
+      filter: blur(0px);
+      opacity: .95;
+    }
+
+    .donut::after{
+      content:"";
+      position:absolute;
+      inset: 14%;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,.14), transparent 40%),
+        radial-gradient(circle at 60% 70%, rgba(0,0,0,.55), transparent 55%),
+        rgba(6,7,12,.92);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.06),
+        inset 0 -30px 60px rgba(0,0,0,.45);
+    }
+
+    .coreText{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      pointer-events:none;
+      padding: 18%;
+    }
+    .coreText h3{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+      color: rgba(238,241,247,.75);
+    }
+    .coreText p{
+      margin:8px 0 0;
+      font-size: 12px;
+      color: rgba(164,173,191,.85);
+      line-height:1.35;
+    }
+
+    /* ring of options around donut */
+    .menuRing{
+      position:absolute;
+      inset:0;
+      transform: rotate(0deg);
+      will-change: transform;
+      cursor: grab;
+    }
+    .menuRing:active{cursor: grabbing}
+
+    .vibe{
+      position:absolute;
+      display:flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(10,12,18,.40);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      font-weight: 900;
+      font-size: 12.5px;
+      color: rgba(238,241,247,.88);
+      transform: translate(-50%,-50%);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .vibe .dot{
+      width:10px; height:10px; border-radius: 999px;
+      background: rgba(255,255,255,.25);
       box-shadow: 0 0 0 4px rgba(255,255,255,.06);
     }
-    .pill.on .dot{
-      background: var(--g);
-      box-shadow: 0 0 0 4px rgba(109,255,184,.14);
+    .vibe:hover{
+      border-color: rgba(255,212,0,.35);
+      background: rgba(255,212,0,.10);
+      transform: translate(-50%,-50%) scale(1.05);
     }
+    .vibe:active{transform: translate(-50%,-50%) scale(0.98)}
 
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 14px;
-      border-radius: 999px;
-      border:1px solid rgba(255,212,0,.35);
-      background: rgba(255,212,0,.12);
-      font-weight: 900;
-      letter-spacing:.3px;
-      text-transform: uppercase;
-      font-size: 12.5px;
-      color: var(--text);
-      box-shadow: 0 18px 50px rgba(0,0,0,.40);
-      text-decoration:none;
-    }
-    .btn:active{transform: translateY(1px)}
+    /* positions */
+    .pos1{left:50%; top:6%}
+    .pos2{left:82%; top:22%}
+    .pos3{left:92%; top:55%}
+    .pos4{left:70%; top:86%}
+    .pos5{left:30%; top:86%}
+    .pos6{left:8%; top:55%}
+    .pos7{left:18%; top:22%}
 
-    /* Overlay copy */
-    .hud{
+    /* ===== premium preview panel ===== */
+    .preview{
       position:fixed;
-      left:50%;
-      top:50%;
-      transform: translate(-50%,-50%);
-      width:min(720px, calc(100vw - 28px));
-      z-index:40;
+      right: 18px;
+      bottom: 18px;
+      width: min(420px, calc(100vw - 36px));
+      border-radius: 24px;
+      background: rgba(10,12,18,.62);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 45px 140px rgba(0,0,0,.70);
+      overflow:hidden;
+      opacity:0;
+      transform: translateY(10px) scale(.985);
       pointer-events:none;
-      text-align:center;
+      transition: .18s ease;
+      z-index:60;
     }
-    .hud .title{
-      font-size: clamp(26px, 4.6vw, 56px);
-      font-weight: 900;
-      letter-spacing:-.7px;
-      margin:0;
-      text-shadow: 0 14px 44px rgba(0,0,0,.55);
-    }
-    .hud .sub{
-      margin:10px auto 0;
-      max-width: 64ch;
-      color: rgba(238,241,247,.84);
-      line-height: 1.45;
-      font-size: clamp(13.5px, 1.5vw, 15.5px);
-      text-shadow: 0 14px 44px rgba(0,0,0,.55);
-    }
-    .hud .hint{
-      margin-top:14px;
-      display:flex;
-      justify-content:center;
-      gap:10px;
-      flex-wrap:wrap;
-      opacity:.92;
-    }
-    .chip{
+    .preview.on{
+      opacity:1;
+      transform: translateY(0) scale(1);
       pointer-events:auto;
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 10px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.22);
-      backdrop-filter: blur(10px);
-      color: var(--muted);
-      font-size: 12.5px;
-      user-select:none;
     }
-
-    /* Bottom micro footer */
-    .foot{
-      position:fixed; inset:auto 14px 14px 14px;
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px;
-      z-index:40;
+    .previewMedia{
+      height: 185px;
+      background-size: cover;
+      background-position: center;
+      position:relative;
+      overflow:hidden;
+    }
+    .previewMedia::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.60)),
+        radial-gradient(600px 240px at 18% 20%, rgba(255,212,0,.16), transparent 60%),
+        radial-gradient(600px 240px at 90% 20%, rgba(121,167,255,.12), transparent 60%);
       pointer-events:none;
-      color: rgba(164,173,191,.82);
+    }
+    .previewBody{padding: 14px 14px 16px}
+    .previewPill{
+      display:inline-flex; align-items:center; gap:8px;
       font-size: 12px;
+      color: rgba(238,241,247,.75);
+      opacity:.95;
     }
-    .foot > *{pointer-events:auto}
-    .foot .mini{
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.22);
-      backdrop-filter: blur(10px);
+    .preview h3{margin:10px 0 6px; font-size: 18px}
+    .preview p{margin:0; color: rgba(238,241,247,.70); font-size: 13px; line-height:1.35}
+    .previewFooter{
+      display:flex; justify-content:space-between; align-items:center;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .previewBtn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: rgba(255,212,0,.14);
+      border: 1px solid rgba(255,212,0,.35);
+      font-weight: 900;
+      font-size: 12.5px;
+    }
+    .previewHint{
+      font-size: 12px;
+      color: rgba(164,173,191,.9);
+    }
+
+    /* ===== small helper text on right card ===== */
+    .hintRow{
+      display:flex; gap:10px; flex-wrap:wrap;
+      color: rgba(164,173,191,.9);
+      font-size: 12.5px;
+      margin-top: 6px;
+    }
+    .hintChip{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      padding: 8px 10px;
       border-radius: 999px;
-      padding:8px 10px;
-      display:inline-flex; gap:10px; align-items:center;
-    }
-    .foot a{
-      color: rgba(238,241,247,.9);
-      text-decoration:none;
-      font-weight: 800;
+      backdrop-filter: blur(10px);
     }
 
-    /* Canvas layer */
-    #scene{
-      position:fixed; inset:0;
-      width:100%; height:100%;
-      display:block;
-    }
-
-    /* Mobile help */
-    @media (max-width: 620px){
-      .brand small{display:none}
-      .hud{top:54%}
-      .hud .sub{max-width: 44ch}
-      .foot{flex-direction:column; align-items:stretch}
-      .foot .mini{justify-content:center}
+    /* reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; animation:none !important}
     }
   </style>
 </head>
+
 <body>
-
-  <canvas id="scene"></canvas>
-
+  <!-- TOP BAR -->
   <div class="topbar">
-    <div class="brand" aria-label="Snack Packz">
-      <div class="mark" aria-hidden="true"></div>
+    <div class="brand">
+      <div class="mark"></div>
       <div>
-        <h1>Snack Packz</h1>
-        <small>Spin the snack • pick a vibe • click to enter</small>
+        <h1>SNACK PACKZ</h1>
+        <div class="sub">Spin the snack • pick a vibe • click to enter</div>
       </div>
     </div>
 
-    <div class="right">
-      <div id="soundToggle" class="pill" role="button" tabindex="0" aria-label="Toggle sound">
-        <span class="dot" aria-hidden="true"></span>
-        <span id="soundLabel">Sound: Off</span>
+    <div class="actions">
+      <div id="soundBtn" class="pill" role="button" tabindex="0">🔊 <small>Sound:</small> <span id="soundState">Off</span></div>
+
+      <a class="pill primary" href="https://wa.me/447483849357?text=Yo%20Snack%20Packz%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">
+        Order
+      </a>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="heroWrap">
+
+      <!-- LEFT: HERO (real brand look + hero video) -->
+      <section class="heroCard">
+        <div class="heroMedia">
+          <video id="heroVid" muted playsinline preload="metadata">
+            <source src="assets/hero.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="heroOverlay"></div>
+
+        <div class="heroBody">
+          <h2 class="heroTitle">A 3D snack hub for real-life packs.</h2>
+          <p class="heroText">
+            Drag the donut or drag the menu ring. Hover a vibe to preview it. Click to enter.
+            Stock changes daily, the vibe stays elite.
+          </p>
+
+          <div class="badges">
+            <span class="badge">💛 Sticker inside</span>
+            <span class="badge">🎟️ Prize draw entry</span>
+            <span class="badge">🎲 RNG drops sometimes</span>
+            <span class="badge">⚠️ No energy drinks to under 16s</span>
+          </div>
+
+          <div class="hintRow">
+            <span class="hintChip">🖱️ Drag = spin</span>
+            <span class="hintChip">🛞 Wheel = scroll ring</span>
+            <span class="hintChip">👆 Tap = preview / enter</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: DONUT HUB -->
+      <section class="hubCard">
+        <div class="space"></div>
+        <div class="stars"></div>
+
+        <div id="hub" class="hub">
+          <div id="menuRing" class="menuRing" aria-label="Vibe selector ring">
+            <button id="vibe-gym" class="vibe pos1" data-vibe="gym"><span class="dot"></span>🏋️ Gym</button>
+            <button id="vibe-lockin" class="vibe pos2" data-vibe="lockin"><span class="dot"></span>🧠 Lock-In</button>
+            <button id="vibe-work" class="vibe pos3" data-vibe="work"><span class="dot"></span>🧰 Work</button>
+            <button id="vibe-gaming" class="vibe pos4" data-vibe="gaming"><span class="dot"></span>🎮 Gaming</button>
+            <button id="vibe-mystery" class="vibe pos5" data-vibe="mystery"><span class="dot"></span>🎲 Mystery</button>
+            <button id="vibe-fresh" class="vibe pos6" data-vibe="fresh"><span class="dot"></span>🧼 Fresh</button>
+            <button id="vibe-custom" class="vibe pos7" data-vibe="custom"><span class="dot"></span>💬 Custom</button>
+          </div>
+
+          <div id="donut" class="donut" aria-label="Snack donut"></div>
+
+          <div class="coreText">
+            <div>
+              <h3>Spin. Hover. Enter.</h3>
+              <p>Futuristic menu. No dead sandwich energy.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- PREMIUM HOVER PREVIEW -->
+  <div id="preview" class="preview" aria-live="polite">
+    <div id="previewMedia" class="previewMedia"></div>
+    <div class="previewBody">
+      <div id="previewPill" class="previewPill"></div>
+      <h3 id="previewTitle">—</h3>
+      <p id="previewDesc">—</p>
+      <div class="previewFooter">
+        <span id="previewBtn" class="previewBtn">Enter</span>
+        <span class="previewHint">Hover = preview • Click = enter</span>
       </div>
-
-      <!-- CHANGE YOUR NUMBER HERE -->
-      <a class="btn" id="orderBtn"
-         href="https://wa.me/447483849357?text=Yo%20-%20what%20packs%20are%20available%20today%3F"
-         target="_blank" rel="noopener">Order</a>
     </div>
   </div>
-
-  <div class="hud" aria-hidden="true">
-    <h2 class="title">A 3D snack hub for real-life packs.</h2>
-    <p class="sub">
-      Drag the donut to spin it. Hover/tap a vibe when it lights up — that’s your menu.
-      Quick packs, daily drops, zero dead sandwich energy.
-    </p>
-
-    <div class="hint">
-      <div class="chip">🟡 Drag = spin</div>
-      <div class="chip">✨ Hover/tap = reveal + glow</div>
-      <div class="chip">🚫 No energy drinks to under 16s</div>
-    </div>
-  </div>
-
-  <div class="foot">
-    <div class="mini">© <span id="year"></span> Snack Packz • stock changes • good vibes only</div>
-    <div class="mini">
-      <a href="gym.html">Gym</a>
-      <span>•</span>
-      <a href="lock-in.html">Lock-In</a>
-      <span>•</span>
-      <a href="work.html">Work</a>
-      <span>•</span>
-      <a href="gaming.html">Gaming</a>
-      <span>•</span>
-      <a href="mystery.html">Mystery</a>
-      <span>•</span>
-      <a href="fresh.html">Fresh</a>
-    </div>
-  </div>
-
-  <!-- Three.js (CDN) -->
-  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    /* ===== hero video: show only when loaded ===== */
+    (function(){
+      const v = document.getElementById("heroVid");
+      if(!v) return;
+      const ready = () => v.setAttribute("data-ready","1");
+      v.addEventListener("canplay", ready, {once:true});
+      v.addEventListener("loadeddata", ready, {once:true});
+      v.addEventListener("error", () => v.removeAttribute("data-ready"));
+      v.play().catch(()=>{});
+    })();
 
-    // If Three.js fails to load, at least keep the page usable
-    if (!window.THREE){
-      alert("Three.js didn't load. Check your internet / CDN. The links still work at the bottom.");
-      throw new Error("Three.js missing");
-    }
-
-    // ---------- Sound (no files needed) ----------
+    /* ===== sound: lightweight (no files) ===== */
     let soundOn = false;
+    const soundBtn = document.getElementById("soundBtn");
+    const soundState = document.getElementById("soundState");
     let audioCtx = null;
 
-    const soundToggle = document.getElementById('soundToggle');
-    const soundLabel  = document.getElementById('soundLabel');
-
-    function ensureAudio(){
-      if (!audioCtx){
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      if (audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
-    }
-
-    function blip(freq=440, dur=0.07, type="sine", gain=0.045){
+    function beep(type="hover"){
       if(!soundOn) return;
-      ensureAudio();
-      const t0 = audioCtx.currentTime;
-      const o = audioCtx.createOscillator();
-      const g = audioCtx.createGain();
-      o.type = type;
-      o.frequency.setValueAtTime(freq, t0);
-      g.gain.setValueAtTime(0.0001, t0);
-      g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-      o.connect(g).connect(audioCtx.destination);
-      o.start(t0);
-      o.stop(t0 + dur + 0.02);
+      try{
+        if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = "sine";
+        o.frequency.value = type === "click" ? 520 : 740;
+        g.gain.value = 0.0001;
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start();
+        const t = audioCtx.currentTime;
+        g.gain.exponentialRampToValueAtTime(0.08, t + 0.01);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + (type==="click" ? 0.08 : 0.05));
+        o.stop(t + (type==="click" ? 0.09 : 0.06));
+      }catch(e){}
     }
 
-    function clickSound(){
-      blip(220, 0.06, "triangle", 0.06);
-      setTimeout(()=>blip(520, 0.06, "sine", 0.04), 40);
-    }
-    function hoverSound(){
-      blip(420, 0.05, "sine", 0.03);
-    }
-
-    function setSoundUI(on){
+    function setSound(on){
       soundOn = on;
-      soundToggle.classList.toggle("on", on);
-      soundLabel.textContent = on ? "Sound: On" : "Sound: Off";
+      soundState.textContent = on ? "On" : "Off";
+      soundBtn.style.borderColor = on ? "rgba(255,212,0,.35)" : "rgba(255,255,255,.10)";
+      soundBtn.style.background = on ? "rgba(255,212,0,.12)" : "rgba(5,6,10,.35)";
+      if(on) beep("click");
     }
 
-    soundToggle.addEventListener("click", () => {
-      setSoundUI(!soundOn);
-      if(soundOn){ ensureAudio(); blip(660, 0.08, "sine", 0.05); }
-    });
-    soundToggle.addEventListener("keydown", (e) => {
-      if(e.key === "Enter" || e.key === " "){
-        e.preventDefault();
-        soundToggle.click();
-      }
-    });
+    soundBtn.addEventListener("click", () => setSound(!soundOn));
+    soundBtn.addEventListener("keydown", (e) => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); setSound(!soundOn); } });
 
-    // ---------- Three scene ----------
-    const canvas = document.getElementById("scene");
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    /* ===== vibe data (NO GUESSING) ===== */
+    const WA = "https://wa.me/447483849357?text=";
 
-    const scene = new THREE.Scene();
+    const VIBES = {
+      gym:     { pill:"🏋️ Gym",      title:"Gym Packs",    desc:"Starter • OG • Sweat Session • Afterburn", img:"assets/gym.jpg",     link:"gym.html" },
+      lockin:  { pill:"🧠 Lock-In",   title:"Lock-In Packs",desc:"Revision fuel • All-nighter kit • Focus mode", img:"assets/lockin.jpg",  link:"lock-in.html" },
+      work:    { pill:"🧰 Work",     title:"Shift Packs",  desc:"Cheaper than shop runs. No dead meal deals.", img:"assets/work.jpg",    link:"work.html" },
+      gaming:  { pill:"🎮 Gaming",   title:"Gaming Packs", desc:"Queue • clutch • late nights. Don’t tilt hungry.", img:"assets/gaming.jpg", link:"gaming.html" },
+      mystery: { pill:"🎲 Mystery",  title:"RNG Drops",    desc:"Loot drop vibes. Random. Could be elite.", img:"assets/mystery.jpg", link:"mystery.html" },
+      fresh:   { pill:"🧼 Fresh",    title:"Fresh Packs",  desc:"Deo • wipes • mints • reset your day.", img:"assets/fresh.jpg",   link:"fresh.html" },
+      custom:  { pill:"💬 Custom",   title:"Build Me One", desc:"Tell me your budget + vibe. I’ll build it.", img:"assets/fresh.jpg",  link: WA + encodeURIComponent("Yo Snack Packz - I want a custom pack. Budget £__ | Vibe __ | Notes: __") }
+    };
 
-    const camera = new THREE.PerspectiveCamera(
-      45,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      200
-    );
-    camera.position.set(0, 0, 14);
+    /* ===== preview panel ===== */
+    const preview = document.getElementById("preview");
+    const previewMedia = document.getElementById("previewMedia");
+    const previewPill = document.getElementById("previewPill");
+    const previewTitle = document.getElementById("previewTitle");
+    const previewDesc = document.getElementById("previewDesc");
+    const previewBtn = document.getElementById("previewBtn");
+    let activeVibeKey = null;
 
-    // Lights (premium look)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 1.15);
-    keyLight.position.set(5, 6, 6);
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight(0x9bc5ff, 0.55);
-    fillLight.position.set(-6, 2, 4);
-    scene.add(fillLight);
-
-    const rimLight = new THREE.DirectionalLight(0xffd400, 0.45);
-    rimLight.position.set(0, -4, 8);
-    scene.add(rimLight);
-
-    scene.add(new THREE.AmbientLight(0xffffff, 0.18));
-
-    // Subtle fog for depth
-    scene.fog = new THREE.FogExp2(0x05060b, 0.04);
-
-    // Donut (torus) + glossy material
-    const donutGeo = new THREE.TorusGeometry(3.2, 1.2, 64, 180);
-    const donutMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0x2a2f3a),
-      roughness: 0.22,
-      metalness: 0.35,
-      emissive: new THREE.Color(0x000000),
-      envMapIntensity: 1.0
+    function showPreview(key){
+      const v = VIBES[key];
+      if(!v) return;
+      activeVibeKey = key;
+      previewMedia.style.backgroundImage = `url('${v.img}')`;
+      previewPill.textContent = v.pill;
+      previewTitle.textContent = v.title;
+      previewDesc.textContent = v.desc;
+      preview.classList.add("on");
+    }
+    function hidePreview(){
+      preview.classList.remove("on");
+      activeVibeKey = null;
+    }
+    previewBtn.addEventListener("click", () => {
+      if(!activeVibeKey) return;
+      beep("click");
+      location.href = VIBES[activeVibeKey].link;
     });
 
-    const donut = new THREE.Mesh(donutGeo, donutMat);
-    donut.rotation.set(0.15, 0.6, 0.08);
-    scene.add(donut);
+    /* ===== spin logic: DONUT + MENU RING (both draggable) ===== */
+    const donut = document.getElementById("donut");
+    const ring = document.getElementById("menuRing");
+    const hub = document.getElementById("hub");
 
-    // Sprinkle-ish highlight ring
-    const glowGeo = new THREE.TorusGeometry(3.25, 1.25, 16, 180);
-    const glowMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(0x0b0d14),
-      roughness: 0.15,
-      metalness: 0.9,
-      emissive: new THREE.Color(0x05060b)
-    });
-    const shell = new THREE.Mesh(glowGeo, glowMat);
-    shell.scale.set(1.01, 1.01, 1.01);
-    donut.add(shell);
+    let rot = 0; // shared rotation
+    let down = false;
+    let lastX = 0;
 
-    // Particles (stars)
-    const pCount = 1200;
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(pCount * 3);
-    for(let i=0;i<pCount;i++){
-      const r = 28 * Math.random();
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2*Math.random()-1);
-      pPos[i*3+0] = r * Math.sin(phi) * Math.cos(theta);
-      pPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
-      pPos[i*3+2] = r * Math.cos(phi);
+    function applyRot(){
+      donut.style.transform = `rotate(${rot}deg)`;
+      ring.style.transform = `rotate(${rot}deg)`;
     }
-    pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({
-      size: 0.035,
-      color: 0xffffff,
-      transparent: true,
-      opacity: 0.55
-    });
-    const stars = new THREE.Points(pGeo, pMat);
-    scene.add(stars);
+    applyRot();
 
-    // ---------- Category "orbit buttons" (3D objects, clickable) ----------
-    const categories = [
-      { key:"Gym",     emoji:"🏋️", color:0xffd400, href:"gym.html" },
-      { key:"Lock-In", emoji:"🧠", color:0x7ab7ff, href:"lock-in.html" },
-      { key:"Work",    emoji:"🧰", color:0x6dffb8, href:"work.html" },
-      { key:"Gaming",  emoji:"🎮", color:0xb08cff, href:"gaming.html" },
-      { key:"Mystery", emoji:"🎲", color:0xff9f1a, href:"mystery.html" },
-      { key:"Fresh",   emoji:"🧼", color:0x70ffea, href:"fresh.html" },
-    ];
-
-    function makeLabelTexture(text, accentHex){
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const w = Math.floor(620 * dpr);
-      const h = Math.floor(180 * dpr);
-      const cnv = document.createElement("canvas");
-      cnv.width = w; cnv.height = h;
-      const ctx = cnv.getContext("2d");
-
-      // bg
-      ctx.clearRect(0,0,w,h);
-      // rounded rect
-      const r = 42 * dpr;
-      const pad = 18 * dpr;
-      const x = pad, y = pad, rw = w - pad*2, rh = h - pad*2;
-
-      ctx.fillStyle = "rgba(0,0,0,0.35)";
-      ctx.strokeStyle = "rgba(255,255,255,0.12)";
-      ctx.lineWidth = 3 * dpr;
-
-      roundRect(ctx, x, y, rw, rh, r);
-      ctx.fill();
-      ctx.stroke();
-
-      // accent glow strip
-      const grad = ctx.createLinearGradient(x, y, x+rw, y);
-      grad.addColorStop(0, hexToRgba(accentHex, 0.0));
-      grad.addColorStop(0.30, hexToRgba(accentHex, 0.22));
-      grad.addColorStop(0.70, hexToRgba(accentHex, 0.12));
-      grad.addColorStop(1, hexToRgba(accentHex, 0.0));
-      ctx.fillStyle = grad;
-      ctx.fillRect(x, y, rw, rh);
-
-      // text
-      ctx.font = `${Math.floor(54*dpr)}px Inter, system-ui, sans-serif`;
-      ctx.fillStyle = "rgba(238,241,247,0.94)";
-      ctx.textBaseline = "middle";
-      ctx.fillText(text, x + 42*dpr, y + rh/2);
-
-      // small helper text
-      ctx.font = `${Math.floor(24*dpr)}px Inter, system-ui, sans-serif`;
-      ctx.fillStyle = "rgba(164,173,191,0.85)";
-      ctx.fillText("Click to enter", x + 42*dpr, y + rh/2 + 46*dpr);
-
-      const tex = new THREE.CanvasTexture(cnv);
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.needsUpdate = true;
-      return tex;
+    function startDrag(x){
+      down = true;
+      lastX = x;
     }
-
-    function roundRect(ctx, x, y, w, h, r){
-      ctx.beginPath();
-      ctx.moveTo(x+r, y);
-      ctx.arcTo(x+w, y, x+w, y+h, r);
-      ctx.arcTo(x+w, y+h, x, y+h, r);
-      ctx.arcTo(x, y+h, x, y, r);
-      ctx.arcTo(x, y, x+w, y, r);
-      ctx.closePath();
+    function dragMove(x){
+      if(!down) return;
+      const dx = x - lastX;
+      rot += dx * 0.35;
+      lastX = x;
+      applyRot();
     }
+    function endDrag(){ down = false; }
 
-    function hexToRgba(hex, a){
-      const c = new THREE.Color(hex);
-      const r = Math.floor(c.r*255);
-      const g = Math.floor(c.g*255);
-      const b = Math.floor(c.b*255);
-      return `rgba(${r},${g},${b},${a})`;
-    }
+    // Drag anywhere on the hub: spins both
+    hub.addEventListener("pointerdown", (e) => { startDrag(e.clientX); hub.setPointerCapture(e.pointerId); });
+    hub.addEventListener("pointermove", (e) => dragMove(e.clientX));
+    hub.addEventListener("pointerup", endDrag);
 
-    const orbitGroup = new THREE.Group();
-    scene.add(orbitGroup);
+    // Mouse wheel spins ring (and donut with it)
+    hub.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      rot += e.deltaY * 0.18;
+      applyRot();
+    }, {passive:false});
 
-    const labelPlanes = [];
-    const sphereGeo = new THREE.SphereGeometry(0.16, 24, 24);
-
-    categories.forEach((cat, i) => {
-      const g = new THREE.Group();
-
-      // small orb
-      const orbMat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(cat.color),
-        roughness: 0.25,
-        metalness: 0.6,
-        emissive: new THREE.Color(cat.color).multiplyScalar(0.12)
-      });
-      const orb = new THREE.Mesh(sphereGeo, orbMat);
-      g.add(orb);
-
-      // label
-      const tex = makeLabelTexture(`${cat.emoji}  ${cat.key}`, cat.color);
-      const planeGeo = new THREE.PlaneGeometry(3.7, 1.05);
-      const planeMat = new THREE.MeshBasicMaterial({
-        map: tex,
-        transparent: true,
-        opacity: 0.92
-      });
-      const label = new THREE.Mesh(planeGeo, planeMat);
-      label.position.set(2.2, 0, 0);
-      label.userData.href = cat.href;
-      label.userData.baseOpacity = 0.92;
-      label.userData.accent = cat.color;
-      g.add(label);
-
-      g.userData.label = label;
-      g.userData.orb = orb;
-
-      // initial orbit angle
-      g.userData.angle = (i / categories.length) * Math.PI * 2;
-
-      orbitGroup.add(g);
-      labelPlanes.push(label);
+    // Keyboard support
+    window.addEventListener("keydown", (e)=>{
+      if(e.key==="ArrowLeft"){ rot -= 8; applyRot(); }
+      if(e.key==="ArrowRight"){ rot += 8; applyRot(); }
     });
 
-    // Place orbit group around donut
-    orbitGroup.position.set(0, 0, 0);
-
-    // ---------- Interaction (drag spin + hover + click) ----------
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    let hovered = null;
-
-    let isDown = false;
-    let lastX = 0, lastY = 0;
-    let velX = 0, velY = 0;
-
-    function setMouseFromEvent(e){
-      const rect = canvas.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      mouse.set(x,y);
-    }
-
-    function pick(){
-      raycaster.setFromCamera(mouse, camera);
-      const hits = raycaster.intersectObjects(labelPlanes, true);
-      return hits.length ? hits[0].object : null;
-    }
-
-    function onMove(e){
-      setMouseFromEvent(e);
-      if(isDown){
-        const dx = (e.clientX - lastX);
-        const dy = (e.clientY - lastY);
-        lastX = e.clientX; lastY = e.clientY;
-        velX = dx * 0.0024;
-        velY = dy * 0.0020;
-        donut.rotation.y += velX;
-        donut.rotation.x += velY;
-      }
-    }
-
-    function onDown(e){
-      isDown = true;
-      lastX = e.clientX; lastY = e.clientY;
-      ensureAudio(); // unlock audio on mobile if they toggle later
-    }
-
-    function onUp(){
-      isDown = false;
-    }
-
-    function onClick(e){
-      setMouseFromEvent(e);
-      const obj = pick();
-      if(obj && obj.userData && obj.userData.href){
-        clickSound();
-        // small “press” feel
-        obj.material.opacity = 0.65;
-        setTimeout(()=>obj.material.opacity = obj.userData.baseOpacity, 90);
-        window.location.href = obj.userData.href;
-      }
-    }
-
-    window.addEventListener("pointermove", onMove, {passive:true});
-    window.addEventListener("pointerdown", onDown, {passive:true});
-    window.addEventListener("pointerup", onUp, {passive:true});
-    window.addEventListener("click", onClick);
-
-    // ---------- Animation loop ----------
-    const clock = new THREE.Clock();
-
-    function animate(){
-      const t = clock.getElapsedTime();
-
-      // Donut idle motion (if not dragging)
-      if(!isDown){
-        velX *= 0.92;
-        velY *= 0.92;
-        donut.rotation.y += 0.003 + velX;
-        donut.rotation.x += 0.0015 + velY;
-      }
-
-      // Stars drift
-      stars.rotation.y += 0.0008;
-      stars.rotation.x += 0.00035;
-
-      // Orbit
-      const radius = 4.65;
-      orbitGroup.children.forEach((g, idx) => {
-        const a = g.userData.angle + t*0.35;
-        const y = Math.sin(t*0.8 + idx) * 0.25;
-
-        g.position.set(
-          Math.cos(a) * radius,
-          y,
-          Math.sin(a) * radius * 0.55
-        );
-
-        // Face camera
-        g.lookAt(camera.position);
-
-        // Soft bob
-        g.userData.orb.position.y = Math.sin(t*1.6 + idx) * 0.05;
-
-        // Orb pulse
-        const orb = g.userData.orb;
-        orb.scale.setScalar(1 + Math.sin(t*2.4 + idx) * 0.05);
+    /* ===== wire vibe buttons ===== */
+    document.querySelectorAll(".vibe").forEach(btn=>{
+      const key = btn.getAttribute("data-vibe");
+      btn.addEventListener("mouseenter", ()=>{ if(VIBES[key]){ showPreview(key); beep("hover"); } });
+      btn.addEventListener("mouseleave", ()=> hidePreview());
+      btn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        if(!VIBES[key]) return;
+        beep("click");
+        location.href = VIBES[key].link;
       });
 
-      // Hover detection
-      raycaster.setFromCamera(mouse, camera);
-      const hits = raycaster.intersectObjects(labelPlanes, true);
-      const now = hits.length ? hits[0].object : null;
-
-      if(now !== hovered){
-        // reset previous
-        if(hovered){
-          hovered.material.opacity = hovered.userData.baseOpacity;
-          hovered.scale.set(1,1,1);
+      // mobile: tap previews first then tap again enters (prevents accidental)
+      let tapped = false;
+      btn.addEventListener("touchstart", ()=>{
+        if(!VIBES[key]) return;
+        if(!tapped){
+          showPreview(key);
+          tapped = true;
+          setTimeout(()=>tapped=false, 1200);
         }
-        hovered = now;
-        if(hovered){
-          hoverSound();
-        }
-      }
-
-      // Hover effect
-      if(hovered){
-        hovered.material.opacity = 1.0;
-        hovered.scale.lerp(new THREE.Vector3(1.06,1.06,1.06), 0.22);
-
-        // Little donut glow boost
-        const c = new THREE.Color(hovered.userData.accent);
-        donutMat.emissive.lerp(c.multiplyScalar(0.06), 0.10);
-      }else{
-        donutMat.emissive.lerp(new THREE.Color(0x000000), 0.06);
-      }
-
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    // ---------- Resize ----------
-    function onResize(){
-      const w = window.innerWidth, h = window.innerHeight;
-      renderer.setSize(w, h);
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-    }
-    window.addEventListener("resize", onResize);
-
-    // ---------- Mobile tap hover help ----------
-    // If user taps a label (click), it navigates. If they just drag, it spins.
-
+      }, {passive:true});
+    });
   </script>
 </body>
 </html>
