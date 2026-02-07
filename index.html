@@ -5,66 +5,104 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
   <title>Snack Packz — Spin Select</title>
   <meta name="theme-color" content="#070812"/>
+
   <style>
     :root{
       --txt:#EEF3FF;
       --mut:rgba(238,243,255,.72);
       --line:rgba(255,255,255,.12);
-      --glass:rgba(10,12,24,.34);
-      --shadow: 0 26px 120px rgba(0,0,0,.64);
+
+      /* glass */
+      --glassA:rgba(10,12,24,.38);
+      --glassB:rgba(10,12,24,.22);
+
+      /* shadows */
+      --shadow: 0 26px 120px rgba(0,0,0,.66);
+      --shadow2: 0 12px 50px rgba(0,0,0,.48);
       --r:22px;
 
       --accent:#A5F0FF;
       --accent2:#B7A8FF;
 
-      --bg0:#040512;
+      --bg0:#030410;
       --bg1:#05071A;
 
       --hudW:min(36vw, 520px);
       --stageW:min(1200px, 100%);
-      --globe:min(82vmin, 920px);
+      --globe:min(82vmin, 940px);
     }
 
     *{box-sizing:border-box}
     html,body{height:100%}
+
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       color:var(--txt);
       background:
-        radial-gradient(1400px 900px at 24% 10%, rgba(167,120,255,.22), transparent 62%),
-        radial-gradient(1200px 900px at 78% 12%, rgba(72,220,255,.15), transparent 62%),
-        radial-gradient(900px 700px at 50% 92%, rgba(120,255,209,.08), transparent 62%),
+        radial-gradient(1400px 900px at 24% 10%, rgba(167,120,255,.26), transparent 62%),
+        radial-gradient(1200px 900px at 78% 12%, rgba(72,220,255,.17), transparent 62%),
+        radial-gradient(900px 700px at 50% 92%, rgba(120,255,209,.10), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
+
+      /* crispness */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: geometricPrecision;
     }
+
     a{color:inherit;text-decoration:none}
     button{font:inherit}
 
-    /* ===== NAV (same style as reference) ===== */
+    /* subtle grain overlay (expensive look, not tacky) */
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:1;
+      background:
+        radial-gradient(1200px 600px at 50% 0%, rgba(255,255,255,.05), transparent 70%),
+        radial-gradient(900px 700px at 50% 100%, rgba(0,0,0,.35), transparent 60%);
+      opacity:.85;
+      mix-blend-mode: overlay;
+    }
+    body:after{
+      content:"";
+      position:fixed; inset:-40%;
+      pointer-events:none;
+      z-index:2;
+      opacity:.10;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      transform: rotate(7deg);
+    }
+
+    /* ===== NAV ===== */
     .nav{
       position:fixed; left:0; right:0; top:0;
       z-index:90;
       padding: 14px 18px;
       display:flex; align-items:center; justify-content:space-between; gap:14px;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      background: linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.08));
+      backdrop-filter: blur(16px) saturate(130%);
+      -webkit-backdrop-filter: blur(16px) saturate(130%);
+      background: linear-gradient(180deg, rgba(0,0,0,.60), rgba(0,0,0,.10));
       border-bottom: 1px solid rgba(255,255,255,.10);
     }
     .brand{display:flex;align-items:center;gap:12px;min-width:0}
     .logo{
       width:40px;height:40px;border-radius:14px;
       background:
-        radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.35), transparent 60%),
+        radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.38), transparent 60%),
         radial-gradient(18px 18px at 70% 65%, rgba(165,240,255,.22), transparent 65%),
         linear-gradient(135deg, rgba(165,240,255,.25), rgba(183,168,255,.20));
       border:1px solid rgba(255,255,255,.16);
-      box-shadow: 0 14px 34px rgba(0,0,0,.40);
+      box-shadow: 0 14px 34px rgba(0,0,0,.42);
       flex:0 0 auto;
     }
     .brandText h1{margin:0;font-size:15px;font-weight:950;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .brandText p{margin:4px 0 0;font-size:12px;color:rgba(238,243,255,.70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
     .navLinks{
       display:flex; gap:18px; align-items:center;
       color:rgba(238,243,255,.72); font-size:12px; letter-spacing:.2px;
@@ -84,8 +122,8 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px) saturate(130%);
+      -webkit-backdrop-filter: blur(12px) saturate(130%);
       cursor:pointer;
       white-space:nowrap;
     }
@@ -110,16 +148,17 @@
       .navLinks{display:none}
     }
 
-    /* ===== LEFT HERO CARD ===== */
+    /* ===== LEFT HERO ===== */
     .left{padding:clamp(12px,2vw,18px);display:flex;align-items:center;justify-content:center}
     .hero{
       width:var(--stageW);
       min-height:74vh;
       border-radius:var(--r);
-      border:1px solid rgba(255,255,255,.10);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
       box-shadow: var(--shadow);
       position:relative;
       overflow:hidden;
@@ -128,19 +167,29 @@
       content:"";
       position:absolute; inset:-1px;
       background:
-        radial-gradient(1200px 520px at 50% 14%, rgba(165,240,255,.16), transparent 62%),
-        radial-gradient(1200px 840px at 60% 74%, rgba(183,168,255,.14), transparent 64%),
-        radial-gradient(900px 700px at 42% 110%, rgba(120,255,209,.07), transparent 62%);
+        radial-gradient(1200px 520px at 50% 14%, rgba(165,240,255,.18), transparent 62%),
+        radial-gradient(1200px 840px at 60% 74%, rgba(183,168,255,.16), transparent 64%),
+        radial-gradient(900px 700px at 42% 110%, rgba(120,255,209,.08), transparent 62%);
       opacity:.98;
       pointer-events:none;
     }
+    .hero:after{
+      content:"";
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        radial-gradient(850px 380px at 50% 6%, rgba(255,255,255,.055), transparent 60%),
+        radial-gradient(900px 640px at 50% 100%, rgba(0,0,0,.52), transparent 64%);
+      mix-blend-mode: overlay;
+      opacity:.70;
+    }
 
-    /* “light city lines” like reference */
+    /* lines */
     .lines{
       position:absolute; inset:0;
       background:
-        linear-gradient(rgba(255,255,255,.06), rgba(255,255,255,0)) 0 0/100% 140px,
-        repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 150px) 0 0/100% 100%;
+        linear-gradient(rgba(255,255,255,.07), rgba(255,255,255,0)) 0 0/100% 140px,
+        repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0, rgba(255,255,255,.07) 1px, transparent 1px, transparent 150px) 0 0/100% 100%;
       opacity:.10;
       pointer-events:none;
       mask-image: radial-gradient(720px 380px at 50% 10%, rgba(0,0,0,1), rgba(0,0,0,0) 72%);
@@ -148,7 +197,7 @@
 
     .heroInner{
       position:relative;
-      z-index:2;
+      z-index:3;
       height:100%;
       padding: clamp(18px, 2.4vw, 26px);
       display:grid;
@@ -156,24 +205,23 @@
       gap: 12px;
     }
 
-    /* top pill */
     .topPill{
       justify-self:center;
       display:inline-flex;
       align-items:center;
       gap:10px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
       border-radius:999px;
       padding: 10px 14px;
       font-size: 12px;
-      color: rgba(238,243,255,.78);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      color: rgba(238,243,255,.80);
+      backdrop-filter: blur(12px) saturate(130%);
+      -webkit-backdrop-filter: blur(12px) saturate(130%);
       transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
+      box-shadow: 0 14px 50px rgba(0,0,0,.35);
     }
 
-    /* headline */
     .headline{
       justify-self:center;
       display:grid;
@@ -185,24 +233,29 @@
     }
     .headline h2{
       margin:0;
-      font-size: clamp(34px, 4.9vw, 64px);
-      line-height:1.02;
-      font-weight:980;
-      letter-spacing:-1px;
-      text-shadow: 0 30px 70px rgba(0,0,0,.55);
+      font-size: clamp(34px, 4.9vw, 66px);
+      line-height:1.01;
+      font-weight:985;
+      letter-spacing:-1.1px;
+      text-shadow: 0 40px 120px rgba(0,0,0,.55);
       max-width: 22ch;
     }
     .headline p{
       margin:0;
-      color: rgba(238,243,255,.74);
+      color: rgba(238,243,255,.76);
       font-size: 13px;
       line-height: 1.45;
-      max-width: 70ch;
+      max-width: 72ch;
     }
     .ctaRow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
-    .ctaPrimary{padding:11px 14px;font-weight:950;border-color:rgba(165,240,255,.18)}
+    .ctaPrimary{
+      padding:11px 14px;
+      font-weight:950;
+      border-color:rgba(165,240,255,.20);
+      box-shadow: 0 18px 70px rgba(0,0,0,.40);
+    }
 
-    /* stats row like reference */
+    /* stats */
     .stats{
       margin-top:auto;
       display:grid;
@@ -219,50 +272,49 @@
     @media (max-width:920px){ .stats{grid-template-columns:1fr} }
     .stat{
       border-radius: 18px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.18);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.20);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
       padding: 14px 14px;
+      box-shadow: 0 16px 70px rgba(0,0,0,.35);
     }
-    .stat .n{font-size:26px;font-weight:980;letter-spacing:-.3px}
-    .stat .t{margin-top:6px;font-size:12px;color:rgba(238,243,255,.70)}
+    .stat .n{font-size:26px;font-weight:980;letter-spacing:-.35px}
+    .stat .t{margin-top:6px;font-size:12px;color:rgba(238,243,255,.72)}
 
-    /* ===== CENTRE HERO SCENE ===== */
+    /* ===== CENTRE SCENE ===== */
     .centre{
       position:absolute;
       inset:0;
-      z-index:1;
+      z-index:2;
       pointer-events:none;
     }
 
-    /* vertical beam (the reference key) */
     .beam{
       position:absolute;
       left:50%;
-      top:-40%;
+      top:-42%;
       transform: translateX(-50%);
       width: 18%;
-      height: 190%;
+      height: 195%;
       background: linear-gradient(180deg,
         rgba(165,240,255,0),
-        rgba(165,240,255,.20),
-        rgba(183,168,255,.16),
+        rgba(165,240,255,.22),
+        rgba(183,168,255,.18),
         rgba(0,0,0,0)
       );
-      filter: blur(14px);
-      opacity:.9;
+      filter: blur(12px);
+      opacity:.92;
     }
 
-    /* globe is huge + half visible at bottom */
     .spin3d{
       position:absolute;
       left:50%;
-      bottom: calc(-1 * (var(--globe) * 0.52)); /* pushes it down like MoonChain */
+      bottom: calc(-1 * (var(--globe) * 0.52));
       transform: translateX(-50%);
       width: var(--globe);
       height: var(--globe);
-      perspective: 1100px;
+      perspective: 1200px;
       touch-action:none;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
@@ -270,61 +322,29 @@
       z-index:2;
     }
 
-    /* FX */
     canvas#fx{
       position:absolute;
       inset:-35%;
       width:170%;
       height:170%;
       z-index:0;
-      opacity:.78;
+      opacity:.82;
       pointer-events:none;
     }
 
-    /* globe body */
-    .globe{
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 35% 26%, rgba(255,255,255,.20), rgba(255,255,255,0) 34%),
-        radial-gradient(circle at 60% 46%, rgba(165,240,255,.14), rgba(165,240,255,0) 48%),
-        radial-gradient(circle at 50% 62%, rgba(183,168,255,.12), rgba(183,168,255,0) 56%),
-        radial-gradient(circle at 50% 55%, rgba(0,0,0,.10), rgba(0,0,0,.74)),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.38));
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow: 0 60px 220px rgba(0,0,0,.72), inset 0 0 0 1px rgba(255,255,255,.07);
-      cursor:pointer;
-      z-index:2;
-    }
-    .globe:before{
-      content:"";
-      position:absolute;
-      inset:-16%;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 55% 50%, rgba(255,255,255,.06), transparent 60%),
-        radial-gradient(circle at 40% 42%, rgba(165,240,255,.18), transparent 62%),
-        radial-gradient(circle at 60% 58%, rgba(183,168,255,.12), transparent 62%);
-      filter: blur(18px);
-      opacity:.92;
-      pointer-events:none;
-      mix-blend-mode: screen;
-    }
-
-    /* orbit ring */
     .orbit{
       position:absolute;
       inset:-12%;
       border-radius:50%;
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
-      opacity:.9;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:
+        inset 0 0 0 1px rgba(255,255,255,.06),
+        0 0 0 1px rgba(0,0,0,.25);
+      opacity:.90;
       z-index:1;
       pointer-events:none;
     }
 
-    /* floating “icons” around globe (reference vibe) */
     .floats{
       position:absolute;
       inset:-10%;
@@ -332,28 +352,27 @@
       pointer-events:none;
       opacity:1;
       transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
+      filter: drop-shadow(0 18px 70px rgba(0,0,0,.50));
     }
     .floatIcon{
       position:absolute;
-      width: 42px; height: 42px;
+      width: 44px; height: 44px;
       border-radius: 50%;
-      border:1px solid rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.16);
       background: rgba(0,0,0,.18);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
       display:grid; place-items:center;
       box-shadow: 0 18px 80px rgba(0,0,0,.55);
-      opacity:.95;
+      opacity:.98;
     }
     .floatIcon:before{
       content:"";
       width:14px;height:14px;border-radius:50%;
       background: linear-gradient(180deg, rgba(165,240,255,.92), rgba(183,168,255,.84));
-      box-shadow: 0 0 0 6px rgba(165,240,255,.10);
-      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 0 7px rgba(165,240,255,.095);
+      border:1px solid rgba(255,255,255,.14);
     }
-
-    /* where the icons sit (like reference) */
     .f1{left:12%; top:42%}
     .f2{left:22%; top:28%}
     .f3{left:36%; top:20%}
@@ -361,7 +380,53 @@
     .f5{right:22%; top:28%}
     .f6{right:12%; top:42%}
 
-    /* OPTIONS (hidden until engaged) */
+    .globe{
+      position:absolute;
+      inset:0;
+      border-radius:50%;
+      z-index:2;
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.18);
+      background:
+        radial-gradient(circle at 34% 24%, rgba(255,255,255,.26), rgba(255,255,255,0) 34%),
+        radial-gradient(circle at 62% 44%, rgba(165,240,255,.18), rgba(165,240,255,0) 50%),
+        radial-gradient(circle at 50% 68%, rgba(183,168,255,.16), rgba(183,168,255,0) 56%),
+        radial-gradient(circle at 50% 54%, rgba(0,0,0,.06), rgba(0,0,0,.78)),
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.42));
+      box-shadow:
+        0 70px 260px rgba(0,0,0,.74),
+        inset 0 0 0 1px rgba(255,255,255,.08);
+      transform: translateZ(0);
+    }
+    .globe:before{
+      content:"";
+      position:absolute;
+      inset:-18%;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 56% 50%, rgba(255,255,255,.07), transparent 60%),
+        radial-gradient(circle at 40% 42%, rgba(165,240,255,.22), transparent 62%),
+        radial-gradient(circle at 60% 58%, rgba(183,168,255,.15), transparent 62%);
+      filter: blur(18px);
+      opacity:.95;
+      mix-blend-mode: screen;
+      pointer-events:none;
+    }
+    .globe:after{
+      content:"";
+      position:absolute;
+      inset:6%;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.04), transparent 62%),
+        conic-gradient(from 190deg, rgba(165,240,255,.05), rgba(183,168,255,.05), rgba(165,240,255,.05));
+      opacity:.55;
+      filter: blur(0px);
+      pointer-events:none;
+      mask-image: radial-gradient(circle at 50% 55%, rgba(0,0,0,1), rgba(0,0,0,0) 68%);
+    }
+
+    /* OPTIONS */
     .opts{
       position:absolute;
       inset:-28%;
@@ -378,10 +443,10 @@
       position:absolute; left:50%; top:50%;
       height: 40px;
       border-radius: 999px;
-      border:1px solid rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.16);
       background: rgba(0,0,0,.22);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
       display:flex; align-items:center; gap:10px;
       padding: 0 12px;
       box-shadow: 0 18px 90px rgba(0,0,0,.58);
@@ -392,13 +457,21 @@
       will-change: transform, opacity, filter;
       transform-style: preserve-3d;
     }
-    .opt:hover{border-color:rgba(165,240,255,.30);background:rgba(0,0,0,.28)}
-    .opt.active{border-color:rgba(165,240,255,.42);background:rgba(0,0,0,.30)}
-    .oDot{width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,var(--accent),var(--accent2));box-shadow:0 0 0 6px rgba(165,240,255,.10)}
-    .oTxt{font-weight:950;font-size:12px;letter-spacing:.55px;text-transform:uppercase}
-    .oSub{margin-left:auto;font-size:11px;color:rgba(238,243,255,.66);letter-spacing:.2px;text-transform:uppercase}
+    .opt:hover{
+      border-color:rgba(165,240,255,.34);
+      background: rgba(0,0,0,.28);
+      box-shadow: 0 18px 120px rgba(0,0,0,.72);
+    }
+    .opt.active{
+      border-color:rgba(165,240,255,.46);
+      background: rgba(0,0,0,.30);
+      box-shadow: 0 18px 140px rgba(0,0,0,.76);
+    }
+    .oDot{width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,var(--accent),var(--accent2));box-shadow:0 0 0 7px rgba(165,240,255,.09)}
+    .oTxt{font-weight:950;font-size:12px;letter-spacing:.62px;text-transform:uppercase}
+    .oSub{margin-left:auto;font-size:11px;color:rgba(238,243,255,.68);letter-spacing:.22px;text-transform:uppercase}
 
-    /* engage behaviour: remove headline/stats like you asked */
+    /* engage: fade headline/stats/pill + floats */
     .hero.engaged .topPill,
     .hero.engaged .headline,
     .hero.engaged .stats{
@@ -415,27 +488,32 @@
       border-left:1px solid rgba(255,255,255,.08);
       display:flex;
       align-items:stretch;
+      z-index:20;
     }
     @media (max-width:980px){ .hud{border-left:none} }
 
     .hudCard{
       width:100%;
       border-radius: var(--r);
-      border:1px solid rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.12);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
       box-shadow: var(--shadow);
       overflow:hidden;
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
       position:relative;
       min-height: 420px;
     }
+
     .hudMedia{position:absolute;inset:0;z-index:2}
     .hudMedia img,.hudMedia video{
       position:absolute;inset:0;width:100%;height:100%;
       object-fit:cover;
+
+      /* “ultra” feel without destroying content */
       transform: scale(1.02);
-      filter: contrast(1.06) saturate(1.03);
+      filter: contrast(1.10) saturate(1.06) brightness(1.02);
+      image-rendering: auto;
     }
     .hudMedia img{opacity:1;transition:opacity 220ms ease}
     .hudMedia video{opacity:0;transition:opacity 320ms ease}
@@ -445,9 +523,9 @@
     .hudShade{
       position:absolute;inset:0;z-index:3;
       background:
-        radial-gradient(700px 380px at 20% 10%, rgba(0,0,0,.12), transparent 60%),
+        radial-gradient(700px 380px at 20% 10%, rgba(0,0,0,.10), transparent 60%),
         radial-gradient(800px 520px at 70% 35%, rgba(0,0,0,.26), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.72));
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.76));
       pointer-events:none;
     }
     .hudTop{
@@ -455,26 +533,29 @@
       padding:16px 16px 0;
       display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
     }
-    .hudTitle h3{margin:0;font-size:18px;font-weight:950;letter-spacing:.5px;text-shadow:0 18px 50px rgba(0,0,0,.65)}
-    .hudTitle p{margin:6px 0 0;font-size:12.5px;color:rgba(238,243,255,.78);line-height:1.35;max-width:46ch;text-shadow:0 18px 50px rgba(0,0,0,.65)}
+    .hudTitle h3{margin:0;font-size:18px;font-weight:950;letter-spacing:.55px;text-shadow:0 18px 60px rgba(0,0,0,.70)}
+    .hudTitle p{margin:6px 0 0;font-size:12.5px;color:rgba(238,243,255,.80);line-height:1.35;max-width:46ch;text-shadow:0 18px 60px rgba(0,0,0,.70)}
     .enter{
       border-radius: 16px;
       padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.20);
       background: rgba(0,0,0,.24);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
       font-size: 12px;
       font-weight: 950;
       letter-spacing:.25px;
       display:inline-flex;align-items:center;gap:10px;
       cursor:pointer;white-space:nowrap;
+      box-shadow: 0 18px 70px rgba(0,0,0,.45);
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
     }
+    .enter:hover{transform:translateY(-1px);background:rgba(0,0,0,.30);border-color:rgba(255,255,255,.24)}
     .spark{
       width:18px;height:18px;border-radius:10px;
-      background: linear-gradient(180deg, rgba(165,240,255,.90), rgba(183,168,255,.82));
-      box-shadow: 0 0 0 6px rgba(165,240,255,.10);
-      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(165,240,255,.92), rgba(183,168,255,.86));
+      box-shadow: 0 0 0 7px rgba(165,240,255,.09);
+      border:1px solid rgba(255,255,255,.14);
     }
     .hudBottom{
       position:absolute;left:0;right:0;bottom:0;z-index:6;
@@ -482,17 +563,18 @@
       display:flex;justify-content:space-between;gap:12px;align-items:flex-end;
     }
     .hudStat{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
       border-radius: 16px;
       padding: 10px 12px;
       max-width: 62%;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      box-shadow: 0 16px 70px rgba(0,0,0,.35);
     }
-    .hudStat .k{font-size:11px;color:rgba(238,243,255,.70)}
+    .hudStat .k{font-size:11px;color:rgba(238,243,255,.72)}
     .hudStat .v{margin-top:5px;font-size:12.5px;font-weight:950}
-    .hudTip{text-align:right;font-size:11px;color:rgba(238,243,255,.70);line-height:1.25;text-shadow:0 18px 50px rgba(0,0,0,.65)}
+    .hudTip{text-align:right;font-size:11px;color:rgba(238,243,255,.72);line-height:1.25;text-shadow:0 18px 60px rgba(0,0,0,.70)}
   </style>
 </head>
 
@@ -545,12 +627,12 @@
           </div>
         </div>
 
-        <!-- centre scene overlay (beam + globe + floats + options) -->
+        <!-- centre scene -->
         <div class="centre" aria-hidden="false">
           <div class="beam" aria-hidden="true"></div>
 
           <div class="spin3d" id="spin3d">
-            <canvas id="fx" width="900" height="900" aria-hidden="true"></canvas>
+            <canvas id="fx" aria-hidden="true"></canvas>
 
             <div class="orbit" aria-hidden="true"></div>
 
@@ -606,6 +688,7 @@
 
   <script>
     const WHATSAPP_NUMBER = "447483849357";
+
     const vibes = [
       { key:"gym",     label:"GYM",     sub:"FOCUS", page:"gym.html",     img:"assets/gym.jpg",     vid:"assets/gym.mp4",     desc:"High focus. Clean fuel. No distractions." },
       { key:"lockin",  label:"LOCK-IN", sub:"GRIND", page:"lock-in.html", img:"assets/lockin.jpg",  vid:"assets/lockin.mp4",  desc:"Tunnel vision mode. Phone down. Get it done." },
@@ -633,7 +716,7 @@
     const hudMeta  = document.getElementById("hudMeta");
     const enterBtn = document.getElementById("enterBtn");
 
-    // --- premium preview: image instantly → video fades when ready
+    /* Premium preview: image instantly → video fades when ready */
     let videoToken = 0;
     function loadPreview(v){
       hudTitle.textContent = v.label;
@@ -668,7 +751,7 @@
       hudVid.load();
     }
 
-    // --- build selectable options
+    /* Build options */
     const N = vibes.length;
     const step = 360 / N;
     const normDeg = d => ((d%360)+360)%360;
@@ -680,7 +763,7 @@
         const opt = document.createElement("div");
         opt.className = "opt";
         opt.dataset.index = String(i);
-        opt.style.width = (vibes[i].label.length > 6 ? 172 : 152) + "px";
+        opt.style.width = (vibes[i].label.length > 6 ? 178 : 156) + "px";
         opt.innerHTML = `
           <span class="oDot" aria-hidden="true"></span>
           <span class="oTxt">${vibes[i].label}</span>
@@ -727,7 +810,7 @@
       return i;
     }
 
-    // --- fast spin engine
+    /* Spin engine */
     let rot = 0;
     let vel = 0;
     let dragging = false;
@@ -752,9 +835,8 @@
       const rect = spin3d.getBoundingClientRect();
       const base = Math.min(rect.width, rect.height);
 
-      // IMPORTANT: orbit sits around globe in the hero scene
       const radius = base * 0.62;
-      const depth  = base * 0.22;
+      const depth  = base * 0.24;
 
       const items = optsEl.querySelectorAll(".opt");
       for(let i=0;i<items.length;i++){
@@ -765,9 +847,9 @@
         const z = (Math.cos(a) * depth);
 
         const z01 = (z/depth + 1)/2;
-        const scale = 0.92 + z01*0.22;
+        const scale = 0.92 + z01*0.24;
         const alpha = 0.62 + z01*0.38;
-        const blur  = (1 - z01) * 0.40;
+        const blur  = (1 - z01) * 0.36;
 
         items[i].style.transform =
           `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) scale(${scale})`;
@@ -846,7 +928,7 @@
       setTimeout(()=> setActive(nearestIndex(rot), true), 80);
     }
 
-    // --- engage behaviour (THIS is the exact “hover globe = reveal”)
+    /* Engage behaviour */
     function setEngaged(on){
       hero.classList.toggle("engaged", on);
       if (on) layout3D();
@@ -868,56 +950,67 @@
     window.addEventListener("pointerup", onUp, {passive:true});
     spin3d.addEventListener("wheel", onWheel, {passive:false});
 
-    // --- FX particles (subtle)
+    /* ===== Ultra-crisp FX canvas (hi-DPI) ===== */
     const fx = document.getElementById("fx");
-    const fctx = fx.getContext("2d");
+    const fctx = fx.getContext("2d", { alpha:true });
     const parts = [];
     let mx=0, my=0;
 
     function fitFx(){
       const rect = fx.getBoundingClientRect();
-      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1)); // higher than before
       fx.width = Math.round(rect.width * dpr);
       fx.height = Math.round(rect.height * dpr);
+      fctx.setTransform(1,0,0,1,0,0);
+      fctx.scale(dpr, dpr);
     }
+
     function seedParts(){
       parts.length = 0;
-      const n = 150;
+      const n = 170;
       for(let i=0;i<n;i++){
         parts.push({
           x: Math.random(),
           y: Math.random(),
-          r: 0.7 + Math.random()*1.7,
-          a: 0.08 + Math.random()*0.20,
+          r: 0.7 + Math.random()*1.8,
+          a: 0.06 + Math.random()*0.22,
           vx:(Math.random()-0.5)*0.00055,
           vy:(Math.random()-0.5)*0.00055
         });
       }
     }
+
     function drawFx(){
-      const w = fx.width, h = fx.height;
+      const w = fx.getBoundingClientRect().width;
+      const h = fx.getBoundingClientRect().height;
       fctx.clearRect(0,0,w,h);
 
       const gx = w*(0.50 + mx*0.06);
       const gy = h*(0.50 + my*0.06);
-      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.56);
+
+      // “bloom” gradient
+      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.62);
       g.addColorStop(0, "rgba(165,240,255,0.12)");
-      g.addColorStop(0.45, "rgba(183,168,255,0.08)");
+      g.addColorStop(0.42, "rgba(183,168,255,0.08)");
       g.addColorStop(1, "rgba(0,0,0,0)");
       fctx.fillStyle = g;
       fctx.fillRect(0,0,w,h);
 
+      // stars/particles
       for(const p of parts){
         p.x += p.vx; p.y += p.vy;
         if (p.x<0) p.x=1; if (p.x>1) p.x=0;
         if (p.y<0) p.y=1; if (p.y>1) p.y=0;
 
-        const x = p.x*w, y = p.y*h;
+        const x = p.x*w;
+        const y = p.y*h;
+
         fctx.fillStyle = `rgba(238,243,255,${p.a})`;
         fctx.beginPath();
-        fctx.arc(x,y,p.r*(window.devicePixelRatio||1),0,Math.PI*2);
+        fctx.arc(x,y,p.r,0,Math.PI*2);
         fctx.fill();
       }
+
       requestAnimationFrame(drawFx);
     }
 
@@ -929,7 +1022,7 @@
       my = clamp((e.clientY - cy)/(r.height/2), -1, 1);
     });
 
-    // loop
+    /* Main loop */
     let last = performance.now();
     function loop(now){
       const dt = Math.min(0.05, (now-last)/1000);
@@ -941,7 +1034,7 @@
 
         if (Math.abs(vel) < 18){
           const idx = nearestIndex(rot);
-          const target = -idx * step;
+          const target = -idx * 360/N;
           let diff = target - rot;
           diff = ((diff + 540) % 360) - 180;
           rot += diff * Math.min(1, dt*8);
@@ -953,21 +1046,26 @@
           }
         }
       }
-
       layout3D();
       requestAnimationFrame(loop);
     }
 
-    // init
+    /* Init */
     buildOptions();
     setActive(0, true);
     loadPreview(vibes[0]);
 
-    fitFx(); seedParts(); drawFx();
+    fitFx();
+    seedParts();
+    drawFx();
     layout3D();
     requestAnimationFrame(loop);
 
-    window.addEventListener("resize", ()=>{ fitFx(); seedParts(); layout3D(); });
+    window.addEventListener("resize", ()=>{
+      fitFx();
+      seedParts();
+      layout3D();
+    });
   </script>
 </body>
 </html>
