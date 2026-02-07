@@ -1,997 +1,1242 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-  <title>Snack Packz — Spin Select</title>
-  <meta name="theme-color" content="#070812"/>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Snack Packz</title>
+<meta name="theme-color" content="#070818"/>
 
-  <style>
-    :root{
-      --txt:#EEF3FF;
-      --mut:rgba(238,243,255,.72);
-      --line:rgba(255,255,255,.12);
+<style>
+  :root{
+    --bg0:#050514;
+    --bg1:#090826;
+    --txt:#F4F6FF;
+    --mut:rgba(244,246,255,.72);
+    --stroke:rgba(255,255,255,.14);
+    --glass:rgba(12,12,30,.46);
+    --glass2:rgba(12,12,30,.24);
+    --shadow:0 30px 160px rgba(0,0,0,.72);
 
-      --glassA:rgba(10,12,24,.42);
-      --glassB:rgba(10,12,24,.22);
+    --acc:#bfa7ff;
+    --acc2:#9be7ff;
+    --acc3:#ff5bf0;
 
-      --shadow: 0 26px 120px rgba(0,0,0,.66);
-      --shadow2: 0 14px 70px rgba(0,0,0,.45);
-      --r:22px;
+    --r:24px;
+    --stageW:min(1240px, 94vw);
+    --heroH:min(780px, 86vh);
 
-      --accent:#A5F0FF;
-      --accent2:#B7A8FF;
+    --globe:min(58vmin, 600px);
+  }
 
-      --bg0:#030410;
-      --bg1:#05071A;
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    color:var(--txt);
+    background:
+      radial-gradient(1000px 650px at 50% 5%, rgba(191,167,255,.34), transparent 66%),
+      radial-gradient(900px 700px at 70% 20%, rgba(155,231,255,.18), transparent 62%),
+      radial-gradient(900px 700px at 20% 30%, rgba(255,91,240,.10), transparent 62%),
+      linear-gradient(180deg, var(--bg0), var(--bg1));
+    overflow:hidden;
+  }
 
-      --hudW:min(36vw, 520px);
-      --stageW:min(1200px, 100%);
+  /* Space depth */
+  .stars{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(1px 1px at 10% 30%, rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(1px 1px at 18% 70%, rgba(255,255,255,.35), transparent 60%),
+      radial-gradient(1px 1px at 34% 18%, rgba(255,255,255,.44), transparent 60%),
+      radial-gradient(1px 1px at 52% 42%, rgba(255,255,255,.30), transparent 60%),
+      radial-gradient(1px 1px at 66% 22%, rgba(255,255,255,.38), transparent 60%),
+      radial-gradient(1px 1px at 74% 62%, rgba(255,255,255,.36), transparent 60%),
+      radial-gradient(1px 1px at 86% 38%, rgba(255,255,255,.36), transparent 60%),
+      radial-gradient(1px 1px at 92% 78%, rgba(255,255,255,.30), transparent 60%);
+    opacity:.55;
+    filter: blur(.2px);
+  }
 
-      /* wheel size */
-      --wheelSize:min(74vmin, 760px);
+  a{color:inherit; text-decoration:none}
+  button{font:inherit}
+  button,a{-webkit-tap-highlight-color:transparent}
+  .sr{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+  /* Top nav pill */
+  .nav{
+    position:fixed; top:18px; left:50%; transform:translateX(-50%);
+    width:var(--stageW);
+    z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 12px;
+    border-radius:999px;
+    background:rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: 0 16px 90px rgba(0,0,0,.45);
+  }
+  .brand{display:flex;align-items:center;gap:10px;min-width:0}
+  .logo{
+    width:34px;height:34px;border-radius:12px;
+    background:
+      radial-gradient(12px 12px at 30% 30%, rgba(255,255,255,.30), transparent 62%),
+      radial-gradient(16px 16px at 70% 70%, rgba(155,231,255,.18), transparent 65%),
+      linear-gradient(135deg, rgba(191,167,255,.22), rgba(155,231,255,.14));
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+  }
+  .brandTxt{display:flex;flex-direction:column;line-height:1.1}
+  .brandTxt b{font-size:14px;letter-spacing:.2px}
+  .brandTxt span{font-size:12px;color:var(--mut)}
+  .links{display:flex;gap:18px;color:var(--mut);font-size:13px}
+  .links a{padding:8px 10px;border-radius:999px}
+  .links a:hover{background:rgba(255,255,255,.06)}
+  .navRight{display:flex;gap:10px;align-items:center}
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 12px;border-radius:999px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.12);
+    color:var(--txt); font-size:13px;
+    cursor:pointer;
+  }
+  .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:linear-gradient(180deg, var(--acc2), var(--acc));
+    box-shadow: 0 0 0 4px rgba(155,231,255,.10);
+  }
+
+  /* Main layout */
+  .wrap{
+    position:relative;
+    z-index:2;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 90px 0 24px;
+  }
+  .stage{
+    width:var(--stageW);
+    height:var(--heroH);
+    display:grid;
+    grid-template-columns: 1.5fr .62fr;
+    gap:18px;
+    align-items:stretch;
+  }
+
+  .hero{
+    position:relative;
+    border-radius:28px;
+    background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  /* “volumetric beam” (original, not a copy) */
+  .beam{
+    position:absolute; inset:-20% -20% 0 -20%;
+    background:
+      radial-gradient(450px 340px at 50% 22%, rgba(255,255,255,.16), transparent 60%),
+      radial-gradient(340px 560px at 50% 30%, rgba(191,167,255,.20), transparent 62%),
+      radial-gradient(260px 740px at 50% 42%, rgba(155,231,255,.14), transparent 70%);
+    transform: translateY(-2%);
+    opacity:.9;
+    filter: blur(.2px);
+    pointer-events:none;
+  }
+
+  /* subtle vertical streaks */
+  .streaks{
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0, rgba(255,255,255,.10) 1px, transparent 1px, transparent 170px);
+    opacity:.14;
+    mask-image: radial-gradient(900px 420px at 50% 15%, black, transparent 72%);
+    pointer-events:none;
+  }
+
+  .content{
+    position:relative;
+    padding: 44px 44px 28px;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+  }
+
+  .kicker{
+    align-self:center;
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+    padding:8px 14px;
+    border-radius:999px;
+    background: rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.12);
+    color:var(--mut);
+    font-size:12px;
+  }
+  .kicker svg{opacity:.85}
+
+  h1{
+    margin:0;
+    text-align:center;
+    font-size: clamp(34px, 4.4vw, 64px);
+    letter-spacing: -0.02em;
+    line-height:1.02;
+  }
+  .sub{
+    margin:0;
+    text-align:center;
+    color:var(--mut);
+    max-width: 720px;
+    align-self:center;
+    font-size: 14px;
+    line-height:1.55;
+  }
+
+  .ctaRow{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .btn{
+    padding:10px 14px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color:var(--txt);
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+  }
+  .btn.primary{
+    background: linear-gradient(180deg, rgba(191,167,255,.28), rgba(155,231,255,.14));
+    border:1px solid rgba(191,167,255,.32);
+    box-shadow: 0 18px 60px rgba(191,167,255,.14);
+  }
+  .btn:hover{filter: brightness(1.08)}
+
+  /* Stats row */
+  .stats{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:14px;
+    margin-top:auto;
+    padding-top:10px;
+  }
+  .stat{
+    border-radius:18px;
+    background: rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.12);
+    padding:16px 16px 14px;
+  }
+  .stat strong{
+    font-size:30px;
+    letter-spacing:-.02em;
+    display:block;
+  }
+  .stat span{
+    color:var(--mut);
+    font-size:12px;
+    display:block;
+    margin-top:6px;
+    line-height:1.35;
+  }
+
+  /* Globe area */
+  .globeZone{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom: 72px;
+    width: var(--globe);
+    height: var(--globe);
+    display:grid;
+    place-items:center;
+  }
+  .glowRing{
+    position:absolute; inset:-16%;
+    border-radius:50%;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(155,231,255,.08), transparent 60%),
+      radial-gradient(circle at 50% 50%, rgba(191,167,255,.10), transparent 62%);
+    filter: blur(8px);
+    opacity:.95;
+  }
+  .globeCard{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    perspective: 900px;
+    transform-style:preserve-3d;
+  }
+  canvas#earth{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    display:block;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.10), rgba(0,0,0,.55));
+    box-shadow:
+      0 70px 150px rgba(0,0,0,.65),
+      inset 0 0 0 1px rgba(255,255,255,.10);
+  }
+
+  /* scan + aurora */
+  .scan{
+    position:absolute; inset:0;
+    border-radius:50%;
+    pointer-events:none;
+    background:
+      repeating-linear-gradient(180deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, transparent 1px, transparent 6px);
+    opacity:.10;
+    mix-blend-mode: screen;
+    mask-image: radial-gradient(circle at 50% 50%, black 55%, transparent 70%);
+    animation: scanMove 6s linear infinite;
+  }
+  @keyframes scanMove{
+    0%{transform:translateY(-10%)}
+    100%{transform:translateY(10%)}
+  }
+  .aurora{
+    position:absolute; inset:-6%;
+    border-radius:50%;
+    pointer-events:none;
+    background:
+      conic-gradient(from 180deg, transparent, rgba(191,167,255,.18), rgba(155,231,255,.18), transparent 60%, rgba(255,91,240,.12), transparent);
+    filter: blur(14px);
+    opacity:.9;
+    animation: auroraSpin 12s linear infinite;
+  }
+  @keyframes auroraSpin{to{transform:rotate(360deg)}}
+
+  /* Pack markers overlay (DOM) */
+  .packs{
+    position:absolute; inset:0;
+    pointer-events:none;
+  }
+  .pack{
+    position:absolute;
+    transform: translate(-50%,-50%);
+    pointer-events:auto;
+  }
+  .packBtn{
+    pointer-events:auto;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:999px;
+    background: rgba(0,0,0,.38);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow: 0 18px 70px rgba(0,0,0,.45);
+    cursor:pointer;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action: manipulation;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    transition: transform .18s ease, filter .18s ease;
+    position:relative;
+  }
+  .packBtn:hover{transform:translateY(-2px) scale(1.02)}
+  .packCore{
+    width:30px; height:30px;
+    border-radius:12px;
+    background:
+      radial-gradient(12px 12px at 30% 30%, rgba(255,255,255,.22), transparent 65%),
+      linear-gradient(135deg, rgba(191,167,255,.22), rgba(155,231,255,.12));
+    border:1px solid rgba(255,255,255,.14);
+    position:relative;
+    box-shadow: 0 0 0 6px rgba(155,231,255,.08);
+  }
+  .packCore:after{
+    content:"";
+    position:absolute; inset:-10px;
+    border-radius:16px;
+    background: radial-gradient(circle, rgba(155,231,255,.16), transparent 62%);
+    filter: blur(6px);
+    opacity:.9;
+  }
+  .packName{
+    font-weight:700;
+    letter-spacing:.12em;
+    font-size:12px;
+  }
+  .packTag{
+    margin-left:6px;
+    font-size:11px;
+    color:rgba(244,246,255,.62);
+    letter-spacing:.02em;
+  }
+  .packVfx{
+    position:absolute; inset:-18px;
+    border-radius:999px;
+    background:
+      radial-gradient(circle at 20% 50%, rgba(155,231,255,.22), transparent 58%),
+      radial-gradient(circle at 80% 50%, rgba(191,167,255,.16), transparent 60%);
+    filter: blur(10px);
+    opacity:.0;
+    transition: opacity .18s ease;
+    pointer-events:none;
+  }
+  .packBtn:hover .packVfx{opacity:.9}
+
+  /* Selected reward pop */
+  .pack.selected .packBtn{
+    border-color: rgba(155,231,255,.38);
+    background: rgba(12,12,30,.52);
+    box-shadow:
+      0 26px 120px rgba(155,231,255,.14),
+      0 18px 90px rgba(0,0,0,.55);
+  }
+  .pack.selected .packCore{
+    box-shadow: 0 0 0 7px rgba(191,167,255,.10);
+  }
+
+  /* satellites */
+  .sats{
+    position:absolute; inset:-22%;
+    pointer-events:none;
+    transform-style:preserve-3d;
+  }
+  .sat{
+    position:absolute;
+    width:8px; height:8px;
+    border-radius:50%;
+    background: rgba(255,255,255,.75);
+    box-shadow: 0 0 18px rgba(155,231,255,.35);
+    opacity:.65;
+  }
+  .trail{
+    position:absolute;
+    width:140px; height:2px;
+    background: linear-gradient(90deg, rgba(155,231,255,.0), rgba(155,231,255,.22), rgba(191,167,255,.0));
+    filter: blur(1px);
+    opacity:.35;
+  }
+
+  /* Right preview card */
+  .panel{
+    position:relative;
+    border-radius:24px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.35);
+    overflow:hidden;
+    box-shadow: 0 24px 120px rgba(0,0,0,.60);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    display:flex;
+    flex-direction:column;
+  }
+  .panelHead{
+    padding:18px 18px 12px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .panelTitle{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    min-width:0;
+  }
+  .panelTitle b{
+    font-size:16px;
+    letter-spacing:.10em;
+  }
+  .panelTitle span{
+    font-size:12px;
+    color:var(--mut);
+    line-height:1.35;
+  }
+  .enterBtn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .enterBtn strong{font-size:12px}
+  .enterBtn .dot{width:8px;height:8px}
+  .enterBtn:hover{filter:brightness(1.07)}
+
+  .media{
+    position:relative;
+    flex:1;
+    min-height: 360px;
+    background:#000;
+    overflow:hidden;
+    border-radius: 18px;
+    margin: 0 12px 12px;
+    border:1px solid rgba(255,255,255,.10);
+  }
+  .media img, .media video{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    transform: scale(1.02);
+  }
+  .media img{
+    opacity:1;
+    transition: opacity .22s ease;
+  }
+  .media video{
+    opacity:0;
+    transition: opacity .28s ease;
+  }
+  .badge{
+    position:absolute;
+    left:12px; bottom:12px;
+    padding:8px 10px;
+    border-radius:14px;
+    background: rgba(0,0,0,.48);
+    border:1px solid rgba(255,255,255,.14);
+    font-size:12px;
+    color:var(--mut);
+    display:flex;
+    gap:8px;
+    align-items:center;
+    backdrop-filter: blur(12px);
+  }
+  .badge .tinyDot{
+    width:7px; height:7px;
+    border-radius:50%;
+    background: linear-gradient(180deg, var(--acc2), var(--acc));
+    box-shadow: 0 0 0 4px rgba(155,231,255,.10);
+  }
+  .panelFoot{
+    padding: 0 18px 16px;
+    color:rgba(244,246,255,.62);
+    font-size:12px;
+    line-height:1.45;
+  }
+
+  /* Guidance overlay */
+  .guide{
+    position:absolute;
+    left:22px; top:22px;
+    padding:10px 12px;
+    border-radius:16px;
+    background: rgba(0,0,0,.30);
+    border:1px solid rgba(255,255,255,.12);
+    color:var(--mut);
+    font-size:12px;
+    backdrop-filter: blur(14px);
+    z-index:10;
+  }
+  .guide b{color:var(--txt)}
+
+  /* Mobile layout */
+  @media (max-width: 980px){
+    body{overflow:auto}
+    .stage{
+      height:auto;
+      grid-template-columns: 1fr;
     }
-
-    *{box-sizing:border-box}
-    html,body{height:100%}
-
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      color:var(--txt);
-      background:
-        radial-gradient(1400px 900px at 24% 10%, rgba(167,120,255,.26), transparent 62%),
-        radial-gradient(1200px 900px at 78% 12%, rgba(72,220,255,.17), transparent 62%),
-        radial-gradient(900px 700px at 50% 92%, rgba(120,255,209,.10), transparent 62%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow:hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      text-rendering: geometricPrecision;
-    }
-
-    /* light stars (no canvas lag) */
-    body:before{
-      content:"";
-      position:fixed; inset:0;
-      pointer-events:none;
-      z-index:1;
-      opacity:.55;
-      background:
-        radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.55), transparent 60%),
-        radial-gradient(1px 1px at 20% 35%, rgba(255,255,255,.40), transparent 60%),
-        radial-gradient(1px 1px at 35% 18%, rgba(255,255,255,.48), transparent 60%),
-        radial-gradient(1px 1px at 46% 40%, rgba(255,255,255,.35), transparent 60%),
-        radial-gradient(1px 1px at 58% 22%, rgba(255,255,255,.42), transparent 60%),
-        radial-gradient(1px 1px at 72% 34%, rgba(255,255,255,.38), transparent 60%),
-        radial-gradient(1px 1px at 84% 18%, rgba(255,255,255,.46), transparent 60%),
-        radial-gradient(1px 1px at 92% 44%, rgba(255,255,255,.30), transparent 60%),
-        radial-gradient(1px 1px at 14% 62%, rgba(255,255,255,.30), transparent 60%),
-        radial-gradient(1px 1px at 28% 74%, rgba(255,255,255,.42), transparent 60%),
-        radial-gradient(1px 1px at 52% 78%, rgba(255,255,255,.30), transparent 60%),
-        radial-gradient(1px 1px at 76% 72%, rgba(255,255,255,.40), transparent 60%),
-        radial-gradient(1px 1px at 90% 84%, rgba(255,255,255,.28), transparent 60%);
-      mix-blend-mode: screen;
-      filter: blur(.2px);
-    }
-
-    a{color:inherit;text-decoration:none}
-    button{font:inherit}
-    button, a{-webkit-tap-highlight-color: transparent}
-
-    /* ===== NAV ===== */
-    .nav{
-      position:fixed; left:0; right:0; top:0;
-      z-index:90;
-      padding: 14px 18px;
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
-      backdrop-filter: blur(16px) saturate(130%);
-      -webkit-backdrop-filter: blur(16px) saturate(130%);
-      background: linear-gradient(180deg, rgba(0,0,0,.60), rgba(0,0,0,.10));
-      border-bottom: 1px solid rgba(255,255,255,.10);
-    }
-    .brand{display:flex;align-items:center;gap:12px;min-width:0}
-    .logo{
-      width:40px;height:40px;border-radius:14px;
-      background:
-        radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,.38), transparent 60%),
-        radial-gradient(18px 18px at 70% 65%, rgba(165,240,255,.22), transparent 65%),
-        linear-gradient(135deg, rgba(165,240,255,.25), rgba(183,168,255,.20));
-      border:1px solid rgba(255,255,255,.16);
-      box-shadow: 0 14px 34px rgba(0,0,0,.42);
-      flex:0 0 auto;
-    }
-    .brandText h1{margin:0;font-size:15px;font-weight:950;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .brandText p{margin:4px 0 0;font-size:12px;color:rgba(238,243,255,.70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-    .navLinks{
-      display:flex; gap:18px; align-items:center;
-      color:rgba(238,243,255,.72); font-size:12px; letter-spacing:.2px;
-    }
-    .navLinks a{padding:8px 10px;border-radius:999px;transition:background .12s ease}
-    .navLinks a:hover{background:rgba(255,255,255,.06)}
-    @media (max-width:980px){ .navLinks{display:none} }
-
-    .btn{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
-      color: rgba(238,243,255,.92);
-      border-radius:999px;
-      padding: 9px 12px;
-      font-size: 12px;
-      letter-spacing:.2px;
-      display:inline-flex; gap:8px; align-items:center;
-      user-select:none;
-      transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      backdrop-filter: blur(12px) saturate(130%);
-      -webkit-backdrop-filter: blur(12px) saturate(130%);
-      cursor:pointer;
-      white-space:nowrap;
-    }
-    .btn:hover{transform:translateY(-1px);background:rgba(0,0,0,.26);border-color:rgba(255,255,255,.18)}
-    .btn:active{transform:translateY(0) scale(.99)}
-    .dot{width:7px;height:7px;border-radius:50%;background:linear-gradient(180deg,var(--accent),var(--accent2));box-shadow:0 0 0 4px rgba(165,240,255,.10)}
-
-    /* ===== GRID ===== */
-    .scene{
-      position:fixed;
-      inset:0;
-      padding-top:74px;
-      z-index:10;
-      display:grid;
-      grid-template-columns: 1fr var(--hudW);
-      gap: clamp(14px, 2.4vw, 26px);
-      align-items:stretch;
-    }
-    @media (max-width:980px){
-      body{overflow:auto}
-      .scene{position:relative;grid-template-columns:1fr;padding-top:78px}
-    }
-
-    /* ===== HERO LEFT ===== */
-    .left{padding:clamp(12px,2vw,18px);display:flex;align-items:center;justify-content:center}
     .hero{
-      width:var(--stageW);
-      min-height:74vh;
-      border-radius:var(--r);
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.065), rgba(255,255,255,.018));
-      backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
-      box-shadow: var(--shadow);
+      min-height: 720px;
+    }
+    .panel{
+      min-height: 520px;
+    }
+    .globeZone{
       position:relative;
-      overflow:hidden;
+      left:auto; transform:none;
+      bottom:auto;
+      margin: 10px auto 0;
     }
-    .hero:before{
-      content:"";
-      position:absolute; inset:-1px;
-      background:
-        radial-gradient(1200px 520px at 50% 14%, rgba(165,240,255,.18), transparent 62%),
-        radial-gradient(1200px 840px at 60% 74%, rgba(183,168,255,.16), transparent 64%),
-        radial-gradient(900px 700px at 42% 110%, rgba(120,255,209,.08), transparent 62%);
-      opacity:.98;
-      pointer-events:none;
-    }
-
-    .lines{
-      position:absolute; inset:0;
-      background:
-        linear-gradient(rgba(255,255,255,.07), rgba(255,255,255,0)) 0 0/100% 140px,
-        repeating-linear-gradient(90deg, rgba(255,255,255,.07) 0, rgba(255,255,255,.07) 1px, transparent 1px, transparent 150px) 0 0/100% 100%;
-      opacity:.10;
-      pointer-events:none;
-      mask-image: radial-gradient(720px 380px at 50% 10%, rgba(0,0,0,1), rgba(0,0,0,0) 72%);
-    }
-
-    .heroInner{
-      position:relative;
-      z-index:4;
-      height:100%;
-      padding: clamp(18px, 2.4vw, 26px);
-      display:grid;
-      grid-template-rows: auto auto 1fr;
-      gap: 12px;
-      pointer-events:none; /* headline area doesn’t steal drag */
-    }
-
-    .topPill{
-      justify-self:center;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.20);
-      border-radius:999px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: rgba(238,243,255,.80);
-      backdrop-filter: blur(12px) saturate(130%);
-      -webkit-backdrop-filter: blur(12px) saturate(130%);
-      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-      box-shadow: 0 14px 50px rgba(0,0,0,.35);
-    }
-
-    .headline{
-      justify-self:center;
-      display:grid;
-      justify-items:center;
-      text-align:center;
-      gap:10px;
-      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-      max-width:min(980px, 92%);
-    }
-    .headline h2{
-      margin:0;
-      font-size: clamp(34px, 4.9vw, 66px);
-      line-height:1.01;
-      font-weight:985;
-      letter-spacing:-1.1px;
-      text-shadow: 0 40px 120px rgba(0,0,0,.55);
-    }
-    .headline p{
-      margin:0;
-      color: rgba(238,243,255,.76);
-      font-size: 13px;
-      line-height: 1.45;
-      max-width: 72ch;
-    }
-    .ctaRow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
-    .ctaRow a{pointer-events:auto}
-    .ctaPrimary{padding:11px 14px;font-weight:950;border-color:rgba(165,240,255,.20);box-shadow: 0 18px 70px rgba(0,0,0,.40);}
-
     .stats{
-      margin-top:auto;
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:12px;
-      max-width: 980px;
-      width:100%;
-      justify-self:center;
-      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-      padding-bottom: 12px;
-      z-index:3;
-      pointer-events:none;
+      grid-template-columns: 1fr;
     }
-    @media (max-width:920px){ .stats{grid-template-columns:1fr} }
-    .stat{
-      border-radius: 18px;
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.20);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      padding: 14px 14px;
-      box-shadow: 0 16px 70px rgba(0,0,0,.35);
-    }
-    .stat .n{font-size:26px;font-weight:980;letter-spacing:-.35px}
-    .stat .t{margin-top:6px;font-size:12px;color:rgba(238,243,255,.72)}
+    .links{display:none}
+  }
 
-    /* ===== CENTRE WHEEL (REAL 3D) ===== */
-    .wheelStage{
-      position:absolute;
-      inset:0;
-      z-index:2;
-      display:grid;
-      place-items:center;
-      pointer-events:none;
-    }
+  /* small phones */
+  @media (max-width: 420px){
+    .content{padding: 36px 18px 18px}
+    .panelHead{padding:16px}
+    .panelFoot{padding: 0 16px 16px}
+  }
 
-    .wheelWrap{
-      width: var(--wheelSize);
-      height: var(--wheelSize);
-      position:relative;
-      perspective: 1200px;
-      pointer-events:auto;
-      user-select:none;
-      touch-action:none; /* mobile drag works */
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    /* the “3D plane” */
-    .wheel3d{
-      position:absolute;
-      inset:0;
-      transform-style: preserve-3d;
-      transform: rotateX(56deg) rotateZ(var(--rz, 0deg));
-      transition: filter 180ms ease;
-      will-change: transform;
-    }
-
-    /* ring */
-    .rim{
-      position:absolute;
-      inset:10%;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,.14);
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.06),
-        0 40px 160px rgba(0,0,0,.60);
-      background:
-        radial-gradient(circle at 35% 25%, rgba(255,255,255,.14), transparent 40%),
-        radial-gradient(circle at 60% 55%, rgba(165,240,255,.10), transparent 56%),
-        radial-gradient(circle at 50% 60%, rgba(0,0,0,.25), rgba(0,0,0,.65));
-    }
-
-    /* centre cap */
-    .hub{
-      position:absolute;
-      inset:36%;
-      border-radius:50%;
-      border:1px solid rgba(255,255,255,.16);
-      background:
-        radial-gradient(circle at 35% 30%, rgba(255,255,255,.18), transparent 45%),
-        radial-gradient(circle at 55% 55%, rgba(165,240,255,.12), transparent 55%),
-        radial-gradient(circle at 50% 65%, rgba(0,0,0,.20), rgba(0,0,0,.72));
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.06),
-        0 20px 80px rgba(0,0,0,.55);
-      transform: translateZ(30px);
-    }
-
-    /* subtle glow under wheel */
-    .underGlow{
-      position:absolute;
-      inset:0;
-      border-radius:50%;
-      pointer-events:none;
-      filter: blur(18px);
-      opacity:.82;
-      background:
-        radial-gradient(circle at 50% 55%, rgba(165,240,255,.14), transparent 52%),
-        radial-gradient(circle at 50% 55%, rgba(183,168,255,.10), transparent 62%);
-      transform: translateZ(-140px) scale(1.12);
-    }
-
-    /* top snap indicator */
-    .snapMark{
-      position:absolute;
-      left:50%;
-      top:6%;
-      transform: translateX(-50%);
-      width: 160px;
-      height: 34px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.22);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      z-index:30;
-      pointer-events:none;
-      box-shadow: var(--shadow2);
-    }
-    .snapMark .pin{
-      width:10px;height:10px;border-radius:50%;
-      background: linear-gradient(180deg, var(--accent), var(--accent2));
-      box-shadow: 0 0 0 7px rgba(165,240,255,.10);
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .snapMark span{font-size:11px;color:rgba(238,243,255,.78);letter-spacing:.25px}
-
-    /* reveal button */
-    .revealBtn{
-      position:absolute;
-      left:50%;
-      top:50%;
-      transform: translate(-50%,-50%);
-      z-index:40;
-      border-radius: 999px;
-      padding: 10px 14px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.22);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      color: rgba(238,243,255,.92);
-      font-size: 12px;
-      font-weight: 950;
-      letter-spacing:.25px;
-      display:flex; align-items:center; gap:10px;
-      box-shadow: var(--shadow2);
-      cursor:pointer;
-      transition: opacity 180ms ease, transform 180ms ease, filter 180ms ease;
-      pointer-events:auto;
-    }
-    .revealBtn .spark{
-      width:18px;height:18px;border-radius:10px;
-      background: linear-gradient(180deg, rgba(165,240,255,.92), rgba(183,168,255,.86));
-      box-shadow: 0 0 0 7px rgba(165,240,255,.09);
-      border:1px solid rgba(255,255,255,.14);
-    }
-
-    /* option pills anchored around the tilted wheel */
-    .opts{
-      position:absolute;
-      inset:0;
-      transform-style: preserve-3d;
-      opacity:0;
-      transition: opacity 180ms ease;
-      pointer-events:none;
-    }
-    .hero.engaged .opts{
-      opacity:1;
-      pointer-events:auto;
-    }
-    .hero.engaged .revealBtn{
-      opacity:0;
-      transform: translate(-50%,-48%);
-      filter: blur(2px);
-      pointer-events:none;
-    }
-
-    .opt{
-      position:absolute;
-      left:50%;
-      top:50%;
-      height: 40px;
-      border-radius: 999px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.22);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      display:flex; align-items:center; gap:10px;
-      padding: 0 12px;
-      box-shadow: 0 18px 90px rgba(0,0,0,.58);
-      cursor:pointer;
-      white-space:nowrap;
-      user-select:none;
-      will-change: transform, opacity, filter;
-      transform-style: preserve-3d;
-      pointer-events:auto;
-    }
-    .opt:hover{border-color:rgba(165,240,255,.34);background: rgba(0,0,0,.28)}
-    .opt.active{border-color:rgba(165,240,255,.55);background: rgba(0,0,0,.30)}
-    .oDot{width:10px;height:10px;border-radius:50%;background:linear-gradient(180deg,var(--accent),var(--accent2));box-shadow:0 0 0 7px rgba(165,240,255,.09)}
-    .oTxt{font-weight:950;font-size:12px;letter-spacing:.62px;text-transform:uppercase}
-    .oSub{margin-left:auto;font-size:11px;color:rgba(238,243,255,.68);letter-spacing:.22px;text-transform:uppercase}
-
-    /* hide hero text when engaged */
-    .hero.engaged .topPill,
-    .hero.engaged .headline,
-    .hero.engaged .stats{
-      opacity:0;
-      transform: translateY(-10px);
-      filter: blur(3px);
-    }
-
-    /* ===== RIGHT PREVIEW ===== */
-    .hud{
-      padding: clamp(12px, 2vw, 16px);
-      border-left:1px solid rgba(255,255,255,.08);
-      display:flex;
-      align-items:stretch;
-      z-index:20;
-    }
-    @media (max-width:980px){ .hud{border-left:none} }
-
-    .hudCard{
-      width:100%;
-      border-radius: var(--r);
-      border:1px solid rgba(255,255,255,.12);
-      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      backdrop-filter: blur(18px) saturate(140%);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
-      position:relative;
-      min-height: 420px;
-    }
-
-    .hudMedia{position:absolute;inset:0;z-index:2}
-    .hudMedia img,.hudMedia video{
-      position:absolute;inset:0;width:100%;height:100%;
-      object-fit:cover;
-      transform: scale(1.02);
-      filter: contrast(1.10) saturate(1.06) brightness(1.02);
-    }
-    .hudMedia img{opacity:1;transition:opacity 220ms ease}
-    .hudMedia video{opacity:0;transition:opacity 320ms ease}
-    .hudMedia.ready video{opacity:1}
-    .hudMedia.ready img{opacity:0}
-
-    .hudShade{
-      position:absolute;inset:0;z-index:3;
-      background:
-        radial-gradient(700px 380px at 20% 10%, rgba(0,0,0,.10), transparent 60%),
-        radial-gradient(800px 520px at 70% 35%, rgba(0,0,0,.26), transparent 65%),
-        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.76));
-      pointer-events:none;
-    }
-    .hudTop{
-      position:relative;z-index:5;
-      padding:16px 16px 0;
-      display:flex;justify-content:space-between;gap:12px;align-items:flex-start;
-    }
-    .hudTitle h3{margin:0;font-size:18px;font-weight:950;letter-spacing:.55px;text-shadow:0 18px 60px rgba(0,0,0,.70)}
-    .hudTitle p{margin:6px 0 0;font-size:12.5px;color:rgba(238,243,255,.80);line-height:1.35;max-width:46ch;text-shadow:0 18px 60px rgba(0,0,0,.70)}
-    .enter{
-      border-radius: 16px;
-      padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,.20);
-      background: rgba(0,0,0,.24);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      font-size: 12px;
-      font-weight: 950;
-      letter-spacing:.25px;
-      display:inline-flex;align-items:center;gap:10px;
-      cursor:pointer;white-space:nowrap;
-      box-shadow: 0 18px 70px rgba(0,0,0,.45);
-    }
-    .enter .spark{
-      width:18px;height:18px;border-radius:10px;
-      background: linear-gradient(180deg, rgba(165,240,255,.92), rgba(183,168,255,.86));
-      box-shadow: 0 0 0 7px rgba(165,240,255,.09);
-      border:1px solid rgba(255,255,255,.14);
-    }
-    .hudBottom{
-      position:absolute;left:0;right:0;bottom:0;z-index:6;
-      padding:14px 16px 16px;
-      display:flex;justify-content:space-between;gap:12px;align-items:flex-end;
-    }
-    .hudStat{
-      border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.22);
-      border-radius: 16px;
-      padding: 10px 12px;
-      max-width: 62%;
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      box-shadow: 0 16px 70px rgba(0,0,0,.35);
-    }
-    .hudStat .k{font-size:11px;color:rgba(238,243,255,.72)}
-    .hudStat .v{margin-top:5px;font-size:12.5px;font-weight:950}
-    .hudTip{text-align:right;font-size:11px;color:rgba(238,243,255,.72);line-height:1.25;text-shadow:0 18px 60px rgba(0,0,0,.70)}
-  </style>
+  /* tiny “reward sparks” canvas */
+  #sparks{
+    position:absolute; inset:0;
+    pointer-events:none;
+    z-index:6;
+  }
+</style>
 </head>
 
 <body>
-  <div class="nav">
+  <div class="stars"></div>
+
+  <header class="nav" aria-label="Top navigation">
     <div class="brand">
-      <div class="logo"></div>
-      <div class="brandText">
-        <h1>Snack Packz</h1>
-        <p>Spin the wheel. Pick your vibe. Order fast.</p>
+      <div class="logo" aria-hidden="true"></div>
+      <div class="brandTxt">
+        <b>Snack Packz</b>
+        <span>Spin the globe. Pick your pack.</span>
       </div>
     </div>
 
-    <div class="navLinks">
-      <a href="#" onclick="return false;">About</a>
-      <a href="#" onclick="return false;">Services</a>
-      <a href="#" onclick="return false;">Pricing</a>
-      <a href="#" onclick="return false;">Resources</a>
-      <a href="#" onclick="return false;">Blog</a>
-    </div>
+    <nav class="links" aria-label="Site">
+      <a href="#packs">Packs</a>
+      <a href="#how">How it works</a>
+      <a href="#order">Order</a>
+    </nav>
 
-    <div style="display:flex; gap:10px; align-items:center;">
-      <div class="btn"><span class="dot"></span> Drag • Scroll • Snap</div>
-      <a class="btn" id="waTop" href="#" rel="noopener">WhatsApp</a>
-    </div>
-  </div>
-
-  <div class="scene">
-    <!-- LEFT -->
-    <div class="left">
-      <div class="hero" id="hero">
-        <div class="lines" aria-hidden="true"></div>
-
-        <div class="heroInner">
-          <div class="topPill"><span class="dot"></span> Web3-level hero layout • but it’s Snack Packz</div>
-
-          <div class="headline">
-            <h2>Redefining Snack Packs with a 3D Spin Selector</h2>
-            <p>Reveal the vibes. Spin fast. Preview loads clean (image → video). Tap the same vibe twice to enter.</p>
-            <div class="ctaRow">
-              <a class="btn ctaPrimary" href="#" onclick="document.getElementById('wheelWrap').scrollIntoView({behavior:'smooth'}); return false;">Discover more</a>
-              <a class="btn" id="waCta" href="#" rel="noopener">Order on WhatsApp</a>
-            </div>
-          </div>
-
-          <div class="stats">
-            <div class="stat"><div class="n">500+</div><div class="t">Snack Packs delivered successfully</div></div>
-            <div class="stat"><div class="n">240+</div><div class="t">Customers who found their vibe</div></div>
-            <div class="stat"><div class="n">98%</div><div class="t">Repeat order satisfaction rate</div></div>
-          </div>
-        </div>
-
-        <!-- REAL 3D WHEEL -->
-        <div class="wheelStage" aria-hidden="false">
-          <div class="wheelWrap" id="wheelWrap">
-            <div class="snapMark" aria-hidden="true">
-              <span class="pin"></span>
-              <span>Selected</span>
-            </div>
-
-            <button class="revealBtn" id="revealBtn" type="button">
-              <span class="spark" aria-hidden="true"></span>
-              Reveal vibes
-            </button>
-
-            <div class="wheel3d" id="wheel3d">
-              <div class="underGlow" aria-hidden="true"></div>
-              <div class="rim" aria-hidden="true"></div>
-              <div class="hub" aria-hidden="true"></div>
-              <div class="opts" id="opts" aria-label="Vibe options"></div>
-            </div>
-          </div>
-        </div>
-
+    <div class="navRight">
+      <div class="pill" title="Controls: drag + scroll + snap">
+        <span class="dot"></span>
+        Drag • Scroll • Snap
       </div>
+      <a class="pill" href="https://wa.me/447483849357" target="_blank" rel="noopener">
+        <span class="dot"></span>
+        WhatsApp
+      </a>
     </div>
+  </header>
 
-    <!-- RIGHT -->
-    <div class="hud">
-      <div class="hudCard">
-        <div class="hudMedia" id="hudMedia" aria-hidden="true">
-          <img id="hudImg" src="assets/gym.jpg" alt=""/>
-          <video id="hudVid" muted playsinline loop preload="metadata"></video>
-        </div>
-        <div class="hudShade" aria-hidden="true"></div>
+  <main class="wrap">
+    <section class="stage">
+      <section class="hero" id="packs">
+        <div class="beam"></div>
+        <div class="streaks"></div>
 
-        <div class="hudTop">
-          <div class="hudTitle">
-            <h3 id="hudTitle">GYM</h3>
-            <p id="hudDesc">High focus. Clean fuel. No distractions.</p>
+        <div class="content">
+          <div class="kicker">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20Z" stroke="rgba(244,246,255,.75)" stroke-width="1.6"/>
+              <path d="M2 12h20" stroke="rgba(244,246,255,.75)" stroke-width="1.6"/>
+              <path d="M12 2c2.8 3 4.2 6.3 4.2 10S14.8 19 12 22c-2.8-3-4.2-6.3-4.2-10S9.2 5 12 2Z" stroke="rgba(244,246,255,.75)" stroke-width="1.6"/>
+            </svg>
+            Premium neon globe • pick a Pack location
           </div>
-          <a class="enter" id="enterBtn" href="gym.html">
-            <span class="spark" aria-hidden="true"></span>
-            Enter
-          </a>
+
+          <h1>Snack Packs — but <span style="color:rgba(191,167,255,.95)">rewarding</span>.</h1>
+          <p class="sub" id="how">
+            Drag the globe to rotate. Scroll to flick. Packs are “locations” — tap one to preview (image → video), then enter to order fast.
+          </p>
+
+          <div class="ctaRow" id="order">
+            <button class="btn primary" id="btnReveal">Reveal packs</button>
+            <a class="btn" href="https://wa.me/447483849357" target="_blank" rel="noopener">Order on WhatsApp</a>
+          </div>
+
+          <div class="stats" aria-label="Stats">
+            <div class="stat">
+              <strong id="stat1">500+</strong>
+              <span>Packs delivered. Clean builds, no mess.</span>
+            </div>
+            <div class="stat">
+              <strong id="stat2">240+</strong>
+              <span>People found their go-to vibe.</span>
+            </div>
+            <div class="stat">
+              <strong id="stat3">98%</strong>
+              <span>Repeat order rate. Consistency hits.</span>
+            </div>
+          </div>
         </div>
 
-        <div class="hudBottom">
-          <div class="hudStat">
-            <div class="k">Preview</div>
-            <div class="v" id="hudMeta">Image → Video</div>
-          </div>
-          <div class="hudTip">
-            Reveal vibes<br/>Drag to spin • Scroll to flick<br/>Mobile: tap vibe twice to enter
+        <div class="globeZone" aria-label="Interactive globe">
+          <div class="glowRing"></div>
+          <div class="globeCard" id="globeCard">
+            <canvas id="earth" width="900" height="900" aria-label="Neon globe"></canvas>
+            <div class="aurora"></div>
+            <div class="scan"></div>
+
+            <div class="guide" id="guide">
+              <b>Tip:</b> drag to spin • scroll to flick • tap a Pack to preview
+            </div>
+
+            <div class="sats" id="sats"></div>
+            <div class="packs" id="packsLayer"></div>
+
+            <canvas id="sparks" width="900" height="900"></canvas>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
+      </section>
 
-  <script>
-    const WHATSAPP_NUMBER = "447483849357";
+      <aside class="panel" aria-label="Preview panel">
+        <div class="panelHead">
+          <div class="panelTitle">
+            <b id="pTitle">GYM</b>
+            <span id="pDesc">High focus. Clean fuel. No distractions.</span>
+          </div>
+          <button class="enterBtn" id="enterBtn" aria-label="Enter pack page">
+            <span class="dot"></span>
+            <strong>Enter</strong>
+          </button>
+        </div>
 
-    const vibes = [
-      { key:"gym",     label:"GYM",     sub:"FOCUS", page:"gym.html",     img:"assets/gym.jpg",     vid:"assets/gym.mp4",     desc:"High focus. Clean fuel. No distractions." },
-      { key:"lockin",  label:"LOCK-IN", sub:"GRIND", page:"lock-in.html", img:"assets/lockin.jpg",  vid:"assets/lockin.mp4",  desc:"Tunnel vision mode. Phone down. Get it done." },
-      { key:"work",    label:"WORK",    sub:"DAY",   page:"work.html",    img:"assets/work.jpg",    vid:"assets/work.mp4",    desc:"Clean energy. Smooth day. No crash." },
-      { key:"gaming",  label:"GAMING",  sub:"NIGHT", page:"gaming.html",  img:"assets/gaming.jpg",  vid:"assets/gaming.mp4",  desc:"Locked in. Fast hands. Zero tilt." },
-      { key:"mystery", label:"MYSTERY", sub:"DROP",  page:"mystery.html", img:"assets/mystery.jpg", vid:"assets/mystery.mp4", desc:"Random pull. Premium chaos (in a good way)." },
-      { key:"fresh",   label:"FRESH",   sub:"CLEAN", page:"fresh.html",   img:"assets/fresh.jpg",   vid:"assets/fresh.mp4",   desc:"Light, clean, refreshing. Reset the day." },
-    ];
+        <div class="media" id="media">
+          <img id="pImg" alt="Preview image" src="./assets/gym.jpg">
+          <video id="pVid" muted playsinline preload="metadata"></video>
+          <div class="badge" id="badge">
+            <span class="tinyDot"></span>
+            <span id="badgeTxt">Tap pack to preview</span>
+          </div>
+        </div>
 
-    const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
-    const wa = (text)=>`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-    document.getElementById("waTop").href = wa("Hi Snack Packz — I want to place an order.");
-    document.getElementById("waCta").href = wa("Hi Snack Packz — I want to place an order.");
+        <div class="panelFoot" id="panelFoot">
+          Mobile: tap a Pack once to preview. Tap it again to enter. Desktop: click to select then hit Enter.
+        </div>
+      </aside>
+    </section>
+  </main>
 
-    const hero     = document.getElementById("hero");
-    const wheelWrap= document.getElementById("wheelWrap");
-    const wheel3d  = document.getElementById("wheel3d");
-    const optsEl   = document.getElementById("opts");
-    const revealBtn= document.getElementById("revealBtn");
+<script>
+(() => {
+  // ========= DATA =========
+  const packs = [
+    { key:'gym',     name:'GYM',     tag:'FOCUS',    desc:'High focus. Clean fuel. No distractions.', img:'./assets/gym.jpg',     vid:'./assets/gym.mp4',     href:'./gym.html',     lat:  35, lon:-20 },
+    { key:'lockin',  name:'LOCK-IN', tag:'GRIND',    desc:'Tunnel vision mode. Phone down. Get it done.', img:'./assets/lockin.jpg',  vid:'./assets/lockin.mp4',  href:'./lock-in.html', lat:  10, lon: 60 },
+    { key:'work',    name:'WORK',    tag:'DAY',      desc:'Clean energy. Smooth day. No crash.', img:'./assets/work.jpg',    vid:'./assets/work.mp4',    href:'./work.html',    lat: -15, lon:110 },
+    { key:'gaming',  name:'GAMING',  tag:'NIGHT',    desc:'Locked in. Fast hands. Zero tilt.', img:'./assets/gaming.jpg',  vid:'./assets/gaming.mp4',  href:'./gaming.html',  lat: -25, lon:-120 },
+    { key:'mystery', name:'MYSTERY', tag:'DROP',     desc:'Random hit. New flavour. New mood.', img:'./assets/mystery.jpg', vid:'./assets/mystery.mp4', href:'./mystery.html', lat:  55, lon:140 },
+    { key:'fresh',   name:'FRESH',   tag:'CLEAN',    desc:'Light, clean, refreshing. Reset the day.', img:'./assets/fresh.jpg',   vid:'./assets/fresh.mp4',   href:'./fresh.html',   lat:  40, lon:-150 },
+  ];
 
-    const hudMedia = document.getElementById("hudMedia");
-    const hudImg   = document.getElementById("hudImg");
-    const hudVid   = document.getElementById("hudVid");
-    const hudTitle = document.getElementById("hudTitle");
-    const hudDesc  = document.getElementById("hudDesc");
-    const hudMeta  = document.getElementById("hudMeta");
-    const enterBtn = document.getElementById("enterBtn");
+  // ========= ELEMENTS =========
+  const earth = document.getElementById('earth');
+  const ctx = earth.getContext('2d');
+  const sparks = document.getElementById('sparks');
+  const sctx = sparks.getContext('2d');
+  const globeCard = document.getElementById('globeCard');
+  const packsLayer = document.getElementById('packsLayer');
+  const satsLayer = document.getElementById('sats');
 
-    // image instantly → video fades when ready
-    let videoToken = 0;
-    function loadPreview(v){
-      hudTitle.textContent = v.label;
-      hudDesc.textContent  = v.desc;
-      enterBtn.href = v.page;
+  const pTitle = document.getElementById('pTitle');
+  const pDesc  = document.getElementById('pDesc');
+  const pImg   = document.getElementById('pImg');
+  const pVid   = document.getElementById('pVid');
+  const badgeTxt = document.getElementById('badgeTxt');
+  const enterBtn = document.getElementById('enterBtn');
+  const btnReveal = document.getElementById('btnReveal');
 
-      hudMedia.classList.remove("ready");
-      hudMeta.textContent = "Image → Video";
-      hudImg.src = v.img;
+  // ========= STATE =========
+  let w = earth.width, h = earth.height;
+  let cx = w/2, cy = h/2;
+  let R = w*0.42;
 
-      const t = ++videoToken;
-      try{ hudVid.pause(); }catch(e){}
-      hudVid.removeAttribute("src");
-      hudVid.load();
-      hudVid.src = v.vid;
+  let rotY = 0;           // globe yaw
+  let vel = 0;            // inertial velocity
+  let dragging = false;
+  let lastX = 0;
+  let lastT = 0;
 
-      const onReady = ()=>{
-        if (t !== videoToken) return;
-        hudMedia.classList.add("ready");
-        hudMeta.textContent = "Video ready";
-        try{ hudVid.play().catch(()=>{}); }catch(e){}
-      };
-      const onErr = ()=>{
-        if (t !== videoToken) return;
-        hudMedia.classList.remove("ready");
-        hudMeta.textContent = "Video unavailable (image only)";
-      };
+  let revealed = false;
 
-      hudVid.addEventListener("loadeddata", onReady, {once:true});
-      hudVid.addEventListener("canplaythrough", onReady, {once:true});
-      hudVid.addEventListener("error", onErr, {once:true});
-      hudVid.load();
+  // selected pack state
+  let selected = packs[0].key;
+  let lastTapped = null;
+  let lastTapTime = 0;
+
+  // ========= HELPERS =========
+  const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+  const lerp = (a,b,t) => a + (b-a)*t;
+
+  function d2r(d){ return d*Math.PI/180; }
+
+  // project lat/lon to sphere and then to 2D with current yaw
+  function project(lat, lon){
+    const phi = d2r(90 - lat);
+    const theta = d2r(lon) + rotY;
+
+    const x = Math.sin(phi) * Math.cos(theta);
+    const y = Math.cos(phi);
+    const z = Math.sin(phi) * Math.sin(theta);
+
+    // perspective
+    const depth = (z*0.5 + 0.5); // 0..1
+    const px = cx + x * R;
+    const py = cy + y * R;
+
+    return {px, py, z, depth};
+  }
+
+  // nearest pack to "front centre" (z max)
+  function nearestFrontPack(){
+    let best = null;
+    let bestZ = -999;
+    for(const p of packs){
+      const pr = project(p.lat, p.lon);
+      if(pr.z > bestZ){
+        bestZ = pr.z;
+        best = p;
+      }
     }
+    return best;
+  }
 
-    // ===== REAL selection math: selected = option closest to TOP (−90deg) =====
-    const N = vibes.length;
-    const step = 360 / N;
+  // snap rotY so chosen pack is at front (max z)
+  function snapToPack(pack){
+    const target = d2r(pack.lon);
+    // We want: lon + rotY ~= 0 (front)
+    // rotY = -lon
+    const desired = -target;
 
-    const normDeg = d => ((d % 360) + 360) % 360;
-    const angDist = (a,b)=>{
-      let d = a - b;
-      d = ((d + 540) % 360) - 180;
-      return d;
+    // choose shortest angular path
+    let delta = desired - rotY;
+    delta = Math.atan2(Math.sin(delta), Math.cos(delta));
+    rotY += delta;
+    vel = 0;
+    setSelected(pack.key, true);
+  }
+
+  // ========= PREVIEW (image -> video fade) =========
+  let videoToken = 0;
+  function setPreview(pack){
+    pTitle.textContent = pack.name;
+    pDesc.textContent = pack.desc;
+
+    // image shows instantly
+    pImg.style.opacity = '1';
+    pImg.src = pack.img;
+
+    // prepare video
+    const token = ++videoToken;
+    pVid.style.opacity = '0';
+    pVid.pause();
+    pVid.removeAttribute('src');
+    pVid.load();
+
+    // load and fade in when ready
+    pVid.src = pack.vid;
+    pVid.currentTime = 0;
+
+    const onReady = async () => {
+      if(token !== videoToken) return;
+      try{
+        await pVid.play();
+      }catch(e){
+        // autoplay might fail on some desktops if not muted; we are muted.
+      }
+      if(token !== videoToken) return;
+      requestAnimationFrame(() => {
+        pVid.style.opacity = '1';
+        pImg.style.opacity = '0';
+      });
+      badgeTxt.textContent = 'Video ready';
+      pVid.removeEventListener('canplaythrough', onReady);
+      pVid.removeEventListener('canplay', onReady);
     };
 
-    // rot = wheel rotation in degrees (around Z, after tilt)
-    // each item has base angle i*step; its current angle = base + rot
-    // selected is closest to -90 (top)
-    function activeFromRot(rot){
-      const target = 270; // -90 normalized
-      let bestI = 0;
-      let bestD = 1e9;
-      for(let i=0;i<N;i++){
-        const a = normDeg(i*step + rot);
-        const d = Math.abs(angDist(a, target));
-        if (d < bestD){ bestD = d; bestI = i; }
-      }
-      return bestI;
-    }
+    badgeTxt.textContent = 'Loading video…';
+    pVid.addEventListener('canplay', onReady, {once:false});
+    pVid.addEventListener('canplaythrough', onReady, {once:false});
+  }
 
-    function rotForIndexAtTop(i){
-      // want normDeg(i*step + rot) == 270
-      // rot = 270 - i*step (can be any equivalent)
-      return (270 - i*step);
-    }
+  // ========= UI BUILD: pack pills =========
+  const packEls = new Map();
 
-    let activeIndex = 0;
+  function buildPacks(){
+    packsLayer.innerHTML = '';
+    packEls.clear();
 
-    function updateActiveClass(){
-      optsEl.querySelectorAll(".opt").forEach(el=>el.classList.remove("active"));
-      const el = optsEl.querySelector(`.opt[data-index="${activeIndex}"]`);
-      if (el) el.classList.add("active");
-    }
+    for(const p of packs){
+      const wrap = document.createElement('div');
+      wrap.className = 'pack';
+      wrap.dataset.key = p.key;
 
-    function setActive(i, snap=true){
-      activeIndex = i;
-      updateActiveClass();
-      loadPreview(vibes[i]);
-      if (snap){
-        rot = rotForIndexAtTop(i);
-        vel = 0;
-        applyWheelRot();
-        layoutPills();
-      }
-    }
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'packBtn';
+      btn.setAttribute('aria-label', `${p.name} pack`);
 
-    // ===== Build pills =====
-    function buildOptions(){
-      optsEl.innerHTML = "";
-      for(let i=0;i<N;i++){
-        const opt = document.createElement("div");
-        opt.className = "opt";
-        opt.dataset.index = String(i);
-        opt.style.width = (vibes[i].label.length > 6 ? "186px" : "160px");
-        opt.innerHTML = `
-          <span class="oDot" aria-hidden="true"></span>
-          <span class="oTxt">${vibes[i].label}</span>
-          <span class="oSub">${vibes[i].sub}</span>
-        `;
+      const vfx = document.createElement('div');
+      vfx.className = 'packVfx';
 
-        opt.addEventListener("click", (e)=>{
-          e.preventDefault();
-          if (!hero.classList.contains("engaged")) setEngaged(true);
+      const core = document.createElement('div');
+      core.className = 'packCore';
 
-          const idx = Number(opt.dataset.index);
-          const isMobile = window.matchMedia("(hover:none)").matches;
+      const name = document.createElement('div');
+      name.innerHTML = `<span class="packName">${p.name}</span><span class="packTag">${p.tag}</span>`;
 
-          if (isMobile){
-            // tap once preview, second tap enter
-            if (activeIndex === idx && opt.classList.contains("active")){
-              window.location.href = vibes[idx].page;
-              return;
-            }
-            setActive(idx, true);
+      btn.appendChild(vfx);
+      btn.appendChild(core);
+      btn.appendChild(name);
+      wrap.appendChild(btn);
+      packsLayer.appendChild(wrap);
+
+      // interaction
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if(!revealed) revealPacks();
+
+        const now = performance.now();
+        const isMobile = matchMedia('(max-width: 980px)').matches;
+
+        setSelected(p.key, true);
+        snapToPack(p);
+
+        if(isMobile){
+          // tap once = preview, tap again quickly = enter
+          if(lastTapped === p.key && (now - lastTapTime) < 1400){
+            window.location.href = p.href;
             return;
           }
-
-          setActive(idx, true);
-        });
-
-        optsEl.appendChild(opt);
-      }
-      updateActiveClass();
-    }
-
-    // ===== True 3D placement =====
-    function layoutPills(){
-      if (!hero.classList.contains("engaged")) return;
-
-      const rect = wheelWrap.getBoundingClientRect();
-      const size = Math.min(rect.width, rect.height);
-
-      // radius around the wheel (2D), depth gives 3D feel
-      const radius = size * 0.44;
-      const depth  = size * 0.18;
-
-      const items = optsEl.querySelectorAll(".opt");
-      for(let i=0;i<items.length;i++){
-        const aDeg = (i * step + rot);
-        const a = aDeg * Math.PI/180;
-
-        // around circle
-        const x = Math.cos(a) * radius;
-        const y = Math.sin(a) * radius;
-
-        // depth: front items pop up
-        const z = Math.cos(a) * depth;
-
-        // opacity/scale based on depth (front = crisp)
-        const z01 = (z / depth + 1) / 2;
-        const scale = 0.92 + z01*0.22;
-        const alpha = 0.50 + z01*0.50;
-        const blur  = (1 - z01) * 0.6;
-
-        items[i].style.transform =
-          `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z + 120}px) scale(${scale})`;
-        items[i].style.opacity = alpha.toFixed(3);
-        items[i].style.filter  = `blur(${blur.toFixed(2)}px)`;
-        items[i].style.zIndex  = String(10 + Math.round(z01*90));
-      }
-    }
-
-    function applyWheelRot(){
-      wheel3d.style.setProperty("--rz", rot + "deg");
-    }
-
-    // ===== Spin engine (stable) =====
-    let rot = 0;
-    let vel = 0;
-    let dragging = false;
-    let pointerId = null;
-
-    function angleFromEvent(e){
-      const r = wheelWrap.getBoundingClientRect();
-      const cx = r.left + r.width/2;
-      const cy = r.top + r.height/2;
-      const dx = e.clientX - cx;
-      const dy = e.clientY - cy;
-      return Math.atan2(dy, dx) * 180 / Math.PI;
-    }
-
-    let lastAng = 0;
-    let lastT = 0;
-
-    function onDown(e){
-      if (!hero.classList.contains("engaged")) setEngaged(true);
-      dragging = true;
-      pointerId = e.pointerId;
-      wheelWrap.setPointerCapture?.(pointerId);
-      lastAng = angleFromEvent(e);
-      lastT = performance.now();
-    }
-
-    function onMove(e){
-      if (!dragging || e.pointerId !== pointerId) return;
-      const a = angleFromEvent(e);
-      let da = a - lastAng;
-      if (da > 180) da -= 360;
-      if (da < -180) da += 360;
-
-      rot += da;
-      applyWheelRot();
-      layoutPills();
-
-      const now = performance.now();
-      const dt = Math.max(1, (now - lastT)) / 1000;
-      const v = da / dt;
-      vel = vel*0.78 + v*0.22;
-
-      lastAng = a;
-      lastT = now;
-
-      const idx = activeFromRot(rot);
-      if (idx !== activeIndex){
-        activeIndex = idx;
-        updateActiveClass();
-        loadPreview(vibes[idx]);
-      }
-    }
-
-    function onUp(e){
-      if (!dragging || e.pointerId !== pointerId) return;
-      dragging = false;
-      pointerId = null;
-      // snap quickly
-      setTimeout(()=> setActive(activeFromRot(rot), true), 70);
-    }
-
-    function onWheel(e){
-      if (!hero.classList.contains("engaged")) return;
-      e.preventDefault();
-      const delta = e.deltaY || 0;
-      const add = clamp(delta * 0.20, -55, 55);
-      rot += add;
-      vel += add * 7.5;
-      applyWheelRot();
-      layoutPills();
-
-      const idx = activeFromRot(rot);
-      if (idx !== activeIndex){
-        activeIndex = idx;
-        updateActiveClass();
-        loadPreview(vibes[idx]);
-      }
-
-      clearTimeout(onWheel._t);
-      onWheel._t = setTimeout(()=> setActive(activeFromRot(rot), true), 120);
-    }
-
-    function setEngaged(on){
-      hero.classList.toggle("engaged", on);
-      if (on){
-        // ensure everything positions correctly immediately
-        layoutPills();
-      }
-    }
-
-    revealBtn.addEventListener("click", ()=> setEngaged(true));
-
-    wheelWrap.addEventListener("pointerdown", onDown, {passive:true});
-    wheelWrap.addEventListener("pointermove", onMove, {passive:true});
-    wheelWrap.addEventListener("pointerup", onUp, {passive:true});
-    wheelWrap.addEventListener("pointercancel", onUp, {passive:true});
-    wheelWrap.addEventListener("wheel", onWheel, {passive:false});
-
-    // loop inertia
-    let last = performance.now();
-    function loop(now){
-      const dt = Math.min(0.05, (now-last)/1000);
-      last = now;
-
-      if (hero.classList.contains("engaged") && !dragging){
-        rot += vel * dt;
-        vel *= Math.exp(-3.2 * dt);
-
-        applyWheelRot();
-        layoutPills();
-
-        const idx = activeFromRot(rot);
-        if (idx !== activeIndex){
-          activeIndex = idx;
-          updateActiveClass();
-          loadPreview(vibes[idx]);
+          lastTapped = p.key;
+          lastTapTime = now;
+          badgeTxt.textContent = 'Tap again to enter';
+        }else{
+          badgeTxt.textContent = 'Selected — hit Enter';
         }
 
-        // soft snap when slow
-        if (Math.abs(vel) < 22){
-          const targetRot = rotForIndexAtTop(activeIndex);
-          const diff = ((targetRot - rot + 540) % 360) - 180;
-          rot += diff * Math.min(1, dt*10);
-          applyWheelRot();
-          layoutPills();
+        burst(prFromPack(p), 18);
+      });
+
+      packEls.set(p.key, wrap);
+    }
+    setSelected(selected, false);
+  }
+
+  function prFromPack(pack){
+    const pr = project(pack.lat, pack.lon);
+    return {x:pr.px, y:pr.py};
+  }
+
+  function setSelected(key, updatePreview){
+    selected = key;
+    for(const p of packs){
+      const el = packEls.get(p.key);
+      if(!el) continue;
+      el.classList.toggle('selected', p.key === key);
+    }
+    const pack = packs.find(x=>x.key===key) || packs[0];
+    if(updatePreview) setPreview(pack);
+    enterBtn.onclick = () => window.location.href = pack.href;
+  }
+
+  // ========= satellites =========
+  function buildSats(){
+    satsLayer.innerHTML = '';
+    const count = 8;
+    for(let i=0;i<count;i++){
+      const sat = document.createElement('div');
+      sat.className = 'sat';
+      const tr = document.createElement('div');
+      tr.className = 'trail';
+      satsLayer.appendChild(tr);
+      satsLayer.appendChild(sat);
+      sat.dataset.i = i;
+      tr.dataset.i = i;
+    }
+  }
+
+  // ========= Earth render (stylised premium) =========
+  // We draw a sphere shading + neon coastlines + subtle grid arcs.
+  function drawEarth(t){
+    ctx.clearRect(0,0,w,h);
+
+    // sphere base shading
+    const grad = ctx.createRadialGradient(cx - R*0.35, cy - R*0.35, R*0.2, cx, cy, R);
+    grad.addColorStop(0, 'rgba(255,255,255,.14)');
+    grad.addColorStop(0.35,'rgba(155,231,255,.12)');
+    grad.addColorStop(0.62,'rgba(191,167,255,.08)');
+    grad.addColorStop(1, 'rgba(0,0,0,.75)');
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // inner core glow
+    const core = ctx.createRadialGradient(cx - R*0.12, cy - R*0.10, R*0.05, cx, cy, R*0.6);
+    core.addColorStop(0, 'rgba(255,255,255,.10)');
+    core.addColorStop(0.4,'rgba(155,231,255,.06)');
+    core.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = core;
+    ctx.fill();
+
+    // mask to sphere for all overlays
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.clip();
+
+    // moving neon “coast” strokes (procedural bands)
+    const time = t * 0.001;
+    ctx.globalCompositeOperation = 'screen';
+    ctx.lineWidth = 2;
+
+    for(let band=0; band<10; band++){
+      const baseLat = -60 + band*13;
+      const phase = (band*0.7 + time*0.7);
+      ctx.strokeStyle = `rgba(155,231,255,${0.10 + 0.04*Math.sin(phase)})`;
+
+      ctx.beginPath();
+      for(let a=0; a<=360; a+=6){
+        const lon = a + (Math.sin(phase + a*0.02)*12);
+        const pr = project(baseLat + Math.sin(phase + a*0.03)*6, lon);
+        // only draw if point is on visible hemisphere (z>0)
+        if(pr.z > -0.02){
+          ctx.lineTo(pr.px, pr.py);
         }
       }
-
-      requestAnimationFrame(loop);
+      ctx.stroke();
     }
 
-    // init
-    buildOptions();
-    setActive(0, true);
-    loadPreview(vibes[0]);
-    requestAnimationFrame(loop);
+    // accent strokes
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(191,167,255,.12)';
+    for(let ring=0; ring<6; ring++){
+      const lat = -50 + ring*18 + Math.sin(time*0.6 + ring)*3;
+      ctx.beginPath();
+      for(let a=0; a<=360; a+=8){
+        const pr = project(lat, a);
+        if(pr.z > -0.02) ctx.lineTo(pr.px, pr.py);
+      }
+      ctx.stroke();
+    }
 
-    window.addEventListener("resize", ()=>{
-      if (hero.classList.contains("engaged")) layoutPills();
+    // subtle terminator vignette
+    ctx.globalCompositeOperation = 'multiply';
+    const vign = ctx.createRadialGradient(cx + R*0.35, cy + R*0.10, R*0.1, cx, cy, R);
+    vign.addColorStop(0,'rgba(0,0,0,0)');
+    vign.addColorStop(1,'rgba(0,0,0,.35)');
+    ctx.fillStyle = vign;
+    ctx.fillRect(0,0,w,h);
+
+    ctx.restore();
+
+    // sphere edge highlight
+    ctx.globalCompositeOperation = 'screen';
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255,255,255,.10)';
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.stroke();
+
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  // ========= pack positioning + depth =========
+  function updatePacks(){
+    if(!revealed){
+      // keep hidden until reveal
+      packsLayer.style.opacity = '0';
+      packsLayer.style.transform = 'scale(.98)';
+      packsLayer.style.pointerEvents = 'none';
+      return;
+    }
+    packsLayer.style.opacity = '1';
+    packsLayer.style.transform = 'scale(1)';
+    packsLayer.style.pointerEvents = 'auto';
+
+    for(const p of packs){
+      const pr = project(p.lat, p.lon);
+      const el = packEls.get(p.key);
+      if(!el) continue;
+
+      // hide if behind sphere
+      const visible = pr.z > 0.05;
+      el.style.opacity = visible ? '1' : '0';
+      el.style.filter = visible ? 'none' : 'blur(1px)';
+      el.style.left = pr.px + 'px';
+      el.style.top  = pr.py + 'px';
+
+      // depth scale + slight tilt feel
+      const s = lerp(0.86, 1.12, pr.depth);
+      el.style.transform = `translate(-50%,-50%) scale(${s})`;
+      el.style.zIndex = Math.floor(pr.depth * 1000);
+    }
+  }
+
+  // ========= satellites motion =========
+  function updateSats(t){
+    const time = t*0.001;
+    const sats = satsLayer.querySelectorAll('.sat');
+    const trails = satsLayer.querySelectorAll('.trail');
+    sats.forEach((sat, i) => {
+      const a = time*0.45 + i*(Math.PI*2/sats.length);
+      const rr = R*1.28;
+      const x = cx + Math.cos(a)*rr;
+      const y = cy + Math.sin(a*0.9)*rr*0.55;
+      sat.style.left = x+'px';
+      sat.style.top  = y+'px';
+
+      const tr = trails[i];
+      if(tr){
+        tr.style.left = (x - 70)+'px';
+        tr.style.top  = (y)+'px';
+        tr.style.transform = `rotate(${(a*180/Math.PI)+20}deg)`;
+      }
     });
-  </script>
+  }
+
+  // ========= interactions =========
+  function onPointerDown(e){
+    if(!revealed) revealPacks();
+    dragging = true;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    lastX = x;
+    lastT = performance.now();
+    vel = 0;
+  }
+  function onPointerMove(e){
+    if(!dragging) return;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    const now = performance.now();
+    const dx = x - lastX;
+    const dt = Math.max(8, now - lastT);
+
+    rotY += dx * 0.006;
+    vel = (dx / dt) * 0.9; // px/ms -> velocity proxy
+
+    lastX = x;
+    lastT = now;
+  }
+  function onPointerUp(){
+    dragging = false;
+    // inertia continues; snap after it settles a bit
+  }
+
+  function onWheel(e){
+    if(!revealed) revealPacks();
+    e.preventDefault();
+    // wheel flick
+    vel += clamp(e.deltaY, -60, 60) * 0.00035;
+  }
+
+  function revealPacks(){
+    revealed = true;
+    document.getElementById('guide').style.opacity = '0.0';
+    setTimeout(()=>{ const g=document.getElementById('guide'); if(g) g.style.display='none'; }, 380);
+    burst({x:cx, y:cy}, 28);
+  }
+
+  btnReveal.addEventListener('click', () => revealPacks());
+
+  // ========= reward sparks =========
+  const particles = [];
+  function burst(pos, n){
+    for(let i=0;i<n;i++){
+      particles.push({
+        x:pos.x + (Math.random()*18-9),
+        y:pos.y + (Math.random()*18-9),
+        vx:(Math.random()*2-1)*3.2,
+        vy:(Math.random()*2-1)*3.2,
+        life: 1,
+        r: 1 + Math.random()*2.2
+      });
+    }
+  }
+  function drawSparks(){
+    sctx.clearRect(0,0,w,h);
+    sctx.globalCompositeOperation = 'screen';
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= 0.94;
+      p.vy *= 0.94;
+      p.life -= 0.03;
+
+      const a = Math.max(0,p.life);
+      const g = sctx.createRadialGradient(p.x,p.y,0,p.x,p.y,18);
+      g.addColorStop(0, `rgba(155,231,255,${0.22*a})`);
+      g.addColorStop(0.5, `rgba(191,167,255,${0.12*a})`);
+      g.addColorStop(1, `rgba(255,91,240,${0.0*a})`);
+      sctx.fillStyle = g;
+      sctx.beginPath();
+      sctx.arc(p.x,p.y,18,0,Math.PI*2);
+      sctx.fill();
+
+      sctx.fillStyle = `rgba(255,255,255,${0.20*a})`;
+      sctx.beginPath();
+      sctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      sctx.fill();
+
+      if(p.life <= 0) particles.splice(i,1);
+    }
+    sctx.globalCompositeOperation = 'source-over';
+  }
+
+  // ========= LOOP =========
+  function tick(t){
+    // inertia
+    if(!dragging){
+      rotY += vel * 1.25;
+      vel *= 0.965;
+      if(Math.abs(vel) < 0.00035) vel = 0;
+
+      // when basically stopped, snap to nearest front pack
+      if(vel === 0 && revealed){
+        const best = nearestFrontPack();
+        if(best && best.key !== selected){
+          setSelected(best.key, true);
+          burst(prFromPack(best), 10);
+        }
+      }
+    }
+
+    drawEarth(t);
+    updateSats(t);
+    updatePacks();
+    drawSparks();
+
+    requestAnimationFrame(tick);
+  }
+
+  // ========= INIT =========
+  function resize(){
+    // keep internal canvas high for crispness
+    const rect = globeCard.getBoundingClientRect();
+    const size = Math.floor(Math.min(900, Math.max(640, rect.width * (window.devicePixelRatio || 1))));
+    earth.width = earth.height = size;
+    sparks.width = sparks.height = size;
+    w=size; h=size; cx=w/2; cy=h/2; R=w*0.42;
+  }
+
+  buildPacks();
+  buildSats();
+  setPreview(packs[0]);
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Pointer events
+  const target = globeCard;
+  target.addEventListener('mousedown', onPointerDown);
+  window.addEventListener('mousemove', onPointerMove);
+  window.addEventListener('mouseup', onPointerUp);
+
+  target.addEventListener('touchstart', onPointerDown, {passive:true});
+  window.addEventListener('touchmove', onPointerMove, {passive:true});
+  window.addEventListener('touchend', onPointerUp);
+
+  // Wheel (prevent page scroll only over globe)
+  target.addEventListener('wheel', onWheel, {passive:false});
+
+  // Keyboard enter to open selected
+  window.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter'){
+      const pack = packs.find(x=>x.key===selected) || packs[0];
+      window.location.href = pack.href;
+    }
+  });
+
+  requestAnimationFrame(tick);
+})();
+</script>
 </body>
 </html>
