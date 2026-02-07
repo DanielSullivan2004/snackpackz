@@ -2,9 +2,9 @@
 <html lang="en-GB">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Snack Packz</title>
-  <meta name="description" content="Snack Packz — Gym • Lock-In • Work • Gaming • Mystery • Fresh" />
+  <meta name="description" content="Snack Packz — quick packs, daily drops. Tap a vibe." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,314 +12,687 @@
 
   <style>
     :root{
-      --bg:#07080c;
-      --panel:#0f1220;
-      --line:rgba(255,255,255,.10);
+      --bg:#05060b;
       --text:#eef1f7;
-      --muted:rgba(238,241,247,.72);
-      --yellow:#ffd400;
-      --orange:#ff9f1a;
-      --shadow: 0 18px 70px rgba(0,0,0,.55);
-      --radius: 22px;
-      --max: 1180px;
+      --muted:#a4adbf;
+      --line:rgba(255,255,255,.10);
+      --panel:rgba(255,255,255,.05);
+      --panel2:rgba(255,255,255,.08);
+      --y:#ffd400;
+      --o:#ff9f1a;
+      --c:#7ab7ff;
+      --g:#6dffb8;
+      --radius:18px;
+      --shadow: 0 18px 60px rgba(0,0,0,.6);
     }
+
     *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       color:var(--text);
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background:
-        radial-gradient(900px 500px at 15% -10%, rgba(255,212,0,.18), transparent 55%),
-        radial-gradient(900px 500px at 110% 10%, rgba(120,170,255,.12), transparent 55%),
-        linear-gradient(180deg, #05060a, #090a16);
+        radial-gradient(900px 520px at 20% -10%, rgba(255,212,0,.18), transparent 58%),
+        radial-gradient(700px 520px at 105% 0%, rgba(122,183,255,.14), transparent 55%),
+        radial-gradient(900px 700px at 55% 120%, rgba(109,255,184,.08), transparent 60%),
+        var(--bg);
+      overflow:hidden;
     }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max);margin:0 auto;padding:18px}
 
-    /* Top nav */
-    .nav{
-      position: sticky; top:0; z-index:50;
-      padding: 14px 0;
-      background: linear-gradient(180deg, rgba(0,0,0,.65), rgba(0,0,0,0));
-      backdrop-filter: blur(10px);
+    /* Top bar */
+    .topbar{
+      position:fixed; inset:14px 14px auto 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      z-index:50;
+      pointer-events:none;
     }
-    .navrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand{display:flex;align-items:center;gap:12px;min-width:0}
-    .mark{
-      width:42px;height:42px;border-radius:16px;
-      background: linear-gradient(135deg, var(--yellow), var(--orange));
-      box-shadow: 0 16px 60px rgba(255,212,0,.18);
-      flex:0 0 auto;
-    }
-    .title{
-      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      margin:0;
-      letter-spacing:1px;
-      text-transform:uppercase;
-      font-size: 30px;
-      line-height:1;
-    }
-    .subtitle{margin:4px 0 0;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .actions{display:flex;gap:10px;align-items:center}
-    .pill{
-      display:inline-flex;align-items:center;justify-content:center;
-      padding:10px 12px;border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.04);
-      font-weight:900;font-size:12px;
-      user-select:none;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-    .pill.primary{
-      border-color: rgba(255,212,0,.35);
-      background: rgba(255,212,0,.14);
-    }
-    .pill:active{transform: translateY(1px)}
+    .topbar > *{pointer-events:auto}
 
-    /* Hero */
-    .hero{
-      margin-top: 6px;
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      padding:10px 12px;
       border:1px solid var(--line);
-      border-radius: calc(var(--radius) + 6px);
       background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
       box-shadow: var(--shadow);
-      overflow:hidden;
-      padding: 22px;
-      position: relative;
     }
-    .hero::before{
-      content:"";
-      position:absolute; inset:-1px;
-      background:
-        radial-gradient(900px 420px at 15% 20%, rgba(255,212,0,.14), transparent 60%),
-        radial-gradient(900px 420px at 85% 0%, rgba(120,170,255,.12), transparent 60%);
-      opacity:.9;
-      pointer-events:none;
-    }
-    .heroinner{position:relative;z-index:2;display:grid;gap:10px}
-    .hero h2{margin:0;font-size:28px;letter-spacing:-.2px}
-    .hero p{margin:0;color:var(--muted);line-height:1.45;font-size:14px;max-width:62ch}
-
-    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .chip{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:8px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-      color: rgba(238,241,247,.85);
-      font-size:12px;
-      font-weight:800;
-      backdrop-filter: blur(6px);
-    }
-
-    /* Grid */
-    .grid{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns:repeat(12,1fr);
-      gap:14px;
-    }
-    .card{
-      grid-column: span 12;
-      border:1px solid var(--line);
-      border-radius: var(--radius);
-      background: rgba(255,255,255,.04);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-      position:relative;
-      min-height: 220px;
-      transform: translateY(0);
-      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-    }
-    @media (min-width: 860px){
-      .card.span6{grid-column:span 6}
-      .card.span4{grid-column:span 4}
-    }
-
-    /* Poster image always works */
-    .media{
-      position:absolute; inset:0;
-      background-size:cover;
-      background-position:center;
-      transform: scale(1.05);
-      filter: saturate(1.05) contrast(1.05);
-      opacity:.95;
-      transition: transform 1.2s ease;
-    }
-    .overlay{
-      position:absolute; inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.72));
-      pointer-events:none;
-    }
-    .content{
-      position:absolute; left:14px; right:14px; bottom:14px;
-      display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
-    }
-    .kicker{
-      display:inline-flex;align-items:center;gap:8px;
-      padding:7px 10px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.25);
-      font-size:12px;
-      font-weight:900;
-    }
-    .name{
-      margin:10px 0 4px;
-      font-weight:1000;
-      font-size:18px;
-      text-transform:uppercase;
-      letter-spacing:.2px;
-    }
-    .desc{margin:0;color:rgba(238,241,247,.82);font-size:13px;line-height:1.35;max-width:50ch}
-    .go{
-      padding:10px 12px;border-radius:14px;
-      border:1px solid rgba(255,212,0,.35);
-      background: rgba(255,212,0,.14);
-      font-weight:1000;
-      text-transform:uppercase;
-      font-size:12px;
+    .mark{
+      width:34px; height:34px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--y), var(--o));
+      box-shadow: 0 16px 40px rgba(255,212,0,.16);
       flex:0 0 auto;
     }
-    .card:hover{
-      transform: translateY(-3px);
-      box-shadow: 0 24px 90px rgba(0,0,0,.60);
-      border-color: rgba(255,255,255,.16);
+    .brand h1{
+      margin:0;
+      font-family: Anton, Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      letter-spacing: 1px;
+      font-size: 20px;
+      line-height: 1;
+      text-transform: uppercase;
     }
-    .card:hover .media{transform: scale(1.10)}
-    .card:hover .go{background: rgba(255,212,0,.20)}
-    .cardlink{position:absolute; inset:0; z-index:2}
+    .brand small{
+      display:block;
+      margin-top:3px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space:nowrap;
+    }
 
-    footer{
-      margin:18px 0 10px;
+    .right{
+      display:flex; align-items:center; gap:10px;
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 44px rgba(0,0,0,.35);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 12.5px;
+      user-select:none;
+    }
+    .pill .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: rgba(255,255,255,.35);
+      box-shadow: 0 0 0 4px rgba(255,255,255,.06);
+    }
+    .pill.on .dot{
+      background: var(--g);
+      box-shadow: 0 0 0 4px rgba(109,255,184,.14);
+    }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px;
+      border-radius: 999px;
+      border:1px solid rgba(255,212,0,.35);
+      background: rgba(255,212,0,.12);
+      font-weight: 900;
+      letter-spacing:.3px;
+      text-transform: uppercase;
+      font-size: 12.5px;
+      color: var(--text);
+      box-shadow: 0 18px 50px rgba(0,0,0,.40);
+      text-decoration:none;
+    }
+    .btn:active{transform: translateY(1px)}
+
+    /* Overlay copy */
+    .hud{
+      position:fixed;
+      left:50%;
+      top:50%;
+      transform: translate(-50%,-50%);
+      width:min(720px, calc(100vw - 28px));
+      z-index:40;
+      pointer-events:none;
       text-align:center;
-      color: rgba(238,241,247,.60);
-      font-size:12.5px;
+    }
+    .hud .title{
+      font-size: clamp(26px, 4.6vw, 56px);
+      font-weight: 900;
+      letter-spacing:-.7px;
+      margin:0;
+      text-shadow: 0 14px 44px rgba(0,0,0,.55);
+    }
+    .hud .sub{
+      margin:10px auto 0;
+      max-width: 64ch;
+      color: rgba(238,241,247,.84);
+      line-height: 1.45;
+      font-size: clamp(13.5px, 1.5vw, 15.5px);
+      text-shadow: 0 14px 44px rgba(0,0,0,.55);
+    }
+    .hud .hint{
+      margin-top:14px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      opacity:.92;
+    }
+    .chip{
+      pointer-events:auto;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      color: var(--muted);
+      font-size: 12.5px;
+      user-select:none;
+    }
+
+    /* Bottom micro footer */
+    .foot{
+      position:fixed; inset:auto 14px 14px 14px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+      z-index:40;
+      pointer-events:none;
+      color: rgba(164,173,191,.82);
+      font-size: 12px;
+    }
+    .foot > *{pointer-events:auto}
+    .foot .mini{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+      border-radius: 999px;
+      padding:8px 10px;
+      display:inline-flex; gap:10px; align-items:center;
+    }
+    .foot a{
+      color: rgba(238,241,247,.9);
+      text-decoration:none;
+      font-weight: 800;
+    }
+
+    /* Canvas layer */
+    #scene{
+      position:fixed; inset:0;
+      width:100%; height:100%;
+      display:block;
+    }
+
+    /* Mobile help */
+    @media (max-width: 620px){
+      .brand small{display:none}
+      .hud{top:54%}
+      .hud .sub{max-width: 44ch}
+      .foot{flex-direction:column; align-items:stretch}
+      .foot .mini{justify-content:center}
     }
   </style>
 </head>
-
 <body>
-  <div class="wrap">
-    <div class="nav">
-      <div class="navrow">
-        <div class="brand">
-          <div class="mark"></div>
-          <div>
-            <h1 class="title">Snack Packz</h1>
-            <p class="subtitle">Gym • Lock-In • Work • Gaming • Mystery • Fresh</p>
-          </div>
-        </div>
-        <div class="actions">
-          <a class="pill" href="#shop">Shop</a>
-          <a class="pill primary" href="https://wa.me/447483849357?text=Yo%20-%20what%20packs%20are%20available%20today%3F" target="_blank" rel="noopener">Order</a>
-        </div>
+
+  <canvas id="scene"></canvas>
+
+  <div class="topbar">
+    <div class="brand" aria-label="Snack Packz">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <h1>Snack Packz</h1>
+        <small>Spin the snack • pick a vibe • click to enter</small>
       </div>
     </div>
 
-    <section class="hero">
-      <div class="heroinner">
-        <h2>Packs for real life. Not dead sandwiches.</h2>
-        <p>Pick a category. Pick a pack. Message to order. Stock changes daily so we swap like-for-like if something sells out.</p>
-        <div class="chips">
-          <span class="chip">💛 Sticker inside</span>
-          <span class="chip">🎟️ Prize draw entry</span>
-          <span class="chip">🎲 RNG drops sometimes</span>
-          <span class="chip">⚠️ No energy drinks to under 16s</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="grid" id="shop">
-      <div class="card span6">
-        <a class="cardlink" href="gym.html" aria-label="Gym Packs"></a>
-        <div class="media" style="background-image:url('assets/gym.jpg')"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🏋️ Gym</span>
-            <div class="name">Gym Packs</div>
-            <p class="desc">Starter • OG • Sweat Session • Afterburn.</p>
-          </div>
-          <div class="go">Enter</div>
-        </div>
+    <div class="right">
+      <div id="soundToggle" class="pill" role="button" tabindex="0" aria-label="Toggle sound">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="soundLabel">Sound: Off</span>
       </div>
 
-      <div class="card span6">
-        <a class="cardlink" href="lock-in.html" aria-label="Lock-In Packs"></a>
-        <div class="media" style="background-image:url('assets/lockin.jpg')"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🧠 Lock-In</span>
-            <div class="name">Lock-In Packs</div>
-            <p class="desc">Revision fuel • all-nighter kit • focus mode.</p>
-          </div>
-          <div class="go">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span4">
-        <a class="cardlink" href="work.html" aria-label="Work Packs"></a>
-        <div class="media" style="background-image:url('assets/work.jpg')"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🧰 Work</span>
-            <div class="name">Shift Packs</div>
-            <p class="desc">Cheaper than random shop runs. No dead meal deals.</p>
-          </div>
-          <div class="go">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span4">
-        <a class="cardlink" href="gaming.html" aria-label="Gaming Packs"></a>
-        <div class="media" style="background-image:url('assets/gaming.jpg')"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🎮 Gaming</span>
-            <div class="name">Gaming Packs</div>
-            <p class="desc">Queue • clutch • late nights. Don’t tilt hungry.</p>
-          </div>
-          <div class="go">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span4">
-        <a class="cardlink" href="mystery.html" aria-label="Mystery Packs"></a>
-        <div class="media" style="background-image:url('assets/mystery.jpg')"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🎲 Mystery</span>
-            <div class="name">RNG Drops</div>
-            <p class="desc">Lucky dip energy. Loot drop vibes. Could be elite.</p>
-          </div>
-          <div class="go">Enter</div>
-        </div>
-      </div>
-
-      <div class="card span6">
-        <a class="cardlink" href="fresh.html" aria-label="Fresh Packs"></a>
-        <div class="media" style="background-image:url('assets/fresh.jpg')"></div>
-        <div class="overlay"></div>
-        <div class="content">
-          <div>
-            <span class="kicker">🧼 Fresh</span>
-            <div class="name">Fresh Packs</div>
-            <p class="desc">Deo • wipes • mints • smell-good reset.</p>
-          </div>
-          <div class="go">Enter</div>
-        </div>
-      </div>
-    </section>
-
-    <footer>© <span id="year"></span> Snack Packz • stock changes • good vibes only</footer>
+      <!-- CHANGE YOUR NUMBER HERE -->
+      <a class="btn" id="orderBtn"
+         href="https://wa.me/447483849357?text=Yo%20-%20what%20packs%20are%20available%20today%3F"
+         target="_blank" rel="noopener">Order</a>
+    </div>
   </div>
+
+  <div class="hud" aria-hidden="true">
+    <h2 class="title">A 3D snack hub for real-life packs.</h2>
+    <p class="sub">
+      Drag the donut to spin it. Hover/tap a vibe when it lights up — that’s your menu.
+      Quick packs, daily drops, zero dead sandwich energy.
+    </p>
+
+    <div class="hint">
+      <div class="chip">🟡 Drag = spin</div>
+      <div class="chip">✨ Hover/tap = reveal + glow</div>
+      <div class="chip">🚫 No energy drinks to under 16s</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="mini">© <span id="year"></span> Snack Packz • stock changes • good vibes only</div>
+    <div class="mini">
+      <a href="gym.html">Gym</a>
+      <span>•</span>
+      <a href="lock-in.html">Lock-In</a>
+      <span>•</span>
+      <a href="work.html">Work</a>
+      <span>•</span>
+      <a href="gaming.html">Gaming</a>
+      <span>•</span>
+      <a href="mystery.html">Mystery</a>
+      <span>•</span>
+      <a href="fresh.html">Fresh</a>
+    </div>
+  </div>
+
+  <!-- Three.js (CDN) -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    // If Three.js fails to load, at least keep the page usable
+    if (!window.THREE){
+      alert("Three.js didn't load. Check your internet / CDN. The links still work at the bottom.");
+      throw new Error("Three.js missing");
+    }
+
+    // ---------- Sound (no files needed) ----------
+    let soundOn = false;
+    let audioCtx = null;
+
+    const soundToggle = document.getElementById('soundToggle');
+    const soundLabel  = document.getElementById('soundLabel');
+
+    function ensureAudio(){
+      if (!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume().catch(()=>{});
+    }
+
+    function blip(freq=440, dur=0.07, type="sine", gain=0.045){
+      if(!soundOn) return;
+      ensureAudio();
+      const t0 = audioCtx.currentTime;
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, t0);
+      g.gain.setValueAtTime(0.0001, t0);
+      g.gain.exponentialRampToValueAtTime(gain, t0 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      o.connect(g).connect(audioCtx.destination);
+      o.start(t0);
+      o.stop(t0 + dur + 0.02);
+    }
+
+    function clickSound(){
+      blip(220, 0.06, "triangle", 0.06);
+      setTimeout(()=>blip(520, 0.06, "sine", 0.04), 40);
+    }
+    function hoverSound(){
+      blip(420, 0.05, "sine", 0.03);
+    }
+
+    function setSoundUI(on){
+      soundOn = on;
+      soundToggle.classList.toggle("on", on);
+      soundLabel.textContent = on ? "Sound: On" : "Sound: Off";
+    }
+
+    soundToggle.addEventListener("click", () => {
+      setSoundUI(!soundOn);
+      if(soundOn){ ensureAudio(); blip(660, 0.08, "sine", 0.05); }
+    });
+    soundToggle.addEventListener("keydown", (e) => {
+      if(e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        soundToggle.click();
+      }
+    });
+
+    // ---------- Three scene ----------
+    const canvas = document.getElementById("scene");
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      200
+    );
+    camera.position.set(0, 0, 14);
+
+    // Lights (premium look)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.15);
+    keyLight.position.set(5, 6, 6);
+    scene.add(keyLight);
+
+    const fillLight = new THREE.DirectionalLight(0x9bc5ff, 0.55);
+    fillLight.position.set(-6, 2, 4);
+    scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffd400, 0.45);
+    rimLight.position.set(0, -4, 8);
+    scene.add(rimLight);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.18));
+
+    // Subtle fog for depth
+    scene.fog = new THREE.FogExp2(0x05060b, 0.04);
+
+    // Donut (torus) + glossy material
+    const donutGeo = new THREE.TorusGeometry(3.2, 1.2, 64, 180);
+    const donutMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(0x2a2f3a),
+      roughness: 0.22,
+      metalness: 0.35,
+      emissive: new THREE.Color(0x000000),
+      envMapIntensity: 1.0
+    });
+
+    const donut = new THREE.Mesh(donutGeo, donutMat);
+    donut.rotation.set(0.15, 0.6, 0.08);
+    scene.add(donut);
+
+    // Sprinkle-ish highlight ring
+    const glowGeo = new THREE.TorusGeometry(3.25, 1.25, 16, 180);
+    const glowMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(0x0b0d14),
+      roughness: 0.15,
+      metalness: 0.9,
+      emissive: new THREE.Color(0x05060b)
+    });
+    const shell = new THREE.Mesh(glowGeo, glowMat);
+    shell.scale.set(1.01, 1.01, 1.01);
+    donut.add(shell);
+
+    // Particles (stars)
+    const pCount = 1200;
+    const pGeo = new THREE.BufferGeometry();
+    const pPos = new Float32Array(pCount * 3);
+    for(let i=0;i<pCount;i++){
+      const r = 28 * Math.random();
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2*Math.random()-1);
+      pPos[i*3+0] = r * Math.sin(phi) * Math.cos(theta);
+      pPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+      pPos[i*3+2] = r * Math.cos(phi);
+    }
+    pGeo.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
+    const pMat = new THREE.PointsMaterial({
+      size: 0.035,
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.55
+    });
+    const stars = new THREE.Points(pGeo, pMat);
+    scene.add(stars);
+
+    // ---------- Category "orbit buttons" (3D objects, clickable) ----------
+    const categories = [
+      { key:"Gym",     emoji:"🏋️", color:0xffd400, href:"gym.html" },
+      { key:"Lock-In", emoji:"🧠", color:0x7ab7ff, href:"lock-in.html" },
+      { key:"Work",    emoji:"🧰", color:0x6dffb8, href:"work.html" },
+      { key:"Gaming",  emoji:"🎮", color:0xb08cff, href:"gaming.html" },
+      { key:"Mystery", emoji:"🎲", color:0xff9f1a, href:"mystery.html" },
+      { key:"Fresh",   emoji:"🧼", color:0x70ffea, href:"fresh.html" },
+    ];
+
+    function makeLabelTexture(text, accentHex){
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.floor(620 * dpr);
+      const h = Math.floor(180 * dpr);
+      const cnv = document.createElement("canvas");
+      cnv.width = w; cnv.height = h;
+      const ctx = cnv.getContext("2d");
+
+      // bg
+      ctx.clearRect(0,0,w,h);
+      // rounded rect
+      const r = 42 * dpr;
+      const pad = 18 * dpr;
+      const x = pad, y = pad, rw = w - pad*2, rh = h - pad*2;
+
+      ctx.fillStyle = "rgba(0,0,0,0.35)";
+      ctx.strokeStyle = "rgba(255,255,255,0.12)";
+      ctx.lineWidth = 3 * dpr;
+
+      roundRect(ctx, x, y, rw, rh, r);
+      ctx.fill();
+      ctx.stroke();
+
+      // accent glow strip
+      const grad = ctx.createLinearGradient(x, y, x+rw, y);
+      grad.addColorStop(0, hexToRgba(accentHex, 0.0));
+      grad.addColorStop(0.30, hexToRgba(accentHex, 0.22));
+      grad.addColorStop(0.70, hexToRgba(accentHex, 0.12));
+      grad.addColorStop(1, hexToRgba(accentHex, 0.0));
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, rw, rh);
+
+      // text
+      ctx.font = `${Math.floor(54*dpr)}px Inter, system-ui, sans-serif`;
+      ctx.fillStyle = "rgba(238,241,247,0.94)";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, x + 42*dpr, y + rh/2);
+
+      // small helper text
+      ctx.font = `${Math.floor(24*dpr)}px Inter, system-ui, sans-serif`;
+      ctx.fillStyle = "rgba(164,173,191,0.85)";
+      ctx.fillText("Click to enter", x + 42*dpr, y + rh/2 + 46*dpr);
+
+      const tex = new THREE.CanvasTexture(cnv);
+      tex.colorSpace = THREE.SRGBColorSpace;
+      tex.needsUpdate = true;
+      return tex;
+    }
+
+    function roundRect(ctx, x, y, w, h, r){
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.arcTo(x+w, y, x+w, y+h, r);
+      ctx.arcTo(x+w, y+h, x, y+h, r);
+      ctx.arcTo(x, y+h, x, y, r);
+      ctx.arcTo(x, y, x+w, y, r);
+      ctx.closePath();
+    }
+
+    function hexToRgba(hex, a){
+      const c = new THREE.Color(hex);
+      const r = Math.floor(c.r*255);
+      const g = Math.floor(c.g*255);
+      const b = Math.floor(c.b*255);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    const orbitGroup = new THREE.Group();
+    scene.add(orbitGroup);
+
+    const labelPlanes = [];
+    const sphereGeo = new THREE.SphereGeometry(0.16, 24, 24);
+
+    categories.forEach((cat, i) => {
+      const g = new THREE.Group();
+
+      // small orb
+      const orbMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(cat.color),
+        roughness: 0.25,
+        metalness: 0.6,
+        emissive: new THREE.Color(cat.color).multiplyScalar(0.12)
+      });
+      const orb = new THREE.Mesh(sphereGeo, orbMat);
+      g.add(orb);
+
+      // label
+      const tex = makeLabelTexture(`${cat.emoji}  ${cat.key}`, cat.color);
+      const planeGeo = new THREE.PlaneGeometry(3.7, 1.05);
+      const planeMat = new THREE.MeshBasicMaterial({
+        map: tex,
+        transparent: true,
+        opacity: 0.92
+      });
+      const label = new THREE.Mesh(planeGeo, planeMat);
+      label.position.set(2.2, 0, 0);
+      label.userData.href = cat.href;
+      label.userData.baseOpacity = 0.92;
+      label.userData.accent = cat.color;
+      g.add(label);
+
+      g.userData.label = label;
+      g.userData.orb = orb;
+
+      // initial orbit angle
+      g.userData.angle = (i / categories.length) * Math.PI * 2;
+
+      orbitGroup.add(g);
+      labelPlanes.push(label);
+    });
+
+    // Place orbit group around donut
+    orbitGroup.position.set(0, 0, 0);
+
+    // ---------- Interaction (drag spin + hover + click) ----------
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    let hovered = null;
+
+    let isDown = false;
+    let lastX = 0, lastY = 0;
+    let velX = 0, velY = 0;
+
+    function setMouseFromEvent(e){
+      const rect = canvas.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+      mouse.set(x,y);
+    }
+
+    function pick(){
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(labelPlanes, true);
+      return hits.length ? hits[0].object : null;
+    }
+
+    function onMove(e){
+      setMouseFromEvent(e);
+      if(isDown){
+        const dx = (e.clientX - lastX);
+        const dy = (e.clientY - lastY);
+        lastX = e.clientX; lastY = e.clientY;
+        velX = dx * 0.0024;
+        velY = dy * 0.0020;
+        donut.rotation.y += velX;
+        donut.rotation.x += velY;
+      }
+    }
+
+    function onDown(e){
+      isDown = true;
+      lastX = e.clientX; lastY = e.clientY;
+      ensureAudio(); // unlock audio on mobile if they toggle later
+    }
+
+    function onUp(){
+      isDown = false;
+    }
+
+    function onClick(e){
+      setMouseFromEvent(e);
+      const obj = pick();
+      if(obj && obj.userData && obj.userData.href){
+        clickSound();
+        // small “press” feel
+        obj.material.opacity = 0.65;
+        setTimeout(()=>obj.material.opacity = obj.userData.baseOpacity, 90);
+        window.location.href = obj.userData.href;
+      }
+    }
+
+    window.addEventListener("pointermove", onMove, {passive:true});
+    window.addEventListener("pointerdown", onDown, {passive:true});
+    window.addEventListener("pointerup", onUp, {passive:true});
+    window.addEventListener("click", onClick);
+
+    // ---------- Animation loop ----------
+    const clock = new THREE.Clock();
+
+    function animate(){
+      const t = clock.getElapsedTime();
+
+      // Donut idle motion (if not dragging)
+      if(!isDown){
+        velX *= 0.92;
+        velY *= 0.92;
+        donut.rotation.y += 0.003 + velX;
+        donut.rotation.x += 0.0015 + velY;
+      }
+
+      // Stars drift
+      stars.rotation.y += 0.0008;
+      stars.rotation.x += 0.00035;
+
+      // Orbit
+      const radius = 4.65;
+      orbitGroup.children.forEach((g, idx) => {
+        const a = g.userData.angle + t*0.35;
+        const y = Math.sin(t*0.8 + idx) * 0.25;
+
+        g.position.set(
+          Math.cos(a) * radius,
+          y,
+          Math.sin(a) * radius * 0.55
+        );
+
+        // Face camera
+        g.lookAt(camera.position);
+
+        // Soft bob
+        g.userData.orb.position.y = Math.sin(t*1.6 + idx) * 0.05;
+
+        // Orb pulse
+        const orb = g.userData.orb;
+        orb.scale.setScalar(1 + Math.sin(t*2.4 + idx) * 0.05);
+      });
+
+      // Hover detection
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(labelPlanes, true);
+      const now = hits.length ? hits[0].object : null;
+
+      if(now !== hovered){
+        // reset previous
+        if(hovered){
+          hovered.material.opacity = hovered.userData.baseOpacity;
+          hovered.scale.set(1,1,1);
+        }
+        hovered = now;
+        if(hovered){
+          hoverSound();
+        }
+      }
+
+      // Hover effect
+      if(hovered){
+        hovered.material.opacity = 1.0;
+        hovered.scale.lerp(new THREE.Vector3(1.06,1.06,1.06), 0.22);
+
+        // Little donut glow boost
+        const c = new THREE.Color(hovered.userData.accent);
+        donutMat.emissive.lerp(c.multiplyScalar(0.06), 0.10);
+      }else{
+        donutMat.emissive.lerp(new THREE.Color(0x000000), 0.06);
+      }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // ---------- Resize ----------
+    function onResize(){
+      const w = window.innerWidth, h = window.innerHeight;
+      renderer.setSize(w, h);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener("resize", onResize);
+
+    // ---------- Mobile tap hover help ----------
+    // If user taps a label (click), it navigates. If they just drag, it spins.
+
   </script>
 </body>
 </html>
