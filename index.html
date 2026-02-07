@@ -11,7 +11,6 @@
       --txt:#EEF3FF;
       --mut:rgba(238,243,255,.72);
       --line:rgba(255,255,255,.12);
-      --glass:rgba(12,16,32,.46);
       --shadow: 0 24px 120px rgba(0,0,0,.62);
       --r:22px;
 
@@ -22,8 +21,8 @@
       --bg1:#06081A;
 
       --hudW:min(36vw, 520px);
-      --stageW:min(1100px, 100%);
-      --sphereSize:min(52vmin, 560px);
+      --stageW:min(1120px, 100%);
+      --sphereSize:min(58vmin, 620px);
     }
 
     *{ box-sizing:border-box; }
@@ -33,8 +32,8 @@
       color:var(--txt);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
       background:
-        radial-gradient(1400px 900px at 20% 15%, rgba(167,120,255,.16), transparent 60%),
-        radial-gradient(1200px 900px at 78% 18%, rgba(72,220,255,.13), transparent 60%),
+        radial-gradient(1400px 900px at 20% 15%, rgba(167,120,255,.18), transparent 60%),
+        radial-gradient(1200px 900px at 78% 18%, rgba(72,220,255,.14), transparent 60%),
         radial-gradient(900px 700px at 50% 90%, rgba(120,255,209,.08), transparent 62%),
         linear-gradient(180deg, var(--bg0), var(--bg1));
       overflow:hidden;
@@ -143,7 +142,7 @@
       .navLinks{ display:none; }
     }
 
-    /* ===== HERO / CENTRE ===== */
+    /* ===== HERO CARD ===== */
     .left{
       padding: clamp(12px, 2vw, 18px);
       display:flex;
@@ -166,10 +165,10 @@
       content:"";
       position:absolute; inset:-1px;
       background:
-        radial-gradient(900px 480px at 50% 22%, rgba(165,240,255,.14), transparent 62%),
-        radial-gradient(1100px 700px at 60% 70%, rgba(183,168,255,.12), transparent 62%),
-        radial-gradient(900px 700px at 40% 110%, rgba(120,255,209,.07), transparent 62%);
-      opacity:.95;
+        radial-gradient(900px 520px at 50% 18%, rgba(165,240,255,.16), transparent 62%),
+        radial-gradient(1100px 760px at 62% 70%, rgba(183,168,255,.12), transparent 64%),
+        radial-gradient(900px 700px at 38% 110%, rgba(120,255,209,.07), transparent 62%);
+      opacity:.98;
       pointer-events:none;
     }
 
@@ -180,17 +179,21 @@
       padding: clamp(18px, 2.4vw, 26px);
       display:grid;
       grid-template-rows: auto 1fr auto;
-      gap: 18px;
+      gap: 16px;
     }
 
-    /* ===== HEADLINE (must disappear on hover/focus) ===== */
-    .headline{
+    /* ===== HEADLINE (collapses on engage — fixes the empty dead space) ===== */
+    .headlineWrap{
       display:grid;
-      gap:10px;
       justify-items:center;
       text-align:center;
-      transition: opacity 220ms ease, transform 220ms ease, filter 220ms ease;
-      will-change: opacity, transform, filter;
+      overflow:hidden;
+      max-height: 320px;
+      transition: max-height 240ms ease, opacity 200ms ease, transform 200ms ease, filter 200ms ease;
+      opacity:1;
+      transform: translateY(0);
+      filter: blur(0);
+      will-change: max-height, opacity, transform, filter;
     }
     .kicker{
       display:inline-flex;
@@ -204,30 +207,31 @@
       color: rgba(238,243,255,.78);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      margin-bottom:10px;
     }
     .kicker .dot{ width:8px;height:8px; }
-    .headline h2{
+    .headlineWrap h2{
       margin:0;
       font-size: clamp(34px, 4.7vw, 58px);
       line-height:1.03;
       font-weight: 980;
       letter-spacing: -0.8px;
       text-shadow: 0 30px 70px rgba(0,0,0,.55);
-      max-width: 20ch;
+      max-width: 22ch;
     }
-    .headline p{
-      margin:0;
+    .headlineWrap p{
+      margin:10px 0 0;
       color: rgba(238,243,255,.74);
       font-size: 13px;
       line-height: 1.45;
-      max-width: 66ch;
+      max-width: 68ch;
     }
     .ctaRow{
       display:flex;
       gap:12px;
       flex-wrap:wrap;
       justify-content:center;
-      margin-top: 6px;
+      margin-top: 14px;
     }
     .ctaPrimary{
       padding: 11px 14px;
@@ -235,12 +239,13 @@
       border-color: rgba(165,240,255,.18);
     }
 
-    /* engaged state: headline fades OUT completely */
-    .heroCard.engaged .headline{
+    .heroCard.engaged .headlineWrap{
+      max-height: 0px;
       opacity:0;
       transform: translateY(-10px);
       filter: blur(3px);
       pointer-events:none;
+      margin:0;
     }
 
     /* ===== CENTREPIECE ===== */
@@ -249,23 +254,23 @@
       display:grid;
       place-items:center;
       min-height: 520px;
+      overflow: visible; /* IMPORTANT: prevents option clipping */
     }
 
-    /* subtle vertical beam */
+    /* vertical beam */
     .beam{
       position:absolute;
       z-index:0;
-      width: 22%;
-      height: 160%;
-      top: -30%;
-      left: 39%;
-      background: linear-gradient(180deg, rgba(165,240,255,0), rgba(165,240,255,.20), rgba(183,168,255,.14), rgba(0,0,0,0));
-      filter: blur(12px);
+      width: 18%;
+      height: 180%;
+      top: -40%;
+      left: 41%;
+      background: linear-gradient(180deg, rgba(165,240,255,0), rgba(165,240,255,.22), rgba(183,168,255,.14), rgba(0,0,0,0));
+      filter: blur(14px);
       opacity:.75;
       pointer-events:none;
     }
 
-    /* 3D container */
     .spin3d{
       width: var(--sphereSize);
       height: var(--sphereSize);
@@ -275,7 +280,8 @@
       touch-action:none;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
-      perspective: 1000px;
+      perspective: 1100px;
+      transform: translateY(-8px); /* nudges centrepiece higher for hero feel */
     }
 
     canvas#fx{
@@ -288,7 +294,20 @@
       pointer-events:none;
     }
 
-    /* Sphere */
+    .ringLine{
+      position:absolute;
+      inset:-18%;
+      border-radius:50%;
+      z-index:1;
+      pointer-events:none;
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), rgba(0,0,0,0) 60%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,.10), rgba(0,0,0,0) 68%);
+      opacity:.9;
+    }
+
     .sphere{
       position:relative;
       width: 100%;
@@ -318,30 +337,14 @@
         radial-gradient(circle at 40% 42%, rgba(165,240,255,.16), transparent 62%),
         radial-gradient(circle at 60% 58%, rgba(183,168,255,.12), transparent 62%);
       filter: blur(18px);
-      opacity:.9;
+      opacity:.92;
       pointer-events:none;
       mix-blend-mode: screen;
     }
 
-    /* Outer ring (subtle) */
-    .ringLine{
-      position:absolute;
-      inset:-16%;
-      border-radius:50%;
-      z-index:1;
-      pointer-events:none;
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
-      background:
-        radial-gradient(circle at 50% 50%, rgba(255,255,255,.03), rgba(0,0,0,0) 58%),
-        radial-gradient(circle at 50% 50%, rgba(0,0,0,.10), rgba(0,0,0,0) 66%);
-      opacity:.9;
-    }
-
-    /* Options: hidden until engaged */
     .opts{
       position:absolute;
-      inset:-20%;
+      inset:-26%;
       z-index:5;
       pointer-events:auto;
       opacity:0;
@@ -358,7 +361,7 @@
       position:absolute;
       left:50%;
       top:50%;
-      height: 38px;
+      height: 40px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
       background: rgba(0,0,0,.24);
@@ -374,6 +377,7 @@
       cursor:pointer;
       transform-style: preserve-3d;
       will-change: transform, opacity, filter;
+      white-space:nowrap;
     }
     .opt:hover{
       border-color: rgba(165,240,255,.30);
@@ -381,7 +385,7 @@
       box-shadow: 0 18px 90px rgba(0,0,0,.72);
     }
     .opt.active{
-      border-color: rgba(165,240,255,.36);
+      border-color: rgba(165,240,255,.40);
       background: rgba(0,0,0,.32);
     }
     .oDot{
@@ -402,7 +406,7 @@
       color: rgba(238,243,255,.62);
       text-align:center;
       line-height:1.25;
-      max-width: 52ch;
+      max-width: 56ch;
       pointer-events:none;
       opacity:.95;
     }
@@ -413,6 +417,16 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin-top: 4px;
+      transition: opacity 200ms ease, transform 200ms ease, filter 200ms ease;
+      opacity:1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    .heroCard.engaged .stats{
+      opacity:0;
+      transform: translateY(10px);
+      filter: blur(2px);
+      pointer-events:none;
     }
     @media (max-width: 920px){
       .stats{ grid-template-columns: 1fr; }
@@ -538,10 +552,6 @@
       line-height:1.25;
       text-shadow: 0 18px 50px rgba(0,0,0,.65);
     }
-
-    @media (hover:none){
-      .hint{ max-width: 56ch; }
-    }
   </style>
 </head>
 
@@ -575,12 +585,12 @@
       <div class="heroCard" id="heroCard">
         <div class="heroInner">
 
-          <div class="headline" id="headline">
-            <div class="kicker"><span class="dot"></span> Hover centrepiece to reveal the wheel</div>
-            <h2>Snack Packs, but premium — picked with a 3D spin selector.</h2>
-            <p>Hover the centre sphere to reveal the options. Spin fast. Preview loads clean (image → video). Enter to order.</p>
+          <div class="headlineWrap" id="headlineWrap">
+            <div class="kicker"><span class="dot"></span> Hover the centre sphere to reveal vibes</div>
+            <h2>Pick your Snack Pack vibe with a 3D spin selector.</h2>
+            <p>Hover to reveal. Drag to spin. Scroll to flick. Preview loads clean (image → video). Enter and order.</p>
             <div class="ctaRow">
-              <a class="btn ctaPrimary" href="#" onclick="document.getElementById('sphere').scrollIntoView({behavior:'smooth'}); return false;">Discover</a>
+              <a class="btn ctaPrimary" href="#" onclick="document.getElementById('spin3d').scrollIntoView({behavior:'smooth'}); return false;">Discover</a>
               <a class="btn" id="waCta" href="#" rel="noopener">Order on WhatsApp</a>
             </div>
           </div>
@@ -596,16 +606,16 @@
 
               <div class="opts" id="opts" aria-label="Vibe options"></div>
 
-              <div class="hint" id="hint">
-                Desktop: hover the sphere to reveal options. Drag to spin. Scroll to flick.<br>
-                Mobile: tap the sphere once to reveal. Tap an option twice to enter.
+              <div class="hint">
+                Desktop: hover sphere to reveal. Drag to spin. Scroll to flick.<br>
+                Mobile: tap sphere to reveal. Tap a vibe twice to enter.
               </div>
             </div>
           </div>
 
-          <div class="stats">
-            <div class="stat"><div class="n">Fast</div><div class="t">Drag + scroll. No slow “waiting” rotation.</div></div>
-            <div class="stat"><div class="n">Clean</div><div class="t">Headline disappears so the wheel feels intentional.</div></div>
+          <div class="stats" id="stats">
+            <div class="stat"><div class="n">Fast</div><div class="t">Drag + scroll. Snaps to selection.</div></div>
+            <div class="stat"><div class="n">Clean</div><div class="t">Text disappears so options feel intentional.</div></div>
             <div class="stat"><div class="n">Premium</div><div class="t">Image instantly → video fades in when ready.</div></div>
           </div>
 
@@ -647,7 +657,6 @@
   </div>
 
   <script>
-    // ===== Config =====
     const WHATSAPP_NUMBER = "447483849357";
 
     const vibes = [
@@ -665,7 +674,6 @@
     document.getElementById("waTop").href = wa("Hi Snack Packz — I want to place an order.");
     document.getElementById("waCta").href = wa("Hi Snack Packz — I want to place an order.");
 
-    // ===== DOM =====
     const heroCard = document.getElementById("heroCard");
     const spin3d   = document.getElementById("spin3d");
     const sphere   = document.getElementById("sphere");
@@ -679,7 +687,7 @@
     const hudMeta  = document.getElementById("hudMeta");
     const enterBtn = document.getElementById("enterBtn");
 
-    // ===== Premium preview (image instantly → video fades when ready) =====
+    // ===== Premium preview: image instantly → video fades when ready
     let videoToken = 0;
     function loadPreview(v){
       hudTitle.textContent = v.label;
@@ -714,7 +722,7 @@
       hudVid.load();
     }
 
-    // ===== Build options =====
+    // ===== Build options
     const N = vibes.length;
     let activeIndex = 0;
 
@@ -724,8 +732,7 @@
         const opt = document.createElement("div");
         opt.className = "opt";
         opt.dataset.index = String(i);
-        opt.style.width = (vibes[i].label.length > 6 ? 164 : 144) + "px";
-
+        opt.style.width = (vibes[i].label.length > 6 ? 170 : 150) + "px";
         opt.innerHTML = `
           <span class="oDot" aria-hidden="true"></span>
           <span class="oTxt">${vibes[i].label}</span>
@@ -742,7 +749,6 @@
           e.preventDefault();
           const idx = Number(opt.dataset.index);
 
-          // mobile: tap once preview, second tap enter
           if (window.matchMedia("(hover:none)").matches){
             if (activeIndex === idx && opt.classList.contains("active")){
               window.location.href = vibes[idx].page;
@@ -751,7 +757,6 @@
             setActive(idx, true);
             return;
           }
-
           setActive(idx, true);
         }, {passive:false});
 
@@ -773,10 +778,9 @@
       if (snap) snapToIndex(i);
     }
 
-    // ===== 3D wheel math (this is the important fix) =====
-    // We render options around the sphere using translate3d + perspective.
-    let rot = 0;         // degrees
-    let vel = 0;         // deg/sec
+    // ===== 3D wheel
+    let rot = 0;
+    let vel = 0;
     let dragging = false;
     let pointerId = null;
 
@@ -800,32 +804,32 @@
 
     function layout3D(){
       const rect = spin3d.getBoundingClientRect();
-      const radius = Math.min(rect.width, rect.height) * 0.58; // big, centred, not tiny
-      const depth  = Math.min(rect.width, rect.height) * 0.22;
+      const base = Math.min(rect.width, rect.height);
+
+      // BIGGER + closer = more “hero”
+      const radius = base * 0.72;
+      const depth  = base * 0.26;
 
       const items = optsEl.querySelectorAll(".opt");
       for(let i=0;i<items.length;i++){
-        const base = i*step;
-        const a = (base + rot) * Math.PI/180;
+        const a = ((i*step) + rot) * Math.PI/180;
 
-        // circle around centre
         const x = Math.cos(a) * radius;
-        const y = Math.sin(a) * radius;
-
-        // depth gives real 3d: front pops, back recedes
+        const y = Math.sin(a) * radius * 0.62; // slightly squashed to feel “orbit”
         const z = (Math.cos(a) * depth);
 
-        // scale/opacity based on z (front is brighter and bigger)
-        const z01 = (z/depth + 1)/2; // 0..1
-        const scale = 0.82 + z01*0.34; // 0.82..1.16
-        const alpha = 0.35 + z01*0.65; // 0.35..1.0
-        const blur  = (1 - z01) * 0.8;
+        const z01 = (z/depth + 1)/2;
+
+        // Make everything readable (no disappearing)
+        const scale = 0.90 + z01*0.24;      // 0.90..1.14
+        const alpha = 0.60 + z01*0.40;      // 0.60..1.00
+        const blur  = (1 - z01) * 0.45;     // max 0.45px (subtle)
 
         items[i].style.transform =
           `translate3d(calc(-50% + ${x}px), calc(-50% + ${y}px), ${z}px) scale(${scale})`;
         items[i].style.opacity = alpha.toFixed(3);
-        items[i].style.filter = `blur(${blur.toFixed(2)}px)`;
-        items[i].style.zIndex = String(10 + Math.round(z01*90));
+        items[i].style.filter  = `blur(${blur.toFixed(2)}px)`;
+        items[i].style.zIndex  = String(10 + Math.round(z01*90));
       }
     }
 
@@ -833,9 +837,9 @@
       if (!heroCard.classList.contains("engaged")) return;
       e.preventDefault();
       const delta = e.deltaY || 0;
-      const add = clamp(delta * 0.16, -35, 35);
+      const add = clamp(delta * 0.18, -40, 40);
       rot += add;
-      vel += add * 6;
+      vel += add * 6.5;
 
       const idx = nearestIndex();
       if (idx !== activeIndex){
@@ -843,6 +847,7 @@
         updateActiveClass();
         loadPreview(vibes[idx]);
       }
+
       clearTimeout(onWheel._t);
       onWheel._t = setTimeout(()=> setActive(nearestIndex(), true), 120);
     }
@@ -870,6 +875,7 @@
 
     function onMove(e){
       if (!dragging || e.pointerId !== pointerId) return;
+
       const a = angleFromEvent(e);
       let da = a - lastAng;
       if (da > 180) da -= 360;
@@ -900,13 +906,12 @@
       setTimeout(()=> setActive(nearestIndex(), true), 80);
     }
 
-    // ===== Engage behaviour (THIS is what you asked) =====
+    // ===== Engage behaviour
     function setEngaged(on){
       heroCard.classList.toggle("engaged", on);
       if (on) layout3D();
     }
 
-    // Desktop: hover sphere → engaged
     spin3d.addEventListener("mouseenter", ()=>{
       if (window.matchMedia("(hover:hover)").matches) setEngaged(true);
     });
@@ -914,20 +919,18 @@
       if (window.matchMedia("(hover:hover)").matches) setEngaged(false);
     });
 
-    // Mobile: tap sphere toggles engaged
     sphere.addEventListener("click", ()=>{
       if (window.matchMedia("(hover:none)").matches){
         setEngaged(!heroCard.classList.contains("engaged"));
       }
     });
 
-    // controls
     spin3d.addEventListener("pointerdown", onDown, {passive:true});
     window.addEventListener("pointermove", onMove, {passive:true});
     window.addEventListener("pointerup", onUp, {passive:true});
     spin3d.addEventListener("wheel", onWheel, {passive:false});
 
-    // ===== FX canvas (subtle premium particles, not tacky) =====
+    // ===== FX canvas (subtle premium particles)
     const fx = document.getElementById("fx");
     const fctx = fx.getContext("2d");
     const parts = [];
@@ -942,15 +945,15 @@
 
     function seedParts(){
       parts.length = 0;
-      const n = 120;
+      const n = 130;
       for(let i=0;i<n;i++){
         parts.push({
           x: Math.random(),
           y: Math.random(),
           r: 0.7 + Math.random()*1.7,
-          a: 0.10 + Math.random()*0.22,
-          vx:(Math.random()-0.5)*0.0006,
-          vy:(Math.random()-0.5)*0.0006
+          a: 0.10 + Math.random()*0.20,
+          vx:(Math.random()-0.5)*0.00055,
+          vy:(Math.random()-0.5)*0.00055
         });
       }
     }
@@ -961,7 +964,7 @@
 
       const gx = w*(0.50 + mx*0.06);
       const gy = h*(0.50 + my*0.06);
-      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.52);
+      const g = fctx.createRadialGradient(gx,gy, w*0.06, gx,gy, w*0.56);
       g.addColorStop(0, "rgba(165,240,255,0.12)");
       g.addColorStop(0.45, "rgba(183,168,255,0.08)");
       g.addColorStop(1, "rgba(0,0,0,0)");
@@ -993,7 +996,7 @@
       my = clamp((e.clientY - cy)/(r.height/2), -1, 1);
     });
 
-    // ===== Main loop =====
+    // ===== Main loop
     let last = performance.now();
     function loop(now){
       const dt = Math.min(0.05, (now-last)/1000);
@@ -1022,7 +1025,7 @@
       requestAnimationFrame(loop);
     }
 
-    // ===== Init =====
+    // ===== Init
     buildOptions();
     setActive(0, true);
     loadPreview(vibes[0]);
