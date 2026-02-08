@@ -27,6 +27,17 @@
 
     #stage{ position:fixed; inset:0; z-index:0; background:#020302; }
 
+    /* premium film/vignette */
+    .film{
+      pointer-events:none;
+      position:fixed; inset:0; z-index:40;
+      background:
+        radial-gradient(1000px 700px at 50% 45%, rgba(0,0,0,0) 0%, rgba(0,0,0,.18) 55%, rgba(0,0,0,.55) 100%),
+        linear-gradient(180deg, rgba(0,0,0,.40) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,.45) 100%);
+      mix-blend-mode: multiply;
+      opacity:.95;
+    }
+
     #topbar{
       position:fixed; left:18px; right:18px; top:16px;
       display:flex; align-items:center; justify-content:space-between;
@@ -131,23 +142,13 @@
       user-select: none;
     }
     #minimapHUD .mmTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:baseline;
-      gap:10px;
-      padding: 4px 6px 8px;
+      display:flex; justify-content:space-between; align-items:baseline;
+      gap:10px; padding: 4px 6px 8px;
     }
     #minimapHUD .mmTop b{ letter-spacing:.9px; font-weight:950; }
     #minimapHUD .mmHint{ color: rgba(255,255,255,.62); font-weight:850; font-size: 11px; }
-    #minimapHUD canvas{
-      width: 220px; height: 220px;
-      display:block;
-      border-radius: 18px;
-    }
-    #minimapHUD .mmBottom{
-      display:flex; gap:8px; flex-wrap:wrap;
-      padding: 8px 6px 2px;
-    }
+    #minimapHUD canvas{ width: 220px; height: 220px; display:block; border-radius: 18px; }
+    #minimapHUD .mmBottom{ display:flex; gap:8px; flex-wrap:wrap; padding: 8px 6px 2px; }
     #minimapHUD .mmChip{
       border:1px solid rgba(255,255,255,.10);
       background: rgba(0,0,0,.22);
@@ -188,48 +189,28 @@
     }
     .menuBtn.primary{ background: rgba(255,255,255,.90); color:#070a08; border-color: rgba(255,255,255,.25); }
 
-    #mobileUI{
-      position:fixed; left:0; right:0; bottom:0;
-      padding:18px;
-      display:none;
-      justify-content:space-between;
-      align-items:flex-end;
-      gap:14px;
-      z-index:90;
-      pointer-events:none;
-    }
-    #joy{
-      width:140px; height:140px;
-      border-radius:999px;
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.12);
-      backdrop-filter: blur(10px);
-      position:relative;
-      pointer-events:auto;
-      touch-action:none;
-    }
-    #joyKnob{
-      width:56px; height:56px;
-      border-radius:999px;
-      position:absolute;
-      left:50%; top:50%;
-      transform: translate(-50%,-50%);
-      background: rgba(255,255,255,.86);
-      box-shadow: 0 18px 70px rgba(255,255,255,.12);
-    }
-    #useBtn{
-      pointer-events:auto;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.90);
-      color:#070a08;
-      font-weight:950;
+    /* error overlay (bulletproof) */
+    #err{
+      position:fixed; left:18px; top:110px;
+      width:min(760px, calc(100vw - 36px));
+      background: rgba(255,0,0,.10);
+      border:1px solid rgba(255,90,90,.35);
       border-radius: 18px;
-      padding:16px 18px;
-      min-width: 110px;
+      padding:12px 14px;
+      z-index:999;
+      display:none;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+    #err b{ display:block; font-weight:950; margin-bottom:6px; }
+    #err pre{
+      margin:0; white-space:pre-wrap; word-break:break-word;
+      color: rgba(255,230,230,.95);
+      font-weight:850; font-size:12px; line-height:1.25;
+      max-height: 260px; overflow:auto;
     }
 
     @media (pointer:coarse), (max-width: 820px){
-      #mobileUI{ display:flex; }
       #minimapHUD{ display:none; }
     }
   </style>
@@ -237,6 +218,7 @@
 
 <body>
   <canvas id="stage"></canvas>
+  <div class="film"></div>
 
   <header id="topbar">
     <div class="brand">
@@ -271,7 +253,7 @@
 
   <div id="crosshair"></div>
 
-  <div id="minimapHUD" aria-hidden="true">
+  <div id="minimapHUD">
     <div class="mmTop">
       <b>MAP</b>
       <span class="mmHint">Clearing boundaries.</span>
@@ -283,12 +265,7 @@
     </div>
   </div>
 
-  <div id="mobileUI" aria-hidden="true">
-    <div id="joy"><div id="joyKnob"></div></div>
-    <button id="useBtn" type="button">USE</button>
-  </div>
-
-  <div id="menu" aria-hidden="true">
+  <div id="menu">
     <div id="menuCard">
       <h2>Pause Menu</h2>
       <p>Resume, reset, or leave the forest.</p>
@@ -299,6 +276,26 @@
       </div>
     </div>
   </div>
+
+  <div id="err">
+    <b>Crash reason (this is why it would go black)</b>
+    <pre id="errText"></pre>
+  </div>
+
+  <script>
+    const errBox = document.getElementById("err");
+    const errText = document.getElementById("errText");
+    function showErr(msg){
+      errBox.style.display="block";
+      errText.textContent = String(msg || "Unknown error");
+    }
+    window.addEventListener("error",(e)=>{
+      showErr(`${e.message}\n${e.filename || ""}:${e.lineno || ""}:${e.colno || ""}`);
+    });
+    window.addEventListener("unhandledrejection",(e)=>{
+      showErr(`Unhandled rejection:\n${e.reason?.stack || e.reason?.message || e.reason || e}`);
+    });
+  </script>
 
   <script type="module">
     import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
@@ -335,29 +332,6 @@
     const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
     const reduce = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = coarse || innerWidth < 820;
-
-    const joy = document.getElementById("joy");
-    const joyKnob = document.getElementById("joyKnob");
-    const useBtn = document.getElementById("useBtn");
-    document.getElementById("mobileUI").style.display = mobile ? "flex" : "none";
-
-    // ===== Quality =====
-    const QUALITY = {
-      ultra: !mobile && !reduce,
-      set(v){
-        this.ultra = v;
-        qualityBtn.setAttribute("aria-pressed", String(v));
-        qualityBtn.textContent = `Quality: ${v ? "Ultra" : "Lite"}`;
-        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, v ? 2 : 1.25));
-        fogNear = v ? 28 : 18;
-        fogFar  = v ? 92 : 60;
-        scene.fog.near = fogNear;
-        scene.fog.far  = fogFar;
-        fireflyTarget = v ? 220 : 120;
-        ensureFireflies();
-        swayEvery = v ? 2 : 4;
-      }
-    };
 
     // ===== World bounds =====
     const BOUNDS = { minX:-55, maxX:55, minZ:-92, maxZ:26 };
@@ -401,29 +375,37 @@
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setSize(innerWidth, innerHeight);
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, QUALITY.ultra ? 2 : 1.25));
     renderer.setClearColor(0x020302, 1);
 
     const scene = new THREE.Scene();
-    let fogNear = QUALITY.ultra ? 28 : 18;
-    let fogFar  = QUALITY.ultra ? 92 : 60;
-    scene.fog = new THREE.Fog(0x050705, fogNear, fogFar);
-
-    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.08, 400);
+    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.08, 420);
     camera.position.set(0, 2.2, 0);
 
     const controls = new PointerLockControls(camera, document.body);
     const clock = new THREE.Clock();
 
-    // Lights
-    const hemi = new THREE.HemisphereLight(0xbfe7c0, 0x0b0d0b, 0.78);
-    scene.add(hemi);
+    // ===== Quality =====
+    const QUALITY = {
+      ultra: !mobile && !reduce,
+      set(v){
+        this.ultra = v;
+        qualityBtn.setAttribute("aria-pressed", String(v));
+        qualityBtn.textContent = `Quality: ${v ? "Ultra" : "Lite"}`;
+        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, v ? 2 : 1.25));
+        scene.fog.near = v ? 28 : 18;
+        scene.fog.far  = v ? 92 : 60;
+      }
+    };
+    scene.fog = new THREE.Fog(0x050705, QUALITY.ultra ? 28 : 18, QUALITY.ultra ? 92 : 60);
+    QUALITY.set(QUALITY.ultra);
 
+    // Lights
+    scene.add(new THREE.HemisphereLight(0xbfe7c0, 0x0b0d0b, 0.78));
     const sun = new THREE.DirectionalLight(0xffffff, 0.72);
     sun.position.set(-12, 18, 12);
     scene.add(sun);
 
-    // ===== CINEMA SKY: forest.mp4 on dome =====
+    // ===== Cinema sky (forest.mp4) =====
     const skyVideo = document.createElement("video");
     skyVideo.src = "assets/forest.mp4";
     skyVideo.loop = true;
@@ -436,20 +418,16 @@
     skyTex.minFilter = THREE.LinearFilter;
     skyTex.magFilter = THREE.LinearFilter;
 
-    const skyGeo = new THREE.SphereGeometry(220, 48, 32);
-    const skyMat = new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide });
-    const sky = new THREE.Mesh(skyGeo, skyMat);
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(220, 48, 32),
+      new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide })
+    );
     scene.add(sky);
 
-    // tone it down so it doesn’t look like a VR “wrap”
-    const skyGradeGeo = new THREE.SphereGeometry(218, 32, 20);
-    const skyGradeMat = new THREE.MeshBasicMaterial({
-      color: 0x050705,
-      transparent: true,
-      opacity: 0.38,
-      side: THREE.BackSide
-    });
-    const skyGrade = new THREE.Mesh(skyGradeGeo, skyGradeMat);
+    const skyGrade = new THREE.Mesh(
+      new THREE.SphereGeometry(218, 32, 20),
+      new THREE.MeshBasicMaterial({ color: 0x050705, transparent:true, opacity:0.38, side: THREE.BackSide })
+    );
     scene.add(skyGrade);
 
     // ===== Terrain =====
@@ -466,7 +444,10 @@
       const h = heightAt(x,z);
       pos.setY(i, h);
 
-      const moss = THREE.MathUtils.clamp((h+2)/6, 0, 1);
+      // FIXED: shade exists (your file was missing it)
+      const moss  = THREE.MathUtils.clamp((h+2)/6, 0, 1);
+      const shade = THREE.MathUtils.clamp(0.55 + moss*0.45, 0, 1);
+
       const g = 0.18 + shade*0.56;
       const r = 0.10 + shade*0.22;
       const b = 0.10 + shade*0.18;
@@ -475,31 +456,26 @@
     terrainGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors,3));
     terrainGeo.computeVertexNormals();
 
-    const terrainMat = new THREE.MeshStandardMaterial({
-      vertexColors: true,
-      roughness: 1.0,
-      metalness: 0.0
-    });
-    const terrain = new THREE.Mesh(terrainGeo, terrainMat);
+    const terrain = new THREE.Mesh(
+      terrainGeo,
+      new THREE.MeshStandardMaterial({ vertexColors:true, roughness:1.0, metalness:0.0 })
+    );
     scene.add(terrain);
 
-    // ===== Trees (instanced) + WIND SWAY =====
+    // ===== Trees (instanced) + sway =====
     const treeCount = QUALITY.ultra ? 1500 : 820;
     const trunkGeo = new THREE.CylinderGeometry(0.10, 0.16, 2.2, 6);
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x2a1b12, roughness: 1.0 });
-    const leafGeo = new THREE.ConeGeometry(0.9, 2.6, 7);
-    const leafMat = new THREE.MeshStandardMaterial({ color: 0x0b2a12, roughness: 1.0 });
+    const leafGeo  = new THREE.ConeGeometry(0.9, 2.6, 7);
+    const leafMat  = new THREE.MeshStandardMaterial({ color: 0x0b2a12, roughness: 1.0 });
 
     const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, treeCount);
-    const leaves = new THREE.InstancedMesh(leafGeo, leafMat, treeCount);
+    const leaves = new THREE.InstancedMesh(leafGeo,  leafMat,  treeCount);
+    scene.add(trunks, leaves);
 
     const dummy = new THREE.Object3D();
-    const baseTrunk = new Array(treeCount);
-    const baseLeaf  = new Array(treeCount);
-
     const treeMeta = new Array(treeCount);
     const treeColliders = [];
-
     function inClearing(x,z){
       const r = Math.sqrt(x*x + (z+18)*(z+18));
       return r < 30;
@@ -515,37 +491,31 @@
       const s = THREE.MathUtils.randFloat(0.85, 1.70);
       const rot = THREE.MathUtils.randFloat(0, Math.PI*2);
 
-      // trunk
       dummy.position.set(x, y+1.1*s, z);
       dummy.rotation.set(0, rot, 0);
-      dummy.scale.set(s, s, s);
+      dummy.scale.set(s,s,s);
       dummy.updateMatrix();
       trunks.setMatrixAt(ti, dummy.matrix);
-      baseTrunk[ti] = dummy.matrix.clone();
 
-      // leaf
       dummy.position.set(x, y+2.55*s, z);
       dummy.rotation.set(0, rot, 0);
-      dummy.scale.set(s, s, s);
+      dummy.scale.set(s,s,s);
       dummy.updateMatrix();
       leaves.setMatrixAt(ti, dummy.matrix);
-      baseLeaf[ti] = dummy.matrix.clone();
 
       treeMeta[ti] = { x, z, s, rot, phase: (x*0.11 + z*0.07) };
 
-      if(Math.abs(x) < 60 && z > -110 && z < 40){
+      // colliders only near play area
+      if(Math.abs(x) < 70 && z > -120 && z < 60){
         treeColliders.push({x, z, r: 0.65*s});
       }
-
       ti++;
     }
-    scene.add(trunks, leaves);
 
-    // ===== Totems: posters + aim-to-play VIDEO =====
+    // ===== Totems: poster + aim video =====
     const loader = new THREE.TextureLoader();
     const totems = [];
 
-    // Create hidden video elements for each pack (play only after user gesture)
     const packVideos = PACKS.map(p=>{
       const v = document.createElement("video");
       v.src = p.video;
@@ -556,40 +526,36 @@
       return v;
     });
 
-    function makeTotemCard(p, i, x, z){
+    function makeTotem(p, i, x, z){
       const group = new THREE.Group();
       const y = heightAt(x,z);
       group.position.set(x, y+1.75, z);
 
-      // frame
-      const frameGeo = new THREE.BoxGeometry(2.05, 2.9, 0.12);
-      const frameMat = new THREE.MeshStandardMaterial({ color: 0x0c0f0c, roughness: 0.55 });
-      const frame = new THREE.Mesh(frameGeo, frameMat);
+      const frame = new THREE.Mesh(
+        new THREE.BoxGeometry(2.05, 2.9, 0.12),
+        new THREE.MeshStandardMaterial({ color: 0x0c0f0c, roughness: 0.55 })
+      );
       group.add(frame);
 
-      // poster texture
       const posterTex = loader.load(p.poster);
       posterTex.colorSpace = THREE.SRGBColorSpace;
 
-      // video texture
-      const vTex = new THREE.VideoTexture(packVideos[i]);
-      vTex.colorSpace = THREE.SRGBColorSpace;
-      vTex.minFilter = THREE.LinearFilter;
-      vTex.magFilter = THREE.LinearFilter;
+      const videoTex = new THREE.VideoTexture(packVideos[i]);
+      videoTex.colorSpace = THREE.SRGBColorSpace;
+      videoTex.minFilter = THREE.LinearFilter;
+      videoTex.magFilter = THREE.LinearFilter;
 
-      // screen
-      const screenGeo = new THREE.PlaneGeometry(1.78, 2.50);
       const screenMat = new THREE.MeshStandardMaterial({
         map: posterTex,
         roughness: 0.85,
         emissive: new THREE.Color(0x0c1a0c),
-        emissiveIntensity: 0.38
+        emissiveIntensity: 0.36
       });
-      const screen = new THREE.Mesh(screenGeo, screenMat);
-      screen.position.set(0, 0, 0.065);
+
+      const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.78, 2.50), screenMat);
+      screen.position.set(0,0,0.065);
       group.add(screen);
 
-      // glow ring
       const ring = new THREE.Mesh(
         new THREE.TorusGeometry(0.32, 0.06, 10, 22),
         new THREE.MeshBasicMaterial({ color: 0xcfff8c })
@@ -597,22 +563,8 @@
       ring.position.set(-0.70, 1.10, 0.09);
       group.add(ring);
 
-      // title plate (cheap but nice)
-      const plate = new THREE.Mesh(
-        new THREE.PlaneGeometry(2.22, 0.62),
-        new THREE.MeshBasicMaterial({ color: 0x0a0f0a, transparent:true, opacity:0.55 })
-      );
-      plate.position.set(0, -1.75, 0.07);
-      group.add(plate);
-
-      totems.push({
-        p, i, x, z,
-        group, screen, screenMat,
-        posterTex, videoTex:vTex,
-        ring
-      });
-
       scene.add(group);
+      totems.push({ p, i, x, z, group, screen, screenMat, posterTex, videoTex, ring });
     }
 
     const totemPositions = [
@@ -622,37 +574,9 @@
       {x:  9, z:-40},
       {x:  0, z:-32}
     ];
-    PACKS.forEach((p,i)=> makeTotemCard(p,i, totemPositions[i].x, totemPositions[i].z));
+    PACKS.forEach((p,i)=> makeTotem(p,i, totemPositions[i].x, totemPositions[i].z));
 
-    // ===== Fireflies (3D sprites) =====
-    let fireflyTarget = QUALITY.ultra ? 220 : 120;
-    let fireflies = [];
-    const flyGeo = new THREE.SphereGeometry(0.03, 8, 8);
-    const flyMat = new THREE.MeshBasicMaterial({ color: 0xcfff8c });
-    function ensureFireflies(){
-      while(fireflies.length < fireflyTarget){
-        const m = new THREE.Mesh(flyGeo, flyMat);
-        const x = THREE.MathUtils.randFloat(BOUNDS.minX, BOUNDS.maxX);
-        const z = THREE.MathUtils.randFloat(BOUNDS.minZ, BOUNDS.maxZ);
-        const y = heightAt(x,z) + THREE.MathUtils.randFloat(0.8, 3.8);
-        m.position.set(x,y,z);
-        m.userData = {
-          phase: Math.random()*1000,
-          base: m.position.clone(),
-          speed: THREE.MathUtils.randFloat(0.4, 0.9),
-          amp: THREE.MathUtils.randFloat(0.18, 0.55)
-        };
-        scene.add(m);
-        fireflies.push(m);
-      }
-      while(fireflies.length > fireflyTarget){
-        const m = fireflies.pop();
-        scene.remove(m);
-      }
-    }
-    ensureFireflies();
-
-    // ===== Controls =====
+    // ===== Stable input =====
     const keys = {w:false,a:false,s:false,d:false,q:false,e:false,shift:false};
     addEventListener("keydown",(ev)=>{
       const k = ev.key.toLowerCase();
@@ -679,69 +603,26 @@
       if(k==="shift") keys.shift=false;
     });
 
-    // Mobile joystick + look
-    const joyState = {active:false,id:null,cx:0,cy:0,dx:0,dy:0};
-    if(joy){
-      joy.addEventListener("pointerdown",(e)=>{
-        joyState.active=true; joyState.id=e.pointerId;
-        joy.setPointerCapture(e.pointerId);
-        const r=joy.getBoundingClientRect();
-        joyState.cx=r.left+r.width/2; joyState.cy=r.top+r.height/2;
-      });
-      joy.addEventListener("pointermove",(e)=>{
-        if(!joyState.active || e.pointerId!==joyState.id) return;
-        const max=46;
-        let dx=e.clientX-joyState.cx, dy=e.clientY-joyState.cy;
-        const len=Math.hypot(dx,dy)||1;
-        if(len>max){ dx=dx/len*max; dy=dy/len*max; }
-        joyState.dx=dx/max; joyState.dy=dy/max;
-        joyKnob.style.transform=`translate(${dx}px,${dy}px) translate(-50%,-50%)`;
-      });
-      const end=()=>{
-        joyState.active=false; joyState.dx=0; joyState.dy=0;
-        joyKnob.style.transform="translate(-50%,-50%)";
-      };
-      joy.addEventListener("pointerup",end);
-      joy.addEventListener("pointercancel",end);
-    }
-
-    let look = {on:false,x:0,y:0};
-    addEventListener("pointerdown",(e)=>{
-      if(!mobile) return;
-      if(e.target===joy || e.target===joyKnob || e.target===useBtn) return;
-      look.on=true; look.x=e.clientX; look.y=e.clientY;
-    },{passive:true});
-    addEventListener("pointermove",(e)=>{
-      if(!mobile || !look.on) return;
-      const dx=e.clientX-look.x, dy=e.clientY-look.y;
-      look.x=e.clientX; look.y=e.clientY;
-      camera.rotation.y -= dx*0.0030;
-      camera.rotation.x -= dy*0.0020;
-      camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x, -0.75, 0.55);
-    },{passive:true});
-    addEventListener("pointerup",()=>{ look.on=false; },{passive:true});
-    useBtn.addEventListener("click", tryEnterFocused);
-
-    // Pointer lock + first user gesture = start videos
-    addEventListener("click",(e)=>{
-      const t=e.target;
-      if(t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#minimapHUD") || t.closest("#menu") || t.closest("#mobileUI"))) return;
-      if(!mobile) controls.lock();
-      startAllVideosOnce();
-    });
-
-    let startedMedia = false;
-    function startAllVideosOnce(){
+    // First user gesture starts media (browser rule)
+    let startedMedia=false;
+    function startMedia(){
       if(startedMedia) return;
-      startedMedia = true;
+      startedMedia=true;
       skyVideo.play().catch(()=>{});
       for(const v of packVideos) v.play().catch(()=>{});
     }
 
+    addEventListener("click",(e)=>{
+      const t=e.target;
+      if(t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#minimapHUD") || t.closest("#menu"))) return;
+      startMedia();
+      if(!mobile) controls.lock();
+    });
+
     controls.addEventListener("lock", ()=> stateChip.textContent = "WASD • Q/E • F");
     controls.addEventListener("unlock", ()=> stateChip.textContent = "Click to lock");
 
-    // Menu
+    // ===== Menu =====
     function openMenu(){
       menu.style.display="flex";
       try{ controls.unlock(); }catch{}
@@ -752,11 +633,15 @@
     }
     exitBtn.addEventListener("click", openMenu);
     resumeBtn.addEventListener("click", closeMenu);
-
-    leaveBtn.addEventListener("click", ()=>{ location.href="shop.html"; });
     resetBtn.addEventListener("click", ()=>{ resetPosition(); closeMenu(); });
+    leaveBtn.addEventListener("click", ()=>{ location.href="shop.html"; });
 
-    // ===== Focus (raycast) =====
+    // Quality toggle
+    qualityBtn.addEventListener("click", ()=> {
+      QUALITY.set(!QUALITY.ultra);
+    });
+
+    // ===== Focus / raycast =====
     const raycaster = new THREE.Raycaster();
     let focused = -1;
 
@@ -766,8 +651,7 @@
       const objects = totems.map(t=>t.screen);
       const hits = raycaster.intersectObjects(objects, false);
       if(hits.length){
-        const hit = hits[0].object;
-        const idx = objects.indexOf(hit);
+        const idx = objects.indexOf(hits[0].object);
         if(idx >= 0) focused = idx;
       }
     }
@@ -776,17 +660,11 @@
       if(focused < 0) return;
       const t = totems[focused];
       const d = Math.hypot(camera.position.x - t.x, camera.position.z - t.z);
-      if(d < 4.4){
-        location.href = t.p.page;
-      } else {
-        dockSub.textContent = `Walk closer (${d.toFixed(1)}m)`;
-      }
+      if(d < 4.4) location.href = t.p.page;
+      else dockSub.textContent = `Walk closer (${d.toFixed(1)}m)`;
     }
 
-    // ===== Movement + physics =====
-    const dir = new THREE.Vector3();
-
-
+    // ===== Physics + bounds (SINGLE definitions) =====
     function clampBounds(pos){
       pos.x = THREE.MathUtils.clamp(pos.x, BOUNDS.minX, BOUNDS.maxX);
       pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ);
@@ -808,7 +686,6 @@
       pos.y = heightAt(pos.x, pos.z) + 2.2;
     }
 
-    // ===== Start =====
     function resetPosition(){
       camera.position.set(0, heightAt(0,0)+2.2, 0);
       dockTitle.textContent = "Forest Clearing";
@@ -834,6 +711,7 @@
     }
     function drawMinimap(){
       if(mobile) return;
+
       const W=mm.width, H=mm.height;
       mmCtx.clearRect(0,0,W,H);
 
@@ -841,22 +719,14 @@
       mmCtx.fillStyle="rgba(0,0,0,0.35)";
       mmRoundRect(mmCtx,0,0,W,H,18); mmCtx.fill();
 
-      mmCtx.globalAlpha=.45;
-      mmCtx.strokeStyle="rgba(255,255,255,0.10)";
-      mmCtx.lineWidth=1;
-      for(let i=1;i<5;i++){
-        const x=(W*i/5)|0, y=(H*i/5)|0;
-        mmCtx.beginPath(); mmCtx.moveTo(x,10); mmCtx.lineTo(x,H-10); mmCtx.stroke();
-        mmCtx.beginPath(); mmCtx.moveTo(10,y); mmCtx.lineTo(W-10,y); mmCtx.stroke();
-      }
+      // bounds box
+      mmCtx.globalAlpha=.70;
+      mmCtx.strokeStyle="rgba(205,255,140,0.18)";
+      mmCtx.lineWidth=2;
+      mmCtx.strokeRect(18,18,W-36,H-36);
 
-      mmCtx.globalAlpha=1;
-      mmCtx.strokeStyle="rgba(255,255,255,0.18)";
-      mmCtx.lineWidth=1;
-      mmRoundRect(mmCtx,0.5,0.5,W-1,H-1,18); mmCtx.stroke();
-
+      // totems
       const pad=18;
-
       for(let i=0;i<totems.length;i++){
         const t=totems[i];
         const m=mmWorldToMap(t.x, t.z);
@@ -875,6 +745,7 @@
         mmCtx.arc(x,y,2.6,0,Math.PI*2); mmCtx.fill();
       }
 
+      // player
       const mp=mmWorldToMap(camera.position.x, camera.position.z);
       const px=pad + mp.x*(W-2*pad);
       const py=pad + mp.y*(H-2*pad);
@@ -906,26 +777,23 @@
       mmNear.textContent = best.i>=0 ? `Nearest: ${PACKS[best.i].name} (${best.d.toFixed(1)}m)` : "Nearest: —";
     }
 
-    // ===== Billboard + aim-to-play video =====
+    // ===== Totems update (billboard + aim video) =====
     function updateTotems(time){
       for(let i=0;i<totems.length;i++){
         const t = totems[i];
 
-        // face you (billboard)
         t.group.lookAt(camera.position.x, t.group.position.y, camera.position.z);
 
-        // subtle ring pulse on focus
         const pulse = 0.5 + 0.5*Math.sin(time*0.002 + i);
         t.ring.scale.setScalar(1 + pulse*0.10);
 
-        // aim-to-play: swap texture map on focus
         if(i === focused){
           if(t.screenMat.map !== t.videoTex){
             t.screenMat.map = t.videoTex;
             t.screenMat.needsUpdate = true;
           }
           t.screenMat.emissiveIntensity = 0.55;
-        }else{
+        } else {
           if(t.screenMat.map !== t.posterTex){
             t.screenMat.map = t.posterTex;
             t.screenMat.needsUpdate = true;
@@ -935,82 +803,46 @@
       }
     }
 
-    // ===== Tree sway (cheap, looks good) =====
-    let swayEvery = QUALITY.ultra ? 2 : 4;
+    // ===== Tree sway (cheap but good) =====
     const m4 = new THREE.Matrix4();
     const q = new THREE.Quaternion();
     const v3 = new THREE.Vector3();
     const s3 = new THREE.Vector3();
+    const swayEvery = QUALITY.ultra ? 2 : 4;
+
     function swayTrees(time, frame){
       if(frame % swayEvery !== 0) return;
-
-      // sway only a subset each update to keep FPS nice
       const step = QUALITY.ultra ? 3 : 5;
 
       for(let i=0;i<treeCount;i+=step){
         const meta = treeMeta[i];
         if(!meta) continue;
 
-        // sway depends on position
-        const w = Math.sin(time*0.0012 + meta.phase) * 0.03;
+        const w  = Math.sin(time*0.0012 + meta.phase) * 0.03;
         const w2 = Math.cos(time*0.0010 + meta.phase*1.3) * 0.02;
         const rotY = meta.rot + w2;
 
-        // trunk: tiny rotation
         q.setFromEuler(new THREE.Euler(w*0.25, rotY, 0));
         v3.set(meta.x, heightAt(meta.x, meta.z)+1.1*meta.s, meta.z);
         s3.set(meta.s, meta.s, meta.s);
-
         m4.compose(v3, q, s3);
         trunks.setMatrixAt(i, m4);
 
-        // leaves: bigger sway
         q.setFromEuler(new THREE.Euler(w*0.9, rotY, w*0.35));
         v3.set(meta.x, heightAt(meta.x, meta.z)+2.55*meta.s, meta.z);
         m4.compose(v3, q, s3);
         leaves.setMatrixAt(i, m4);
       }
-
       trunks.instanceMatrix.needsUpdate = true;
       leaves.instanceMatrix.needsUpdate = true;
     }
 
-    // ===== Fireflies movement =====
-    function animateFireflies(time){
-      for(const f of fireflies){
-        const d = f.userData;
-        d.phase += d.speed * 0.016;
-        f.position.x = d.base.x + Math.sin(d.phase + time*0.0005)*d.amp*2.2;
-        f.position.z = d.base.z + Math.cos(d.phase + time*0.00045)*d.amp*2.0;
-        f.position.y = heightAt(f.position.x, f.position.z) + 1.1 + (0.6 + Math.sin(d.phase*1.3)*0.5);
-      }
-    }
-
-    // ===== Movement loop =====
+    // ===== Movement =====
+    const dir = new THREE.Vector3();
     const up = new THREE.Vector3(0,1,0);
     const forward = new THREE.Vector3();
     const right = new THREE.Vector3();
-
-    function clampBounds(pos){
-      pos.x = THREE.MathUtils.clamp(pos.x, BOUNDS.minX, BOUNDS.maxX);
-      pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ);
-    }
-    function resolveTreeCollisions(pos){
-      for(let i=0;i<treeColliders.length;i++){
-        const c = treeColliders[i];
-        const dx = pos.x - c.x;
-        const dz = pos.z - c.z;
-        const d = Math.hypot(dx,dz);
-        if(d > 0.0001 && d < c.r){
-          const push = (c.r - d);
-          pos.x += (dx / d) * push;
-          pos.z += (dz / d) * push;
-        }
-      }
-    }
-    function snapToGround(pos){
-      pos.y = heightAt(pos.x, pos.z) + 2.2;
-    }
+    const move = new THREE.Vector3();
 
     // ===== Resize =====
     addEventListener("resize", ()=>{
@@ -1018,10 +850,6 @@
       camera.aspect = innerWidth/innerHeight;
       camera.updateProjectionMatrix();
     }, {passive:true});
-
-    // Quality toggle
-    qualityBtn.addEventListener("click", ()=> QUALITY.set(!QUALITY.ultra));
-    QUALITY.set(QUALITY.ultra);
 
     // ===== Main loop =====
     let frames=0, fpsLast=performance.now(), frame=0;
@@ -1037,21 +865,21 @@
       if(keys.e) camera.rotation.y -= 1.25 * dt;
 
       dir.set(0,0,0);
-      const sp = (keys.shift ? 6.2 : 4.7) * (mobile ? 0.85 : 1);
+      const sp = (keys.shift ? 6.2 : 4.7) * (mobile ? 0.90 : 1);
+
       if(keys.w) dir.z -= 1;
       if(keys.s) dir.z += 1;
       if(keys.a) dir.x -= 1;
       if(keys.d) dir.x += 1;
-      if(mobile){ dir.x += joyState.dx; dir.z += joyState.dy; }
       if(dir.lengthSq() > 0) dir.normalize();
 
       camera.getWorldDirection(forward);
       forward.y = 0; forward.normalize();
       right.crossVectors(forward, up).normalize().negate();
 
-      const move = new THREE.Vector3()
+      move.set(0,0,0)
         .addScaledVector(forward, dir.z)
-        .addScaledVector(right, dir.x);
+        .addScaledVector(right,   dir.x);
 
       camera.position.addScaledVector(move, sp * dt);
 
@@ -1059,14 +887,13 @@
       resolveTreeCollisions(camera.position);
       snapToGround(camera.position);
 
-      // Keep sky centred + subtle drift so it feels alive
+      // sky follows you
       sky.position.copy(camera.position);
       sky.rotation.y += 0.0002;
 
-      // Focus
+      // focus + UI
       updateFocus();
 
-      // Dock text
       if(focused >= 0){
         dockTitle.textContent = PACKS[focused].name;
         const t = totems[focused];
@@ -1077,20 +904,12 @@
         dockSub.textContent = "Find a totem.";
       }
 
-      // Totems
       updateTotems(time);
-
-      // Atmosphere
-      animateFireflies(time);
       swayTrees(time, frame);
 
-      // Render
       renderer.render(scene, camera);
-
-      // Minimap
       drawMinimap();
 
-      // FPS
       frames++;
       const now=performance.now();
       if(now - fpsLast > 500){
@@ -1098,24 +917,6 @@
         frames=0; fpsLast=now;
       }
     }
-
-    // ===== Pointer lock events =====
-    controls.addEventListener("lock", ()=> stateChip.textContent = "WASD • Q/E • F");
-    controls.addEventListener("unlock", ()=> stateChip.textContent = "Click to lock");
-
-    // ===== Menu =====
-    function openMenu(){
-      menu.style.display="flex";
-      try{ controls.unlock(); }catch{}
-    }
-    function closeMenu(){
-      menu.style.display="none";
-      if(!mobile) controls.lock();
-    }
-    exitBtn.addEventListener("click", openMenu);
-    resumeBtn.addEventListener("click", closeMenu);
-    resetBtn.addEventListener("click", ()=>{ resetPosition(); closeMenu(); });
-    leaveBtn.addEventListener("click", ()=>{ location.href="shop.html"; });
 
     // Start loop
     animate(performance.now());
