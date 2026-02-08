@@ -364,8 +364,10 @@
         bloomPass.strength = v ? 0.45 : 0.20;
         bloomPass.radius   = v ? 0.35 : 0.25;
         bloomPass.threshold= v ? 0.20 : 0.30;
-        filmPass.uniforms.nIntensity.value = v ? 0.22 : 0.12;
-        filmPass.uniforms.sIntensity.value = v ? 0.35 : 0.20;
+       const fu = filmPass?.uniforms || filmPass?.material?.uniforms;
+if (fu?.nIntensity) fu.nIntensity.value = v ? 0.22 : 0.12;
+if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
+
 
         // world density
         targetTreeCount = v ? 1500 : 820;
