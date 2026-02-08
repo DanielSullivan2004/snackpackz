@@ -2,251 +2,234 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Snack Packz — 3D Forest</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+  <title>Snack Packz — Forest Portal</title>
   <meta name="theme-color" content="#050705"/>
-
-  <!-- ✅ FIX for GitHub Pages: allow "import ... from 'three'" -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
-  }
-  </script>
 
   <style>
     :root{
-      --fg:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.72);
-      --dim:rgba(255,255,255,.52);
-      --accent:rgba(205,255,140,.92);
-      --ease:cubic-bezier(.16,1,.3,1);
+      --fg: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.70);
+      --dim: rgba(255,255,255,.55);
+      --glass: rgba(0,0,0,.26);
+      --glass2: rgba(0,0,0,.18);
+      --stroke: rgba(255,255,255,.12);
+      --stroke2: rgba(255,255,255,.10);
+      --accent: rgba(205,255,140,.92);
       --shadow: 0 30px 110px rgba(0,0,0,.70);
+      --ease: cubic-bezier(.16,1,.3,1);
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
       overflow:hidden;
-      background:#030403;
+      background:#020302;
       color:var(--fg);
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
     }
+    #stage{position:fixed;inset:0;z-index:0;background:#020302}
 
-    #stage{ position:fixed; inset:0; z-index:0; background:#020302; }
-
-    .film{
-      pointer-events:none;
-      position:fixed; inset:0; z-index:40;
-      background:
-        radial-gradient(1000px 700px at 50% 45%, rgba(0,0,0,0) 0%, rgba(0,0,0,.18) 55%, rgba(0,0,0,.55) 100%),
-        linear-gradient(180deg, rgba(0,0,0,.40) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,.45) 100%);
-      mix-blend-mode: multiply;
-      opacity:.95;
-    }
-
+    /* Premium shell */
     #topbar{
-      position:fixed; left:18px; right:18px; top:16px;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:12px 14px;
-      border-radius:999px;
-      background: rgba(0,0,0,.26);
-      border: 1px solid rgba(255,255,255,.10);
+      position:fixed;left:18px;right:18px;top:16px;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:12px 14px;border-radius:999px;
+      background:var(--glass);border:1px solid var(--stroke);
       backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      z-index:50;
-      user-select:none;
+      box-shadow:var(--shadow);
+      z-index:50;user-select:none;
     }
-    .brand{ display:flex; gap:10px; align-items:center; }
+    .brand{display:flex;gap:10px;align-items:center}
     .seed{
-      width:10px; height:10px; border-radius:999px;
-      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.18) 35%, var(--accent) 72%, rgba(0,0,0,0));
+      width:10px;height:10px;border-radius:999px;
+      background:radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.18) 35%, var(--accent) 72%, rgba(0,0,0,0));
       box-shadow: 0 0 0 7px rgba(205,255,140,.08);
+      flex:0 0 auto;
     }
-    .brand b{ font-weight:950; letter-spacing:.2px; }
-    .brand small{ display:block; color:var(--dim); font-weight:700; margin-top:2px; }
-
-    .controls{ display:flex; gap:10px; align-items:center; }
+    .brand b{font-weight:950;letter-spacing:.2px}
+    .brand small{display:block;color:var(--dim);font-weight:750;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:min(62vw,720px)}
+    .controls{display:flex;gap:10px;align-items:center}
     .pill{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(0,0,0,.24);
-      color: var(--fg);
-      padding:10px 12px;
-      border-radius: 999px;
-      font-weight:900;
-      cursor:pointer;
-      text-decoration:none;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.24);
+      color:var(--fg);
+      padding:10px 12px;border-radius:999px;
+      font-weight:900;cursor:pointer;text-decoration:none;
       user-select:none;
-      transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+      transition:transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease), opacity .25s var(--ease);
       white-space:nowrap;
     }
-    .pill:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.20); }
-    .pill.cta{ background: rgba(255,255,255,.90); color:#070a08; border-color: rgba(255,255,255,.30); }
+    .pill:hover{transform:translateY(-1px);background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.20)}
+    .pill.cta{background:rgba(255,255,255,.92);color:#070a08;border-color:rgba(255,255,255,.28)}
+    .pill.danger{background:rgba(255,90,90,.14);border-color:rgba(255,90,90,.35)}
+    .pill[aria-pressed="false"]{opacity:.78}
 
     #hint{
-      position:fixed; left:50%; transform:translateX(-50%);
-      top: 94px;
-      padding:10px 12px;
-      border-radius:999px;
-      background: rgba(0,0,0,.22);
-      border: 1px solid rgba(255,255,255,.10);
+      position:fixed;left:50%;transform:translateX(-50%);
+      top:94px;z-index:50;user-select:none;
+      padding:10px 12px;border-radius:999px;
+      background:rgba(0,0,0,.22);
+      border:1px solid var(--stroke2);
       backdrop-filter: blur(12px);
-      display:flex; gap:10px; align-items:center;
-      user-select:none;
-      z-index:50;
+      display:flex;gap:10px;align-items:center;
     }
-    #hint .k{ font-weight:950; }
-    #hint .s{ color:var(--muted); font-weight:800; }
+    #hint .k{font-weight:950}
+    #hint .s{color:var(--muted);font-weight:800}
 
     #dock{
-      position:fixed; left:18px; right:18px; bottom:16px;
-      display:flex; justify-content:space-between; align-items:center;
-      padding:12px 14px;
-      border-radius:999px;
-      background: rgba(0,0,0,.26);
-      border: 1px solid rgba(255,255,255,.10);
+      position:fixed;left:18px;right:18px;bottom:16px;
+      display:flex;justify-content:space-between;align-items:center;
+      padding:12px 14px;border-radius:999px;
+      background:var(--glass);border:1px solid var(--stroke2);
       backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      user-select:none;
-      z-index:50;
+      box-shadow:var(--shadow);
+      user-select:none;z-index:50;
     }
-    .chips{ display:flex; gap:10px; align-items:center; }
+    .chipRow{display:flex;gap:10px;align-items:center}
     .chip{
-      padding:9px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.20);
-      color: rgba(255,255,255,.76);
-      font-weight:900;
-      font-size:12px;
-      white-space:nowrap;
+      padding:9px 12px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+      color:rgba(255,255,255,.78);
+      font-weight:900;font-size:12px;white-space:nowrap;
     }
 
     #crosshair{
-      position:fixed; left:50%; top:50%;
-      width:10px; height:10px;
-      transform:translate(-50%,-50%);
-      border-radius:999px;
-      background: rgba(255,255,255,.78);
+      position:fixed;left:50%;top:50%;
+      width:10px;height:10px;transform:translate(-50%,-50%);
+      border-radius:999px;background:rgba(255,255,255,.80);
       box-shadow: 0 0 0 10px rgba(255,255,255,.05);
       mix-blend-mode: screen;
       pointer-events:none;
       z-index:60;
     }
 
+    /* Minimap */
     #minimapHUD{
-      position: fixed;
-      right: 18px;
-      bottom: 86px;
-      width: 240px;
-      border-radius: 22px;
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.10);
+      position:fixed;right:18px;bottom:86px;width:260px;
+      border-radius:22px;padding:10px;
+      background:var(--glass2);border:1px solid var(--stroke2);
       backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-      padding: 10px;
-      z-index: 60;
-      user-select: none;
+      box-shadow:var(--shadow);
+      z-index:60;user-select:none;
     }
-    #minimapHUD .mmTop{
-      display:flex; justify-content:space-between; align-items:baseline;
-      gap:10px; padding: 4px 6px 8px;
-    }
-    #minimapHUD .mmTop b{ letter-spacing:.9px; font-weight:950; }
-    #minimapHUD .mmHint{ color: rgba(255,255,255,.62); font-weight:850; font-size: 11px; }
-    #minimapHUD canvas{ width: 220px; height: 220px; display:block; border-radius: 18px; }
-    #minimapHUD .mmBottom{ display:flex; gap:8px; flex-wrap:wrap; padding: 8px 6px 2px; }
+    #minimapHUD .mmTop{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:4px 6px 8px}
+    #minimapHUD .mmTop b{letter-spacing:.9px;font-weight:950}
+    #minimapHUD .mmHint{color:rgba(255,255,255,.62);font-weight:850;font-size:11px}
+    #minimapHUD canvas{width:240px;height:240px;display:block;border-radius:18px}
+    #minimapHUD .mmBottom{display:flex;gap:8px;flex-wrap:wrap;padding:8px 6px 2px}
     #minimapHUD .mmChip{
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(0,0,0,.22);
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-weight:900;
-      font-size: 12px;
-      color: rgba(255,255,255,.78);
+      background:rgba(0,0,0,.22);
+      border-radius:999px;
+      padding:7px 10px;
+      font-weight:900;font-size:12px;
+      color:rgba(255,255,255,.78);
     }
 
+    /* Menu */
     #menu{
-      position:fixed; inset:0; z-index:80;
-      display:none; align-items:center; justify-content:center;
-      background: rgba(0,0,0,.45);
+      position:fixed;inset:0;z-index:80;
+      display:none;align-items:center;justify-content:center;
+      background:rgba(0,0,0,.45);
       backdrop-filter: blur(12px);
       padding:18px;
     }
     #menuCard{
-      width:min(520px, 94vw);
+      width:min(560px, 94vw);
       border-radius:26px;
-      background: rgba(0,0,0,.42);
+      background:rgba(0,0,0,.42);
       border:1px solid rgba(255,255,255,.12);
-      box-shadow: var(--shadow);
+      box-shadow:var(--shadow);
       padding:16px;
     }
-    #menuCard h2{ margin:6px 6px 10px; font-size:18px; letter-spacing:.2px; }
-    #menuCard p{ margin:0 6px 14px; color: rgba(255,255,255,.70); font-weight:750; line-height:1.3; }
-    .menuRow{ display:flex; gap:10px; flex-wrap:wrap; padding:6px; }
+    #menuCard h2{margin:6px 6px 10px;font-size:18px;letter-spacing:.2px}
+    #menuCard p{margin:0 6px 14px;color:rgba(255,255,255,.74);font-weight:750;line-height:1.35}
+    .menuRow{display:flex;gap:10px;flex-wrap:wrap;padding:6px}
     .menuBtn{
-      flex:1; min-width: 140px;
+      flex:1;min-width:150px;
       border:1px solid rgba(255,255,255,.14);
-      border-radius: 18px;
+      border-radius:18px;
       padding:12px 12px;
-      background: rgba(255,255,255,.08);
-      color: var(--fg);
+      background:rgba(255,255,255,.08);
+      color:var(--fg);
       font-weight:950;
       cursor:pointer;
     }
-    .menuBtn.primary{ background: rgba(255,255,255,.90); color:#070a08; border-color: rgba(255,255,255,.25); }
+    .menuBtn.primary{background:rgba(255,255,255,.92);color:#070a08;border-color:rgba(255,255,255,.25)}
+    .menuBtn.danger{background:rgba(255,90,90,.16);border-color:rgba(255,90,90,.35)}
+    .menuFine{padding:2px 6px 8px;color:rgba(255,255,255,.62);font-weight:750;font-size:12px;line-height:1.35}
 
-    /* Crash overlay */
-    #err{
-      position:fixed; left:18px; top:110px;
-      width:min(820px, calc(100vw - 36px));
-      background: rgba(255,0,0,.10);
-      border:1px solid rgba(255,90,90,.35);
-      border-radius: 18px;
-      padding:12px 14px;
-      z-index:999;
+    /* Mobile */
+    #mobileUI{
+      position:fixed;left:0;right:0;bottom:0;
+      padding:18px;
       display:none;
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:14px;
+      z-index:90;
+      pointer-events:none;
     }
-    #err b{ display:block; font-weight:950; margin-bottom:6px; }
-    #err pre{
-      margin:0; white-space:pre-wrap; word-break:break-word;
-      color: rgba(255,230,230,.95);
-      font-weight:850; font-size:12px; line-height:1.25;
-      max-height: 260px; overflow:auto;
+    #joy{
+      width:140px;height:140px;border-radius:999px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(10px);
+      position:relative;
+      pointer-events:auto;
+      touch-action:none;
+    }
+    #joyKnob{
+      width:56px;height:56px;border-radius:999px;
+      position:absolute;left:50%;top:50%;
+      transform:translate(-50%,-50%);
+      background:rgba(255,255,255,.88);
+      box-shadow: 0 18px 70px rgba(255,255,255,.12);
+    }
+    #useBtn{
+      pointer-events:auto;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(255,255,255,.92);
+      color:#070a08;
+      font-weight:950;
+      border-radius:18px;
+      padding:16px 18px;
+      min-width: 118px;
     }
 
-    @media (pointer:coarse), (max-width: 820px){
-      #minimapHUD{ display:none; }
+    @media (pointer:coarse), (max-width: 860px){
+      #mobileUI{display:flex}
+      #minimapHUD{display:none}
+      .brand small{max-width: 52vw}
     }
   </style>
 </head>
 
 <body>
   <canvas id="stage"></canvas>
-  <div class="film"></div>
 
   <header id="topbar">
     <div class="brand">
       <span class="seed"></span>
       <div>
         <b>Snack Packz</b>
-        <small>Click to lock • WASD move • Q/E turn • F enter • Esc menu</small>
+        <small id="subline">Click to lock • WASD move • Q/E turn • F enter • Esc menu</small>
       </div>
     </div>
+
     <div class="controls">
-      <button id="exitBtn" class="pill" type="button">Exit</button>
+      <button id="soundBtn" class="pill" type="button" aria-pressed="false">Sound: Off</button>
       <button id="qualityBtn" class="pill" type="button" aria-pressed="true">Quality: Ultra</button>
+      <button id="exitBtn" class="pill danger" type="button">Exit</button>
       <a class="pill cta" href="shop.html">Order</a>
     </div>
   </header>
 
   <div id="hint">
     <div class="k">Click to lock</div>
-    <div class="s">Aim at a totem → screen plays video. Walk up → F enters.</div>
+    <div class="s">Aim at a totem → it “wakes up”. Walk close → F enters.</div>
   </div>
 
   <div id="dock">
@@ -254,65 +237,59 @@
       <b id="dockTitle">Forest Clearing</b><br/>
       <small id="dockSub" style="color:rgba(255,255,255,.72);font-weight:750;">Find a totem.</small>
     </div>
-    <div class="chips">
+    <div class="chipRow">
       <span class="chip" id="fpsChip">FPS: --</span>
       <span class="chip" id="stateChip">Click to lock</span>
+      <span class="chip" id="zoneChip">Zone: Clearing</span>
     </div>
   </div>
 
   <div id="crosshair"></div>
 
-  <div id="minimapHUD">
+  <div id="minimapHUD" aria-hidden="true">
     <div class="mmTop">
       <b>MAP</b>
-      <span class="mmHint">Clearing boundaries.</span>
+      <span class="mmHint" id="mmHint">Clearing + terrain</span>
     </div>
-    <canvas id="mm" width="220" height="220"></canvas>
+    <canvas id="mm" width="240" height="240"></canvas>
     <div class="mmBottom">
       <span class="mmChip" id="mmPos">x 0.0 • z 0.0</span>
       <span class="mmChip" id="mmNear">Nearest: —</span>
+      <span class="mmChip" id="mmHead">N ↑</span>
     </div>
   </div>
 
-  <div id="menu">
+  <div id="mobileUI" aria-hidden="true">
+    <div id="joy"><div id="joyKnob"></div></div>
+    <button id="useBtn" type="button">USE</button>
+  </div>
+
+  <div id="menu" aria-hidden="true">
     <div id="menuCard">
       <h2>Pause Menu</h2>
       <p>Resume, reset, or leave the forest.</p>
       <div class="menuRow">
         <button id="resumeBtn" class="menuBtn primary" type="button">Resume</button>
-        <button id="resetBtn" class="menuBtn" type="button">Reset position</button>
-        <button id="leaveBtn" class="menuBtn" type="button">Leave game</button>
+        <button id="resetBtn" class="menuBtn" type="button">Reset to clearing</button>
+        <button id="panicBtn" class="menuBtn" type="button">Return to nearest totem</button>
+        <button id="leaveBtn" class="menuBtn danger" type="button">Leave game</button>
+      </div>
+      <div class="menuFine">
+        Tip: If you ever feel “lost”, hit <b>Esc</b> → <b>Return to nearest totem</b>. You cannot soft-lock.
       </div>
     </div>
   </div>
 
-  <div id="err">
-    <b>Crash reason</b>
-    <pre id="errText"></pre>
-  </div>
-
-  <script>
-    const errBox = document.getElementById("err");
-    const errText = document.getElementById("errText");
-    function showErr(msg){
-      errBox.style.display="block";
-      errText.textContent = String(msg || "Unknown error");
-    }
-    window.addEventListener("error",(e)=>{
-      showErr(`${e.message}\n${e.filename || ""}:${e.lineno || ""}:${e.colno || ""}`);
-    });
-    window.addEventListener("unhandledrejection",(e)=>{
-      showErr(`Unhandled rejection:\n${e.reason?.stack || e.reason?.message || e.reason || e}`);
-    });
-  </script>
-
   <script type="module">
-    import * as THREE from "three";
-    import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
-    import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-    import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-    import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-    import { FilmPass } from "three/addons/postprocessing/FilmPass.js";
+    // ✅ IMPORTANT: use full URLs so GitHub Pages never breaks imports
+    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+    import { PointerLockControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/PointerLockControls.js";
+    import { EffectComposer } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/EffectComposer.js";
+    import { RenderPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/RenderPass.js";
+    import { UnrealBloomPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/UnrealBloomPass.js";
+    import { FilmPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/FilmPass.js";
+    import { ShaderPass } from "https://unpkg.com/three@0.160.0/examples/jsm/postprocessing/ShaderPass.js";
+    import { VignetteShader } from "https://unpkg.com/three@0.160.0/examples/jsm/shaders/VignetteShader.js";
 
     // ===== Packs =====
     const PACKS = [
@@ -325,56 +302,60 @@
 
     // ===== UI =====
     const canvas = document.getElementById("stage");
-    const exitBtn = document.getElementById("exitBtn");
     const qualityBtn = document.getElementById("qualityBtn");
+    const soundBtn = document.getElementById("soundBtn");
+    const exitBtn = document.getElementById("exitBtn");
+
     const dockTitle = document.getElementById("dockTitle");
-    const dockSub = document.getElementById("dockSub");
-    const fpsChip = document.getElementById("fpsChip");
+    const dockSub   = document.getElementById("dockSub");
+    const fpsChip   = document.getElementById("fpsChip");
     const stateChip = document.getElementById("stateChip");
+    const zoneChip  = document.getElementById("zoneChip");
 
     const menu = document.getElementById("menu");
     const resumeBtn = document.getElementById("resumeBtn");
-    const resetBtn = document.getElementById("resetBtn");
-    const leaveBtn = document.getElementById("leaveBtn");
+    const resetBtn  = document.getElementById("resetBtn");
+    const panicBtn  = document.getElementById("panicBtn");
+    const leaveBtn  = document.getElementById("leaveBtn");
 
     const mm = document.getElementById("mm");
     const mmCtx = mm.getContext("2d");
     const mmPos = document.getElementById("mmPos");
     const mmNear = document.getElementById("mmNear");
+    const mmHead = document.getElementById("mmHead");
+    const mmHint = document.getElementById("mmHint");
 
     const coarse = matchMedia && matchMedia("(pointer: coarse)").matches;
     const reduce = matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const mobile = coarse || innerWidth < 820;
+    const mobile = coarse || innerWidth < 860;
 
-    // ===== World bounds =====
-    const BOUNDS = { minX:-55, maxX:55, minZ:-92, maxZ:26 };
+    const joy = document.getElementById("joy");
+    const joyKnob = document.getElementById("joyKnob");
+    const useBtn = document.getElementById("useBtn");
+    document.getElementById("mobileUI").style.display = mobile ? "flex" : "none";
 
-    // ===== Quality =====
-    const QUALITY = {
-      ultra: !mobile && !reduce,
-      set(v){
-        this.ultra = v;
-        qualityBtn.setAttribute("aria-pressed", String(v));
-        qualityBtn.textContent = `Quality: ${v ? "Ultra" : "Lite"}`;
-        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, v ? 2 : 1.25));
-        scene.fog.near = v ? 28 : 18;
-        scene.fog.far  = v ? 92 : 60;
+    // ===== Safety / crash overlay (so you never stare at black again) =====
+    function crashBox(err){
+      console.error(err);
+      const box = document.createElement("div");
+      box.style.cssText = `
+        position:fixed;left:18px;top:120px;z-index:9999;max-width:min(720px,92vw);
+        padding:14px 14px;border-radius:18px;
+        background:rgba(90,0,0,.45);border:1px solid rgba(255,120,120,.40);
+        color:rgba(255,255,255,.92);font-weight:850;backdrop-filter: blur(12px);
+        box-shadow: 0 30px 110px rgba(0,0,0,.70);
+      `;
+      box.innerHTML = `<b>Crash reason</b><div style="margin-top:6px;color:rgba(255,255,255,.80);font-weight:750;line-height:1.35">${String(err).replaceAll("<","&lt;")}</div>`;
+      document.body.appendChild(box);
+    }
+    window.addEventListener("error", (e)=> crashBox(e.error || e.message));
+    window.addEventListener("unhandledrejection", (e)=> crashBox(e.reason || "Unhandled promise rejection"));
 
-        // post FX intensity
-        bloomPass.strength = v ? 0.45 : 0.20;
-        bloomPass.radius   = v ? 0.35 : 0.25;
-        bloomPass.threshold= v ? 0.20 : 0.30;
-       const fu = filmPass?.uniforms || filmPass?.material?.uniforms;
-if (fu?.nIntensity) fu.nIntensity.value = v ? 0.22 : 0.12;
-if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
+    // ===== World bounds (YOU CANNOT GET LOST) =====
+    const BOUNDS = { minX:-70, maxX:70, minZ:-140, maxZ:30 };
+    const CLEARING = { x:0, z:0, r:34 }; // safe zone radius
 
-
-        // world density
-        targetTreeCount = v ? 1500 : 820;
-      }
-    };
-
-    // ===== Noise =====
+    // ===== Noise (terrain) =====
     function hash2(x,z){
       let n = x * 374761393 + z * 668265263;
       n = (n ^ (n >> 13)) * 1274126177;
@@ -402,57 +383,37 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
     }
     function heightAt(x,z){
       const base = fbm(x,z);
-      const r = Math.sqrt(x*x + (z+18)*(z+18));
-      const clearing = Math.max(0, 1 - (r/48));
-      const flat = base * (1 - clearing*0.90);
+      const r = Math.sqrt((x-CLEARING.x)**2 + (z-(CLEARING.z-18))**2);
+      const clearing = Math.max(0, 1 - (r/52));
+      const flat = base * (1 - clearing*0.92);
       const micro = fbm(x*1.9, z*1.9) * 0.14;
-      return flat*4.4 + micro;
+      return flat*5.0 + micro;
     }
 
-    // ===== Three.js =====
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    // ===== Three setup =====
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, powerPreference:"high-performance" });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setSize(innerWidth, innerHeight);
-    renderer.setClearColor(0x020302, 1);
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, QUALITY.ultra ? 2 : 1.25));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, mobile ? 1.35 : 2));
 
     const scene = new THREE.Scene();
-    scene.fog = new THREE.Fog(0x050705, QUALITY.ultra ? 28 : 18, QUALITY.ultra ? 92 : 60);
+    scene.fog = new THREE.Fog(0x060806, mobile ? 34 : 42, mobile ? 130 : 170);
 
-    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.08, 420);
-    camera.position.set(0, 2.2, 0);
+    const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.08, 520);
+    camera.position.set(0, 2.15, 0);
 
     const controls = new PointerLockControls(camera, document.body);
-    const clock = new THREE.Clock();
 
-    // Lights
-    scene.add(new THREE.HemisphereLight(0xbfe7c0, 0x0b0d0b, 0.78));
-    const sun = new THREE.DirectionalLight(0xffffff, 0.72);
-    sun.position.set(-12, 18, 12);
+    // ===== Lights (Steam-feel: readable, not horror-black) =====
+    const hemi = new THREE.HemisphereLight(0xdfffe0, 0x1b241b, 1.15);
+    scene.add(hemi);
+
+    const sun = new THREE.DirectionalLight(0xffffff, 0.95);
+    sun.position.set(-16, 22, 10);
+    sun.castShadow = false;
     scene.add(sun);
 
-    // ===== Post-processing (Steam vibe) =====
-    const composer = new EffectComposer(renderer);
-    const renderPass = new RenderPass(scene, camera);
-    composer.addPass(renderPass);
-
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(innerWidth, innerHeight),
-      QUALITY.ultra ? 0.45 : 0.20,
-      QUALITY.ultra ? 0.35 : 0.25,
-      QUALITY.ultra ? 0.20 : 0.30
-    );
-    composer.addPass(bloomPass);
-
-    const filmPass = new FilmPass(
-      QUALITY.ultra ? 0.35 : 0.20,  // noise
-      QUALITY.ultra ? 0.22 : 0.12,  // scanlines
-      648,                          // scanline count
-      false
-    );
-    composer.addPass(filmPass);
-
-    // ===== Cinema sky video =====
+    // ===== Sky dome (forest.mp4) =====
     const skyVideo = document.createElement("video");
     skyVideo.src = "assets/forest.mp4";
     skyVideo.loop = true;
@@ -465,120 +426,156 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
     skyTex.minFilter = THREE.LinearFilter;
     skyTex.magFilter = THREE.LinearFilter;
 
-    const sky = new THREE.Mesh(
-      new THREE.SphereGeometry(220, 48, 32),
-      new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide })
-    );
+    const skyGeo = new THREE.SphereGeometry(280, 56, 36);
+    const skyMat = new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide });
+    const sky = new THREE.Mesh(skyGeo, skyMat);
     scene.add(sky);
 
-    const skyGrade = new THREE.Mesh(
-      new THREE.SphereGeometry(218, 32, 20),
-      new THREE.MeshBasicMaterial({ color: 0x050705, transparent:true, opacity:0.38, side: THREE.BackSide })
+    // Grade shell (soft contrast)
+    const grade = new THREE.Mesh(
+      new THREE.SphereGeometry(279, 30, 20),
+      new THREE.MeshBasicMaterial({ color:0x070907, transparent:true, opacity:0.18, side:THREE.BackSide })
     );
-    scene.add(skyGrade);
+    scene.add(grade);
 
     // ===== Terrain =====
-    const size = 180;
-    const seg = QUALITY.ultra ? 240 : 150;
-    const terrainGeo = new THREE.PlaneGeometry(size, size, seg, seg);
+    const terrainSize = 220;
+    const seg = mobile ? 150 : 240;
+    const terrainGeo = new THREE.PlaneGeometry(terrainSize, terrainSize, seg, seg);
     terrainGeo.rotateX(-Math.PI/2);
 
     const pos = terrainGeo.attributes.position;
-    const colors = [];
+    const cols = [];
     for(let i=0;i<pos.count;i++){
       const x = pos.getX(i);
       const z = pos.getZ(i);
       const h = heightAt(x,z);
       pos.setY(i, h);
 
-      const moss  = THREE.MathUtils.clamp((h+2)/6, 0, 1);
+      const moss = THREE.MathUtils.clamp((h+2)/7, 0, 1);
       const shade = THREE.MathUtils.clamp(0.55 + moss*0.45, 0, 1);
 
-      const g = 0.18 + shade*0.56;
-      const r = 0.10 + shade*0.22;
-      const b = 0.10 + shade*0.18;
-      colors.push(r,g,b);
+      // less radioactive green (Steam demo vibe)
+      const g = 0.22 + shade*0.42;
+      const r = 0.11 + shade*0.22;
+      const b = 0.11 + shade*0.20;
+      cols.push(r,g,b);
     }
-    terrainGeo.setAttribute("color", new THREE.Float32BufferAttribute(colors,3));
+    terrainGeo.setAttribute("color", new THREE.Float32BufferAttribute(cols, 3));
     terrainGeo.computeVertexNormals();
 
-    const terrain = new THREE.Mesh(
-      terrainGeo,
-      new THREE.MeshStandardMaterial({ vertexColors:true, roughness:1.0, metalness:0.0 })
-    );
+    const terrainMat = new THREE.MeshStandardMaterial({
+      vertexColors:true,
+      roughness: 1.0,
+      metalness: 0.0
+    });
+    const terrain = new THREE.Mesh(terrainGeo, terrainMat);
     scene.add(terrain);
 
-    // ===== Trees (instanced) =====
-    let targetTreeCount = QUALITY.ultra ? 1500 : 820;
-    const treeCount = 1500; // max buffer, we can "fade" by not placing all on Lite
+    // ===== Post FX (bulletproof) =====
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
 
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.45, 0.35, 0.20);
+    composer.addPass(bloomPass);
+
+    const filmPass = new FilmPass(0.20, 0.35, 620, false);
+    composer.addPass(filmPass);
+
+    const vignettePass = new ShaderPass(VignetteShader);
+    // bulletproof uniforms access
+    const vu = vignettePass.uniforms || vignettePass.material?.uniforms;
+    if(vu?.offset)   vu.offset.value = 1.05;
+    if(vu?.darkness) vu.darkness.value = 1.25;
+    composer.addPass(vignettePass);
+
+    // ===== Quality Toggle =====
+    const QUALITY = {
+      ultra: !mobile && !reduce,
+      set(v){
+        this.ultra = !!v;
+        qualityBtn.setAttribute("aria-pressed", String(this.ultra));
+        qualityBtn.textContent = `Quality: ${this.ultra ? "Ultra" : "Lite"}`;
+
+        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, this.ultra ? 2 : (mobile ? 1.25 : 1.5)));
+
+        // Fog readability
+        scene.fog.near = this.ultra ? 42 : 34;
+        scene.fog.far  = this.ultra ? 175 : 140;
+
+        // Bloom / Film (safe even if passes change)
+        try{
+          if(bloomPass){
+            bloomPass.strength  = this.ultra ? 0.52 : 0.26;
+            bloomPass.radius    = this.ultra ? 0.36 : 0.25;
+            bloomPass.threshold = this.ultra ? 0.18 : 0.26;
+          }
+          const fu = filmPass?.uniforms || filmPass?.material?.uniforms;
+          if(fu?.nIntensity) fu.nIntensity.value = this.ultra ? 0.20 : 0.10;
+          if(fu?.sIntensity) fu.sIntensity.value = this.ultra ? 0.30 : 0.16;
+          if(fu?.grayscale)  fu.grayscale.value  = 0;
+        }catch(e){
+          console.warn("PostFX tweak skipped:", e);
+        }
+      }
+    };
+
+    // ===== Trees (instanced) =====
+    const treeCount = QUALITY.ultra ? 1400 : 760;
     const trunkGeo = new THREE.CylinderGeometry(0.10, 0.16, 2.2, 6);
-    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x2a1b12, roughness: 1.0 });
-    const leafGeo  = new THREE.ConeGeometry(0.9, 2.6, 7);
-    const leafMat  = new THREE.MeshStandardMaterial({ color: 0x0b2a12, roughness: 1.0 });
+    const trunkMat = new THREE.MeshStandardMaterial({ color:0x2a1b12, roughness:1.0 });
+
+    const leafGeo = new THREE.ConeGeometry(0.9, 2.6, 7);
+    const leafMat = new THREE.MeshStandardMaterial({ color:0x0b2a12, roughness:1.0 });
 
     const trunks = new THREE.InstancedMesh(trunkGeo, trunkMat, treeCount);
-    const leaves = new THREE.InstancedMesh(leafGeo,  leafMat,  treeCount);
-    scene.add(trunks, leaves);
+    const leaves = new THREE.InstancedMesh(leafGeo, leafMat, treeCount);
 
     const dummy = new THREE.Object3D();
     const treeMeta = [];
     const treeColliders = [];
 
     function inClearing(x,z){
-      const r = Math.sqrt(x*x + (z+18)*(z+18));
-      return r < 30;
+      const dx = x - CLEARING.x;
+      const dz = z - (CLEARING.z-18);
+      return Math.hypot(dx,dz) < (CLEARING.r - 4);
     }
 
-    function rebuildTrees(){
-      treeMeta.length = 0;
-      treeColliders.length = 0;
+    let ti=0;
+    while(ti < treeCount){
+      const x = THREE.MathUtils.randFloatSpread(160);
+      const z = THREE.MathUtils.randFloatSpread(200) - 40;
 
-      let placed = 0;
-      let tries = 0;
+      if(inClearing(x,z)) continue;
+      if(x < BOUNDS.minX-10 || x > BOUNDS.maxX+10 || z < BOUNDS.minZ-10 || z > BOUNDS.maxZ+10) continue;
 
-      while(placed < targetTreeCount && tries < 500000){
-        tries++;
-        const x = THREE.MathUtils.randFloatSpread(135);
-        const z = THREE.MathUtils.randFloatSpread(135);
-        if(inClearing(x,z)) continue;
+      const y = heightAt(x,z);
+      const s = THREE.MathUtils.randFloat(0.85, 1.70);
+      const rot = THREE.MathUtils.randFloat(0, Math.PI*2);
+      const phase = (x*0.11 + z*0.07);
 
-        const y = heightAt(x,z);
-        const s = THREE.MathUtils.randFloat(0.85, 1.70);
-        const rot = THREE.MathUtils.randFloat(0, Math.PI*2);
+      dummy.position.set(x, y + 1.1*s, z);
+      dummy.rotation.set(0, rot, 0);
+      dummy.scale.set(s,s,s);
+      dummy.updateMatrix();
+      trunks.setMatrixAt(ti, dummy.matrix);
 
-        dummy.position.set(x, y+1.1*s, z);
-        dummy.rotation.set(0, rot, 0);
-        dummy.scale.set(s,s,s);
-        dummy.updateMatrix();
-        trunks.setMatrixAt(placed, dummy.matrix);
+      dummy.position.set(x, y + 2.55*s, z);
+      dummy.rotation.set(0, rot, 0);
+      dummy.scale.set(s,s,s);
+      dummy.updateMatrix();
+      leaves.setMatrixAt(ti, dummy.matrix);
 
-        dummy.position.set(x, y+2.55*s, z);
-        dummy.rotation.set(0, rot, 0);
-        dummy.scale.set(s,s,s);
-        dummy.updateMatrix();
-        leaves.setMatrixAt(placed, dummy.matrix);
+      treeMeta[ti] = { x,z,s,rot,phase };
 
-        treeMeta[placed] = { x, z, s, rot, phase: (x*0.11 + z*0.07) };
-
-        if(Math.abs(x) < 70 && z > -120 && z < 60){
-          treeColliders.push({x, z, r: 0.65*s});
-        }
-
-        placed++;
+      // colliders only near play area (performance)
+      if(Math.abs(x) < 80 && z > (BOUNDS.minZ-10) && z < (BOUNDS.maxZ+10)){
+        treeColliders.push({ x,z, r: 0.70*s });
       }
-
-      // hide unused instances
-      const hide = new THREE.Matrix4().makeScale(0,0,0);
-      for(let i=placed;i<treeCount;i++){
-        trunks.setMatrixAt(i, hide);
-        leaves.setMatrixAt(i, hide);
-      }
-
-      trunks.instanceMatrix.needsUpdate = true;
-      leaves.instanceMatrix.needsUpdate = true;
+      ti++;
     }
-    rebuildTrees();
+
+    scene.add(trunks, leaves);
 
     // ===== Totems =====
     const loader = new THREE.TextureLoader();
@@ -597,119 +594,302 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
     function makeTotem(p, i, x, z){
       const group = new THREE.Group();
       const y = heightAt(x,z);
-      group.position.set(x, y+1.75, z);
+      group.position.set(x, y + 1.85, z);
 
+      // Frame
       const frame = new THREE.Mesh(
-        new THREE.BoxGeometry(2.05, 2.9, 0.12),
-        new THREE.MeshStandardMaterial({ color: 0x0c0f0c, roughness: 0.55 })
+        new THREE.BoxGeometry(2.08, 2.95, 0.14),
+        new THREE.MeshStandardMaterial({ color:0x0c0f0c, roughness:0.55 })
       );
       group.add(frame);
 
+      // Poster + Video texture
       const posterTex = loader.load(p.poster);
       posterTex.colorSpace = THREE.SRGBColorSpace;
 
-      const videoTex = new THREE.VideoTexture(packVideos[i]);
-      videoTex.colorSpace = THREE.SRGBColorSpace;
-      videoTex.minFilter = THREE.LinearFilter;
-      videoTex.magFilter = THREE.LinearFilter;
+      const vidTex = new THREE.VideoTexture(packVideos[i]);
+      vidTex.colorSpace = THREE.SRGBColorSpace;
+      vidTex.minFilter = THREE.LinearFilter;
+      vidTex.magFilter = THREE.LinearFilter;
 
       const screenMat = new THREE.MeshStandardMaterial({
         map: posterTex,
-        roughness: 0.85,
+        roughness: 0.90,
         emissive: new THREE.Color(0x0c1a0c),
-        emissiveIntensity: 0.36
+        emissiveIntensity: 0.34
       });
 
-      const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.78, 2.50), screenMat);
-      screen.position.set(0,0,0.065);
+      const screen = new THREE.Mesh(new THREE.PlaneGeometry(1.80, 2.52), screenMat);
+      screen.position.set(0,0,0.075);
       group.add(screen);
 
       const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(0.32, 0.06, 10, 22),
-        new THREE.MeshBasicMaterial({ color: 0xcfff8c })
+        new THREE.TorusGeometry(0.34, 0.07, 10, 22),
+        new THREE.MeshBasicMaterial({ color:0xcfff8c })
       );
-      ring.position.set(-0.70, 1.10, 0.09);
+      ring.position.set(-0.72, 1.12, 0.095);
       group.add(ring);
 
+      // tiny ground glow (surprise #1: it pulses with your heartbeat when close)
+      const glow = new THREE.Mesh(
+        new THREE.CircleGeometry(1.35, 28),
+        new THREE.MeshBasicMaterial({ color:0xcfff8c, transparent:true, opacity:0.07 })
+      );
+      glow.rotateX(-Math.PI/2);
+      glow.position.set(0, -1.85, 0);
+      group.add(glow);
+
+      const plate = new THREE.Mesh(
+        new THREE.PlaneGeometry(2.22, 0.62),
+        new THREE.MeshBasicMaterial({ color:0x0a0f0a, transparent:true, opacity:0.55 })
+      );
+      plate.position.set(0, -1.78, 0.08);
+      group.add(plate);
+
       scene.add(group);
-      totems.push({ p, i, x, z, group, screen, screenMat, posterTex, videoTex, ring });
+
+      totems.push({
+        p,i,x,z, group, screen, screenMat,
+        posterTex, vidTex, ring, glow,
+        awake: 0
+      });
     }
 
     const totemPositions = [
-      {x:-14, z:-26},
-      {x: 14, z:-26},
-      {x:-9,  z:-40},
-      {x:  9, z:-40},
-      {x:  0, z:-32}
+      {x:-16, z:-30},
+      {x: 16, z:-30},
+      {x:-10, z:-46},
+      {x: 10, z:-46},
+      {x:  0, z:-36}
     ];
     PACKS.forEach((p,i)=> makeTotem(p,i, totemPositions[i].x, totemPositions[i].z));
 
-    // ===== Input =====
-    const keys = {w:false,a:false,s:false,d:false,q:false,e:false,shift:false};
+    // ===== Fireflies =====
+    const fireflyTarget = QUALITY.ultra ? 220 : 120;
+    const fireflies = [];
+    const flyGeo = new THREE.SphereGeometry(0.03, 8, 8);
+    const flyMat = new THREE.MeshBasicMaterial({ color:0xcfff8c });
+
+    for(let i=0;i<fireflyTarget;i++){
+      const m = new THREE.Mesh(flyGeo, flyMat);
+      const x = THREE.MathUtils.randFloat(BOUNDS.minX, BOUNDS.maxX);
+      const z = THREE.MathUtils.randFloat(BOUNDS.minZ, BOUNDS.maxZ);
+      const y = heightAt(x,z) + THREE.MathUtils.randFloat(0.8, 3.8);
+      m.position.set(x,y,z);
+      m.userData = {
+        base: m.position.clone(),
+        phase: Math.random()*1000,
+        speed: THREE.MathUtils.randFloat(0.35, 0.95),
+        amp: THREE.MathUtils.randFloat(0.18, 0.55)
+      };
+      scene.add(m);
+      fireflies.push(m);
+    }
+
+    // ===== Audio (no extra files needed) =====
+    let audioOn = false;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    let actx = null;
+    let ambGain = null;
+    let windOsc = null;
+
+    function startAudio(){
+      if(audioOn) return;
+      audioOn = true;
+      soundBtn.setAttribute("aria-pressed","true");
+      soundBtn.textContent = "Sound: On";
+
+      actx = actx || new AC();
+      ambGain = actx.createGain();
+      ambGain.gain.value = 0.0;
+      ambGain.connect(actx.destination);
+
+      // very soft “forest air” (procedural)
+      windOsc = actx.createOscillator();
+      const filter = actx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 420;
+      const windGain = actx.createGain();
+      windGain.gain.value = 0.02;
+
+      windOsc.type = "triangle";
+      windOsc.frequency.value = 34;
+
+      windOsc.connect(filter);
+      filter.connect(windGain);
+      windGain.connect(ambGain);
+      windOsc.start();
+
+      // fade in
+      ambGain.gain.setTargetAtTime(0.22, actx.currentTime, 0.25);
+    }
+
+    function stopAudio(){
+      audioOn = false;
+      soundBtn.setAttribute("aria-pressed","false");
+      soundBtn.textContent = "Sound: Off";
+      try{
+        ambGain && ambGain.gain.setTargetAtTime(0.0, actx.currentTime, 0.15);
+      }catch{}
+    }
+
+    soundBtn.addEventListener("click", ()=>{
+      if(!audioOn){
+        startAudio();
+        // video audio stays muted (premium). We keep your “cinema” vibe clean.
+      }else{
+        stopAudio();
+      }
+    });
+
+    // ===== Controls + input =====
+    const keys = { w:false,a:false,s:false,d:false,q:false,e:false,shift:false };
     addEventListener("keydown",(ev)=>{
       const k = ev.key.toLowerCase();
-      if(k==="w") keys.w=true;
-      if(k==="a") keys.a=true;
-      if(k==="s") keys.s=true;
-      if(k==="d") keys.d=true;
-      if(k==="q") keys.q=true;
-      if(k==="e") keys.e=true;
-      if(k==="shift") keys.shift=true;
-
+      if(k in keys) keys[k]=true;
       if(k==="f") tryEnterFocused();
-      if(k==="escape") openMenu();
-      if(k==="r") resetPosition();
+      if(k==="escape") toggleMenu(true);
+      if(k==="r") resetToClearing();
     });
     addEventListener("keyup",(ev)=>{
       const k = ev.key.toLowerCase();
-      if(k==="w") keys.w=false;
-      if(k==="a") keys.a=false;
-      if(k==="s") keys.s=false;
-      if(k==="d") keys.d=false;
-      if(k==="q") keys.q=false;
-      if(k==="e") keys.e=false;
-      if(k==="shift") keys.shift=false;
+      if(k in keys) keys[k]=false;
     });
 
-    // Start media after first gesture (browser rule)
-    let startedMedia=false;
-    function startMedia(){
+    // Mobile joystick
+    const joyState = { active:false, id:null, cx:0, cy:0, dx:0, dy:0 };
+    if(joy){
+      joy.addEventListener("pointerdown",(e)=>{
+        joyState.active=true; joyState.id=e.pointerId;
+        joy.setPointerCapture(e.pointerId);
+        const r=joy.getBoundingClientRect();
+        joyState.cx=r.left+r.width/2; joyState.cy=r.top+r.height/2;
+      });
+      joy.addEventListener("pointermove",(e)=>{
+        if(!joyState.active || e.pointerId!==joyState.id) return;
+        const max=46;
+        let dx=e.clientX-joyState.cx, dy=e.clientY-joyState.cy;
+        const len=Math.hypot(dx,dy)||1;
+        if(len>max){ dx=dx/len*max; dy=dy/len*max; }
+        joyState.dx=dx/max; joyState.dy=dy/max;
+        joyKnob.style.transform=`translate(${dx}px,${dy}px) translate(-50%,-50%)`;
+      });
+      const end=()=>{
+        joyState.active=false; joyState.dx=0; joyState.dy=0;
+        joyKnob.style.transform="translate(-50%,-50%)";
+      };
+      joy.addEventListener("pointerup",end);
+      joy.addEventListener("pointercancel",end);
+    }
+
+    // Mobile look
+    let look = { on:false, x:0, y:0 };
+    addEventListener("pointerdown",(e)=>{
+      if(!mobile) return;
+      if(e.target===joy || e.target===joyKnob || e.target===useBtn) return;
+      look.on=true; look.x=e.clientX; look.y=e.clientY;
+    },{passive:true});
+    addEventListener("pointermove",(e)=>{
+      if(!mobile || !look.on) return;
+      const dx=e.clientX-look.x, dy=e.clientY-look.y;
+      look.x=e.clientX; look.y=e.clientY;
+      camera.rotation.y -= dx*0.0030;
+      camera.rotation.x -= dy*0.0020;
+      camera.rotation.x = THREE.MathUtils.clamp(camera.rotation.x, -0.80, 0.55);
+    },{passive:true});
+    addEventListener("pointerup",()=>{ look.on=false; },{passive:true});
+    useBtn.addEventListener("click", tryEnterFocused);
+
+    // Pointer lock entry
+    let startedMedia = false;
+    function startMediaOnce(){
       if(startedMedia) return;
-      startedMedia=true;
+      startedMedia = true;
       skyVideo.play().catch(()=>{});
       for(const v of packVideos) v.play().catch(()=>{});
     }
 
     addEventListener("click",(e)=>{
-      const t=e.target;
-      if(t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#minimapHUD") || t.closest("#menu"))) return;
-      startMedia();
+      const t = e.target;
+      if(t.closest && (t.closest("#topbar") || t.closest("#dock") || t.closest("#minimapHUD") || t.closest("#menu") || t.closest("#mobileUI"))) return;
       if(!mobile) controls.lock();
+      startMediaOnce();
+      if(!audioOn && actx){} // no-op
     });
 
     controls.addEventListener("lock", ()=> stateChip.textContent = "WASD • Q/E • F");
     controls.addEventListener("unlock", ()=> stateChip.textContent = "Click to lock");
 
     // ===== Menu =====
-    function openMenu(){
-      menu.style.display="flex";
-      try{ controls.unlock(); }catch{}
+    function toggleMenu(open){
+      menu.style.display = open ? "flex" : "none";
+      if(open){
+        try{ controls.unlock(); }catch{}
+      }else{
+        if(!mobile) controls.lock();
+      }
     }
-    function closeMenu(){
-      menu.style.display="none";
-      if(!mobile) controls.lock();
-    }
-    exitBtn.addEventListener("click", openMenu);
-    resumeBtn.addEventListener("click", closeMenu);
-    resetBtn.addEventListener("click", ()=>{ resetPosition(); closeMenu(); });
-    leaveBtn.addEventListener("click", ()=>{ location.href="shop.html"; });
+    exitBtn.addEventListener("click", ()=> toggleMenu(true));
+    resumeBtn.addEventListener("click", ()=> toggleMenu(false));
+    leaveBtn.addEventListener("click", ()=> location.href="shop.html");
+    resetBtn.addEventListener("click", ()=>{ resetToClearing(); toggleMenu(false); });
+    panicBtn.addEventListener("click", ()=>{ teleportToNearestTotem(); toggleMenu(false); });
 
-    // Quality toggle
-    qualityBtn.addEventListener("click", ()=> {
-      QUALITY.set(!QUALITY.ultra);
-      rebuildTrees();
-    });
-    QUALITY.set(QUALITY.ultra);
+    // ===== Movement (Steam-feel) =====
+    const clock = new THREE.Clock();
+    const up = new THREE.Vector3(0,1,0);
+    const forward = new THREE.Vector3();
+    const right = new THREE.Vector3();
+    const wish = new THREE.Vector3();
+    const vel = new THREE.Vector3();   // velocity on XZ plane
+    let bob = 0;
+    let baseFov = 72;
+
+    function clampBoundsXZ(p){
+      p.x = THREE.MathUtils.clamp(p.x, BOUNDS.minX, BOUNDS.maxX);
+      p.z = THREE.MathUtils.clamp(p.z, BOUNDS.minZ, BOUNDS.maxZ);
+    }
+    function resolveTreeCollisions(p){
+      for(let i=0;i<treeColliders.length;i++){
+        const c = treeColliders[i];
+        const dx = p.x - c.x;
+        const dz = p.z - c.z;
+        const d = Math.hypot(dx,dz);
+        if(d > 0.0001 && d < c.r){
+          const push = (c.r - d);
+          p.x += (dx / d) * push;
+          p.z += (dz / d) * push;
+        }
+      }
+    }
+    function snapToGround(p){
+      p.y = heightAt(p.x, p.z) + 2.15;
+    }
+
+    function resetToClearing(){
+      camera.position.set(CLEARING.x, heightAt(CLEARING.x, CLEARING.z) + 2.15, CLEARING.z);
+      vel.set(0,0,0);
+      dockTitle.textContent = "Forest Clearing";
+      dockSub.textContent = "Find a totem.";
+    }
+
+    function teleportToNearestTotem(){
+      let best = { i:-1, d:1e9 };
+      for(let i=0;i<totems.length;i++){
+        const t=totems[i];
+        const d=Math.hypot(t.x-camera.position.x, t.z-camera.position.z);
+        if(d<best.d) best={i,d};
+      }
+      if(best.i>=0){
+        const t = totems[best.i];
+        camera.position.set(t.x, heightAt(t.x,t.z)+2.15, t.z+4.6);
+        vel.set(0,0,0);
+      }else{
+        resetToClearing();
+      }
+    }
+
+    resetToClearing();
 
     // ===== Focus / raycast =====
     const raycaster = new THREE.Raycaster();
@@ -718,11 +898,12 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
     function updateFocus(){
       focused = -1;
       raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
-      const objects = totems.map(t=>t.screen);
-      const hits = raycaster.intersectObjects(objects, false);
+      const screens = totems.map(t=>t.screen);
+      const hits = raycaster.intersectObjects(screens, false);
       if(hits.length){
-        const idx = objects.indexOf(hits[0].object);
-        if(idx >= 0) focused = idx;
+        const obj = hits[0].object;
+        const idx = screens.indexOf(obj);
+        if(idx>=0) focused = idx;
       }
     }
 
@@ -730,66 +911,124 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
       if(focused < 0) return;
       const t = totems[focused];
       const d = Math.hypot(camera.position.x - t.x, camera.position.z - t.z);
-      if(d < 4.4) location.href = t.p.page;
-      else dockSub.textContent = `Walk closer (${d.toFixed(1)}m)`;
+      if(d < 4.8){
+        location.href = t.p.page;
+      }else{
+        dockSub.textContent = `Walk closer (${d.toFixed(1)}m)`;
+      }
     }
 
-    // ===== Physics =====
-    function clampBounds(pos){
-      pos.x = THREE.MathUtils.clamp(pos.x, BOUNDS.minX, BOUNDS.maxX);
-      pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ);
-    }
-    function resolveTreeCollisions(pos){
-      for(let i=0;i<treeColliders.length;i++){
-        const c = treeColliders[i];
-        const dx = pos.x - c.x;
-        const dz = pos.z - c.z;
-        const d = Math.hypot(dx,dz);
-        if(d > 0.0001 && d < c.r){
-          const push = (c.r - d);
-          pos.x += (dx / d) * push;
-          pos.z += (dz / d) * push;
+    // ===== Totem behaviour (billboard + “wake up”) =====
+    function updateTotems(time){
+      for(let i=0;i<totems.length;i++){
+        const t = totems[i];
+
+        // face you (billboard)
+        t.group.lookAt(camera.position.x, t.group.position.y, camera.position.z);
+
+        // distance-based “awake”
+        const d = Math.hypot(camera.position.x - t.x, camera.position.z - t.z);
+        const targetAwake = (i===focused || d < 18) ? 1 : 0;
+        t.awake += (targetAwake - t.awake) * 0.08;
+
+        // ring pulse (smoother / premium)
+        const pulse = 0.5 + 0.5*Math.sin(time*0.0016 + i);
+        const ringS = 1 + pulse*0.10 + t.awake*0.18;
+        t.ring.scale.setScalar(ringS);
+
+        // glow “heartbeat” surprise when close
+        const heart = 0.5 + 0.5*Math.sin(time*0.0042);
+        t.glow.material.opacity = 0.04 + t.awake*0.10 + (d<7 ? heart*0.05 : 0);
+
+        // aim-to-play: swap poster→video only when focused (keeps perf + looks premium)
+        if(i === focused){
+          if(t.screenMat.map !== t.vidTex){
+            t.screenMat.map = t.vidTex;
+            t.screenMat.needsUpdate = true;
+          }
+          t.screenMat.emissiveIntensity = 0.58;
+        }else{
+          if(t.screenMat.map !== t.posterTex){
+            t.screenMat.map = t.posterTex;
+            t.screenMat.needsUpdate = true;
+          }
+          t.screenMat.emissiveIntensity = 0.34 + t.awake*0.08;
         }
       }
     }
 
-    // ===== Steam-feel movement (Upgrade Pack 1) =====
-    const vel = new THREE.Vector3(0,0,0);
-    const dir = new THREE.Vector3();
-    const forward = new THREE.Vector3();
-    const right = new THREE.Vector3();
-    const up = new THREE.Vector3(0,1,0);
+    // ===== Tree sway (cheap but insane quality) =====
+    const m4 = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const v3 = new THREE.Vector3();
+    const s3 = new THREE.Vector3();
+    let swayEvery = QUALITY.ultra ? 2 : 4;
 
-    let yawVel = 0;
-    let bobPhase = 0;
+    function swayTrees(time, frame){
+      if(frame % swayEvery !== 0) return;
+      const step = QUALITY.ultra ? 3 : 5;
 
-    function groundY(x,z){ return heightAt(x,z); }
+      for(let i=0;i<treeMeta.length;i+=step){
+        const meta = treeMeta[i];
+        if(!meta) continue;
 
-    function resetPosition(){
-      camera.position.set(0, groundY(0,0) + 2.2, 0);
-      vel.set(0,0,0);
-      yawVel = 0;
-      bobPhase = 0;
-      dockTitle.textContent = "Forest Clearing";
-      dockSub.textContent = "Find a totem.";
+        const w  = Math.sin(time*0.0012 + meta.phase) * 0.032;
+        const w2 = Math.cos(time*0.0010 + meta.phase*1.3) * 0.020;
+
+        const rotY = meta.rot + w2;
+
+        // trunk
+        q.setFromEuler(new THREE.Euler(w*0.25, rotY, 0));
+        v3.set(meta.x, heightAt(meta.x, meta.z) + 1.1*meta.s, meta.z);
+        s3.set(meta.s, meta.s, meta.s);
+        m4.compose(v3, q, s3);
+        trunks.setMatrixAt(i, m4);
+
+        // leaves
+        q.setFromEuler(new THREE.Euler(w*0.95, rotY, w*0.35));
+        v3.set(meta.x, heightAt(meta.x, meta.z) + 2.55*meta.s, meta.z);
+        m4.compose(v3, q, s3);
+        leaves.setMatrixAt(i, m4);
+      }
+
+      trunks.instanceMatrix.needsUpdate = true;
+      leaves.instanceMatrix.needsUpdate = true;
     }
-    resetPosition();
 
-    // ===== Minimap =====
-    function mmWorldToMap(wx,wz){
+    // ===== Fireflies motion (surprise #2: a swarm forms if you stand still) =====
+    let stillTimer = 0;
+    function animateFireflies(time, speed){
+      const still = speed < 0.15;
+      stillTimer = still ? Math.min(8, stillTimer + 0.016) : Math.max(0, stillTimer - 0.050);
+
+      for(const f of fireflies){
+        const d = f.userData;
+        d.phase += d.speed * 0.016;
+        const swarm = Math.max(0, stillTimer - 2.2);
+        const pullX = swarm ? (camera.position.x - d.base.x) * 0.0012 * swarm : 0;
+        const pullZ = swarm ? (camera.position.z - d.base.z) * 0.0012 * swarm : 0;
+
+        f.position.x = d.base.x + Math.sin(d.phase + time*0.0005)*d.amp*2.2 + pullX*20;
+        f.position.z = d.base.z + Math.cos(d.phase + time*0.00045)*d.amp*2.0 + pullZ*20;
+        f.position.y = heightAt(f.position.x, f.position.z) + 1.1 + (0.6 + Math.sin(d.phase*1.3)*0.5);
+      }
+    }
+
+    // ===== Minimap (terrain shading + totems + compass) =====
+    function mmRoundRect(ctx,x,y,w,h,r){
+      const rr=Math.min(r,w/2,h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+rr,y);
+      ctx.arcTo(x+w,y,x+w,y+h,rr);
+      ctx.arcTo(x+w,y+h,x,y+h,rr);
+      ctx.arcTo(x,y+h,x,y,rr);
+      ctx.arcTo(x,y,x+w,y,rr);
+      ctx.closePath();
+    }
+    function worldToMap(wx,wz){
       const nx = (wx - BOUNDS.minX) / (BOUNDS.maxX - BOUNDS.minX);
       const nz = (wz - BOUNDS.minZ) / (BOUNDS.maxZ - BOUNDS.minZ);
       return { x:nx, y:nz };
-    }
-    function mmRoundRect(ctx,x,y,w,h,r){
-      const rr = Math.min(r, w/2, h/2);
-      ctx.beginPath();
-      ctx.moveTo(x+rr, y);
-      ctx.arcTo(x+w, y, x+w, y+h, rr);
-      ctx.arcTo(x+w, y+h, x, y+h, rr);
-      ctx.arcTo(x, y+h, x, y, rr);
-      ctx.arcTo(x, y, x+w, y, rr);
-      ctx.closePath();
     }
     function drawMinimap(){
       if(mobile) return;
@@ -797,38 +1036,70 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
       const W=mm.width, H=mm.height;
       mmCtx.clearRect(0,0,W,H);
 
+      // background card
       mmCtx.globalAlpha=1;
       mmCtx.fillStyle="rgba(0,0,0,0.35)";
       mmRoundRect(mmCtx,0,0,W,H,18); mmCtx.fill();
 
-      mmCtx.globalAlpha=.70;
-      mmCtx.strokeStyle="rgba(205,255,140,0.18)";
+      // terrain shading (cheap height sampling)
+      const pad=16;
+      const innerW=W-2*pad, innerH=H-2*pad;
+
+      const step = QUALITY.ultra ? 10 : 14;
+      for(let y=0;y<innerH;y+=step){
+        for(let x=0;x<innerW;x+=step){
+          const nx = x/innerW;
+          const nz = y/innerH;
+          const wx = BOUNDS.minX + nx*(BOUNDS.maxX-BOUNDS.minX);
+          const wz = BOUNDS.minZ + nz*(BOUNDS.maxZ-BOUNDS.minZ);
+          const h = heightAt(wx,wz);
+          const t = THREE.MathUtils.clamp((h+2)/8, 0, 1);
+          const a = 0.12 + t*0.18;
+          mmCtx.fillStyle = `rgba(205,255,140,${a})`;
+          mmCtx.fillRect(pad+x, pad+y, step, step);
+        }
+      }
+
+      // clearing circle
+      mmCtx.globalAlpha=1;
+      const c = worldToMap(CLEARING.x, CLEARING.z);
+      const cx = pad + c.x*innerW;
+      const cy = pad + c.y*innerH;
+      mmCtx.strokeStyle="rgba(255,255,255,0.18)";
       mmCtx.lineWidth=2;
-      mmCtx.strokeRect(18,18,W-36,H-36);
+      mmCtx.beginPath();
+      mmCtx.arc(cx, cy, (CLEARING.r/(BOUNDS.maxX-BOUNDS.minX))*innerW, 0, Math.PI*2);
+      mmCtx.stroke();
 
-      const pad=18;
+      // frame
+      mmCtx.globalAlpha=1;
+      mmCtx.strokeStyle="rgba(255,255,255,0.16)";
+      mmCtx.lineWidth=1;
+      mmRoundRect(mmCtx,0.5,0.5,W-1,H-1,18); mmCtx.stroke();
 
+      // totems
       for(let i=0;i<totems.length;i++){
-        const t=totems[i];
-        const m=mmWorldToMap(t.x, t.z);
-        const x=pad + m.x*(W-2*pad);
-        const y=pad + m.y*(H-2*pad);
+        const t = totems[i];
+        const m = worldToMap(t.x,t.z);
+        const x = pad + m.x*innerW;
+        const y = pad + m.y*innerH;
         const isFocus = (i===focused);
 
-        mmCtx.globalAlpha=isFocus?1:0.85;
+        mmCtx.globalAlpha = isFocus ? 1 : 0.85;
         mmCtx.beginPath();
-        mmCtx.strokeStyle=isFocus?"rgba(205,255,140,0.92)":"rgba(255,255,255,0.55)";
-        mmCtx.lineWidth=isFocus?3:2;
+        mmCtx.strokeStyle = isFocus ? "rgba(205,255,140,0.92)" : "rgba(255,255,255,0.55)";
+        mmCtx.lineWidth = isFocus ? 3 : 2;
         mmCtx.arc(x,y,8,0,Math.PI*2); mmCtx.stroke();
 
         mmCtx.beginPath();
-        mmCtx.fillStyle=isFocus?"rgba(205,255,140,0.92)":"rgba(255,255,255,0.65)";
+        mmCtx.fillStyle = isFocus ? "rgba(205,255,140,0.92)" : "rgba(255,255,255,0.65)";
         mmCtx.arc(x,y,2.6,0,Math.PI*2); mmCtx.fill();
       }
 
-      const mp=mmWorldToMap(camera.position.x, camera.position.z);
-      const px=pad + mp.x*(W-2*pad);
-      const py=pad + mp.y*(H-2*pad);
+      // player + heading
+      const mp = worldToMap(camera.position.x, camera.position.z);
+      const px = pad + mp.x*innerW;
+      const py = pad + mp.y*innerH;
 
       mmCtx.globalAlpha=0.55;
       mmCtx.fillStyle="rgba(205,255,140,0.35)";
@@ -839,7 +1110,7 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
       mmCtx.beginPath(); mmCtx.arc(px,py,4.2,0,Math.PI*2); mmCtx.fill();
 
       const ang = camera.rotation.y - Math.PI/2;
-      mmCtx.strokeStyle="rgba(255,255,255,0.80)";
+      mmCtx.strokeStyle="rgba(255,255,255,0.82)";
       mmCtx.lineWidth=2;
       mmCtx.beginPath();
       mmCtx.moveTo(px,py);
@@ -848,6 +1119,7 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
 
       mmPos.textContent = `x ${camera.position.x.toFixed(1)} • z ${camera.position.z.toFixed(1)}`;
 
+      // nearest
       let best={i:-1,d:1e9};
       for(let i=0;i<totems.length;i++){
         const t=totems[i];
@@ -855,186 +1127,164 @@ if (fu?.sIntensity) fu.sIntensity.value = v ? 0.35 : 0.20;
         if(d<best.d) best={i,d};
       }
       mmNear.textContent = best.i>=0 ? `Nearest: ${PACKS[best.i].name} (${best.d.toFixed(1)}m)` : "Nearest: —";
+
+      // compass
+      const deg = ((-camera.rotation.y * 180/Math.PI) % 360 + 360) % 360;
+      const dirs = ["N","NE","E","SE","S","SW","W","NW"];
+      const idx = Math.round(deg/45) % 8;
+      mmHead.textContent = `${dirs[idx]} ↑`;
     }
 
-    function updateTotems(time){
-      for(let i=0;i<totems.length;i++){
-        const t = totems[i];
-
-        t.group.lookAt(camera.position.x, t.group.position.y, camera.position.z);
-
-        const pulse = 0.5 + 0.5*Math.sin(time*0.002 + i);
-        t.ring.scale.setScalar(1 + pulse*0.10);
-
-        if(i === focused){
-          if(t.screenMat.map !== t.videoTex){
-            t.screenMat.map = t.videoTex;
-            t.screenMat.needsUpdate = true;
-          }
-          t.screenMat.emissiveIntensity = 0.60;
-        } else {
-          if(t.screenMat.map !== t.posterTex){
-            t.screenMat.map = t.posterTex;
-            t.screenMat.needsUpdate = true;
-          }
-          t.screenMat.emissiveIntensity = 0.35;
-        }
-      }
-    }
-
-    // sway (simple)
-    const m4 = new THREE.Matrix4();
-    const q = new THREE.Quaternion();
-    const v3 = new THREE.Vector3();
-    const s3 = new THREE.Vector3();
-    function swayTrees(time, frame){
-      const swayEvery = QUALITY.ultra ? 2 : 4;
-      if(frame % swayEvery !== 0) return;
-      const step = QUALITY.ultra ? 3 : 5;
-
-      for(let i=0;i<targetTreeCount;i+=step){
-        const meta = treeMeta[i];
-        if(!meta) continue;
-
-        const w  = Math.sin(time*0.0012 + meta.phase) * 0.03;
-        const w2 = Math.cos(time*0.0010 + meta.phase*1.3) * 0.02;
-        const rotY = meta.rot + w2;
-
-        q.setFromEuler(new THREE.Euler(w*0.25, rotY, 0));
-        v3.set(meta.x, heightAt(meta.x, meta.z)+1.1*meta.s, meta.z);
-        s3.set(meta.s, meta.s, meta.s);
-        m4.compose(v3, q, s3);
-        trunks.setMatrixAt(i, m4);
-
-        q.setFromEuler(new THREE.Euler(w*0.9, rotY, w*0.35));
-        v3.set(meta.x, heightAt(meta.x, meta.z)+2.55*meta.s, meta.z);
-        m4.compose(v3, q, s3);
-        leaves.setMatrixAt(i, m4);
-      }
-      trunks.instanceMatrix.needsUpdate = true;
-      leaves.instanceMatrix.needsUpdate = true;
-    }
+    // ===== Quality button =====
+    qualityBtn.addEventListener("click", ()=>{
+      QUALITY.set(!QUALITY.ultra);
+      swayEvery = QUALITY.ultra ? 2 : 4;
+      mmHint.textContent = QUALITY.ultra ? "Clearing + terrain (Ultra)" : "Clearing + terrain (Lite)";
+    });
+    QUALITY.set(QUALITY.ultra);
 
     // ===== Resize =====
     addEventListener("resize", ()=>{
       renderer.setSize(innerWidth, innerHeight);
-      composer.setSize(innerWidth, innerHeight);
       camera.aspect = innerWidth/innerHeight;
       camera.updateProjectionMatrix();
+      composer.setSize(innerWidth, innerHeight);
     }, {passive:true});
 
-    // ===== Main loop =====
+    // ===== Render loop =====
     let frames=0, fpsLast=performance.now(), frame=0;
 
-    function animate(time){
+    function animate(t){
       requestAnimationFrame(animate);
       frame++;
 
       const dt = Math.min(0.033, clock.getDelta());
 
-      // Turn smoothing: Q/E adds angular velocity, then friction
-      const turnAccel = 3.2;
-      const turnFriction = 10.0;
-      if(keys.q) yawVel += turnAccel * dt;
-      if(keys.e) yawVel -= turnAccel * dt;
-      yawVel -= yawVel * Math.min(1, turnFriction * dt);
-      camera.rotation.y += yawVel * dt;
+      // Q/E turn (keyboard) — pointer lock still does mouse look
+      if(keys.q) camera.rotation.y += 1.55 * dt;
+      if(keys.e) camera.rotation.y -= 1.55 * dt;
 
-      // Input direction
-      dir.set(0,0,0);
-      if(keys.w) dir.z -= 1;
-      if(keys.s) dir.z += 1;
-      if(keys.a) dir.x -= 1;
-      if(keys.d) dir.x += 1;
-      if(dir.lengthSq() > 0) dir.normalize();
-
-      // Build movement vector relative to view
+      // Build forward/right vectors
       camera.getWorldDirection(forward);
       forward.y = 0; forward.normalize();
-      right.crossVectors(forward, up).normalize().negate();
+      right.crossVectors(forward, up).normalize(); // true right
 
-      const wish = new THREE.Vector3()
-        .addScaledVector(forward, dir.z)
-        .addScaledVector(right,   dir.x);
+      // ✅ FIXED INVERSION:
+      // W = forward (+1), S = back (-1)
+      const inputF = (keys.w ? 1 : 0) + (keys.s ? -1 : 0);
+      const inputR = (keys.d ? 1 : 0) + (keys.a ? -1 : 0);
 
-      // Steam-feel numbers
-      const run = keys.shift;
-      const maxSpeed = (run ? 5.4 : 4.1) * (mobile ? 0.90 : 1);
-      const accel = (run ? 18.0 : 14.0);
-      const friction = 10.5;
+      // Mobile joystick contributes to forward/right
+      const jF = mobile ? (-joyState.dy) : 0; // up on stick => forward
+      const jR = mobile ? ( joyState.dx) : 0;
 
-      // accelerate towards wish direction
-      if(wish.lengthSq() > 0){
-        wish.normalize();
-        vel.x += wish.x * accel * dt;
-        vel.z += wish.z * accel * dt;
-      } else {
-        // friction when no input
-        const f = Math.min(1, friction * dt);
-        vel.x *= (1 - f);
-        vel.z *= (1 - f);
-      }
+      wish.set(0,0,0);
+      wish.addScaledVector(forward, inputF + jF);
+      wish.addScaledVector(right,   inputR + jR);
 
-      // clamp horizontal speed
-      const speed = Math.hypot(vel.x, vel.z);
-      if(speed > maxSpeed){
-        const k = maxSpeed / speed;
-        vel.x *= k; vel.z *= k;
-      }
+      const moving = wish.lengthSq() > 0.0001;
+      if(moving) wish.normalize();
 
-      // apply movement
+      // Steam-feel movement: accel + friction
+      const maxSpeed = (keys.shift ? 6.6 : 4.8) * (mobile ? 0.90 : 1);
+      const accel = moving ? (keys.shift ? 18 : 14) : 0;
+      const friction = moving ? 8 : 14;
+
+      // accelerate toward wish
+      const targetVx = wish.x * maxSpeed;
+      const targetVz = wish.z * maxSpeed;
+
+      vel.x += (targetVx - vel.x) * Math.min(1, accel * dt);
+      vel.z += (targetVz - vel.z) * Math.min(1, accel * dt);
+
+      // friction (stops floatiness)
+      vel.x *= Math.max(0, 1 - friction*dt);
+      vel.z *= Math.max(0, 1 - friction*dt);
+
+      // integrate
       camera.position.x += vel.x * dt;
       camera.position.z += vel.z * dt;
 
-      // collisions + bounds
-      clampBounds(camera.position);
+      // bounds + collisions + ground
+      clampBoundsXZ(camera.position);
       resolveTreeCollisions(camera.position);
-      clampBounds(camera.position);
+      snapToGround(camera.position);
 
-      // ground snap + headbob
-      const gy = groundY(camera.position.x, camera.position.z);
-      const moving = speed > 0.25;
+      const speed = Math.hypot(vel.x, vel.z);
 
-      if(moving) bobPhase += dt * (run ? 11.0 : 9.0);
-      else bobPhase *= 0.96;
+      // zone label + soft anti-lost guidance
+      const distToClearing = Math.hypot(camera.position.x - CLEARING.x, camera.position.z - CLEARING.z);
+      zoneChip.textContent = distToClearing < CLEARING.r ? "Zone: Clearing" : (distToClearing < 75 ? "Zone: Forest" : "Zone: Edge");
 
-      const bob = moving ? (Math.sin(bobPhase) * 0.06 + Math.sin(bobPhase*0.5) * 0.03) : 0;
-      camera.position.y = gy + 2.2 + bob;
+      if(distToClearing > 110){
+        // soft pull back (you can’t disappear into nowhere)
+        const pull = 0.020;
+        camera.position.x += (CLEARING.x - camera.position.x) * pull;
+        camera.position.z += (CLEARING.z - camera.position.z) * pull;
+        vel.multiplyScalar(0.92);
+      }
 
-      // sky follows
+      // head-bob + subtle fov kick (Steam feel)
+      const bobTarget = Math.min(1, speed / 4.2);
+      bob += dt * (2.2 + bobTarget*6.5);
+      const bobY = Math.sin(bob) * 0.05 * bobTarget;
+      camera.position.y = heightAt(camera.position.x, camera.position.z) + 2.15 + bobY;
+
+      const fovKick = THREE.MathUtils.clamp(speed / 7.0, 0, 1) * 3.0;
+      camera.fov = baseFov + fovKick;
+      camera.updateProjectionMatrix();
+
+      // keep sky centred (infinite feel)
       sky.position.copy(camera.position);
       sky.rotation.y += 0.00018;
 
-      // focus + UI
+      // focus / UI
       updateFocus();
-
       if(focused >= 0){
         dockTitle.textContent = PACKS[focused].name;
-        const t = totems[focused];
-        const d = Math.hypot(camera.position.x - t.x, camera.position.z - t.z);
-        dockSub.textContent = d < 4.4 ? "Press F to enter" : `Walk closer (${d.toFixed(1)}m)`;
-      } else {
+        const tt = totems[focused];
+        const d = Math.hypot(camera.position.x - tt.x, camera.position.z - tt.z);
+        dockSub.textContent = d < 4.8 ? "Press F to enter" : `Walk closer (${d.toFixed(1)}m)`;
+      }else{
         dockTitle.textContent = "Forest Clearing";
         dockSub.textContent = "Find a totem.";
       }
 
-      updateTotems(time);
-      swayTrees(time, frame);
+      // totems / atmosphere
+      updateTotems(t);
+      animateFireflies(t, speed);
+      swayTrees(t, frame);
 
-      // render with post fx (always)
+      // “surprise #3”: fog breathes subtly when you sprint (only ultra)
+      if(QUALITY.ultra){
+        const fu = filmPass?.uniforms || filmPass?.material?.uniforms;
+        if(fu?.nIntensity) fu.nIntensity.value = 0.18 + (keys.shift ? 0.06 : 0) + Math.min(0.05, speed*0.01);
+      }
+
+      // render
       composer.render();
 
+      // minimap
       drawMinimap();
 
-      // FPS
+      // fps
       frames++;
-      const now=performance.now();
+      const now = performance.now();
       if(now - fpsLast > 500){
         fpsChip.textContent = `FPS: ${Math.round(frames*1000/(now-fpsLast))}`;
         frames=0; fpsLast=now;
       }
     }
 
+    // Menu uses Esc
+    addEventListener("keydown",(e)=>{
+      if(e.key === "Escape"){
+        // if already open, close
+        if(menu.style.display === "flex") toggleMenu(false);
+      }
+    });
+
+    // Start loop
     animate(performance.now());
   </script>
 </body>
