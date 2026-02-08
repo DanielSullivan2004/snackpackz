@@ -6,6 +6,16 @@
   <title>Snack Packz — 3D Forest</title>
   <meta name="theme-color" content="#050705"/>
 
+  <!-- ✅ FIX for GitHub Pages: allow "import ... from 'three'" -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
   <style>
     :root{
       --fg:rgba(255,255,255,.92);
@@ -27,7 +37,6 @@
 
     #stage{ position:fixed; inset:0; z-index:0; background:#020302; }
 
-    /* premium film/vignette */
     .film{
       pointer-events:none;
       position:fixed; inset:0; z-index:40;
@@ -189,10 +198,10 @@
     }
     .menuBtn.primary{ background: rgba(255,255,255,.90); color:#070a08; border-color: rgba(255,255,255,.25); }
 
-    /* error overlay (bulletproof) */
+    /* Crash overlay */
     #err{
       position:fixed; left:18px; top:110px;
-      width:min(760px, calc(100vw - 36px));
+      width:min(820px, calc(100vw - 36px));
       background: rgba(255,0,0,.10);
       border:1px solid rgba(255,90,90,.35);
       border-radius: 18px;
@@ -278,7 +287,7 @@
   </div>
 
   <div id="err">
-    <b>Crash reason (this is why it would go black)</b>
+    <b>Crash reason</b>
     <pre id="errText"></pre>
   </div>
 
@@ -298,8 +307,12 @@
   </script>
 
   <script type="module">
-    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-    import { PointerLockControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/PointerLockControls.js";
+    import * as THREE from "three";
+    import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
+    import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+    import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+    import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+    import { FilmPass } from "three/addons/postprocessing/FilmPass.js";
 
     // ===== Packs =====
     const PACKS = [
@@ -335,6 +348,29 @@
 
     // ===== World bounds =====
     const BOUNDS = { minX:-55, maxX:55, minZ:-92, maxZ:26 };
+
+    // ===== Quality =====
+    const QUALITY = {
+      ultra: !mobile && !reduce,
+      set(v){
+        this.ultra = v;
+        qualityBtn.setAttribute("aria-pressed", String(v));
+        qualityBtn.textContent = `Quality: ${v ? "Ultra" : "Lite"}`;
+        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, v ? 2 : 1.25));
+        scene.fog.near = v ? 28 : 18;
+        scene.fog.far  = v ? 92 : 60;
+
+        // post FX intensity
+        bloomPass.strength = v ? 0.45 : 0.20;
+        bloomPass.radius   = v ? 0.35 : 0.25;
+        bloomPass.threshold= v ? 0.20 : 0.30;
+        filmPass.uniforms.nIntensity.value = v ? 0.22 : 0.12;
+        filmPass.uniforms.sIntensity.value = v ? 0.35 : 0.20;
+
+        // world density
+        targetTreeCount = v ? 1500 : 820;
+      }
+    };
 
     // ===== Noise =====
     function hash2(x,z){
@@ -376,28 +412,16 @@
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setSize(innerWidth, innerHeight);
     renderer.setClearColor(0x020302, 1);
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, QUALITY.ultra ? 2 : 1.25));
 
     const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x050705, QUALITY.ultra ? 28 : 18, QUALITY.ultra ? 92 : 60);
+
     const camera = new THREE.PerspectiveCamera(72, innerWidth/innerHeight, 0.08, 420);
     camera.position.set(0, 2.2, 0);
 
     const controls = new PointerLockControls(camera, document.body);
     const clock = new THREE.Clock();
-
-    // ===== Quality =====
-    const QUALITY = {
-      ultra: !mobile && !reduce,
-      set(v){
-        this.ultra = v;
-        qualityBtn.setAttribute("aria-pressed", String(v));
-        qualityBtn.textContent = `Quality: ${v ? "Ultra" : "Lite"}`;
-        renderer.setPixelRatio(Math.min(devicePixelRatio || 1, v ? 2 : 1.25));
-        scene.fog.near = v ? 28 : 18;
-        scene.fog.far  = v ? 92 : 60;
-      }
-    };
-    scene.fog = new THREE.Fog(0x050705, QUALITY.ultra ? 28 : 18, QUALITY.ultra ? 92 : 60);
-    QUALITY.set(QUALITY.ultra);
 
     // Lights
     scene.add(new THREE.HemisphereLight(0xbfe7c0, 0x0b0d0b, 0.78));
@@ -405,7 +429,28 @@
     sun.position.set(-12, 18, 12);
     scene.add(sun);
 
-    // ===== Cinema sky (forest.mp4) =====
+    // ===== Post-processing (Steam vibe) =====
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(innerWidth, innerHeight),
+      QUALITY.ultra ? 0.45 : 0.20,
+      QUALITY.ultra ? 0.35 : 0.25,
+      QUALITY.ultra ? 0.20 : 0.30
+    );
+    composer.addPass(bloomPass);
+
+    const filmPass = new FilmPass(
+      QUALITY.ultra ? 0.35 : 0.20,  // noise
+      QUALITY.ultra ? 0.22 : 0.12,  // scanlines
+      648,                          // scanline count
+      false
+    );
+    composer.addPass(filmPass);
+
+    // ===== Cinema sky video =====
     const skyVideo = document.createElement("video");
     skyVideo.src = "assets/forest.mp4";
     skyVideo.loop = true;
@@ -444,7 +489,6 @@
       const h = heightAt(x,z);
       pos.setY(i, h);
 
-      // FIXED: shade exists (your file was missing it)
       const moss  = THREE.MathUtils.clamp((h+2)/6, 0, 1);
       const shade = THREE.MathUtils.clamp(0.55 + moss*0.45, 0, 1);
 
@@ -462,8 +506,10 @@
     );
     scene.add(terrain);
 
-    // ===== Trees (instanced) + sway =====
-    const treeCount = QUALITY.ultra ? 1500 : 820;
+    // ===== Trees (instanced) =====
+    let targetTreeCount = QUALITY.ultra ? 1500 : 820;
+    const treeCount = 1500; // max buffer, we can "fade" by not placing all on Lite
+
     const trunkGeo = new THREE.CylinderGeometry(0.10, 0.16, 2.2, 6);
     const trunkMat = new THREE.MeshStandardMaterial({ color: 0x2a1b12, roughness: 1.0 });
     const leafGeo  = new THREE.ConeGeometry(0.9, 2.6, 7);
@@ -474,45 +520,65 @@
     scene.add(trunks, leaves);
 
     const dummy = new THREE.Object3D();
-    const treeMeta = new Array(treeCount);
+    const treeMeta = [];
     const treeColliders = [];
+
     function inClearing(x,z){
       const r = Math.sqrt(x*x + (z+18)*(z+18));
       return r < 30;
     }
 
-    let ti=0;
-    while(ti<treeCount){
-      const x = THREE.MathUtils.randFloatSpread(135);
-      const z = THREE.MathUtils.randFloatSpread(135);
-      if(inClearing(x,z)) continue;
+    function rebuildTrees(){
+      treeMeta.length = 0;
+      treeColliders.length = 0;
 
-      const y = heightAt(x,z);
-      const s = THREE.MathUtils.randFloat(0.85, 1.70);
-      const rot = THREE.MathUtils.randFloat(0, Math.PI*2);
+      let placed = 0;
+      let tries = 0;
 
-      dummy.position.set(x, y+1.1*s, z);
-      dummy.rotation.set(0, rot, 0);
-      dummy.scale.set(s,s,s);
-      dummy.updateMatrix();
-      trunks.setMatrixAt(ti, dummy.matrix);
+      while(placed < targetTreeCount && tries < 500000){
+        tries++;
+        const x = THREE.MathUtils.randFloatSpread(135);
+        const z = THREE.MathUtils.randFloatSpread(135);
+        if(inClearing(x,z)) continue;
 
-      dummy.position.set(x, y+2.55*s, z);
-      dummy.rotation.set(0, rot, 0);
-      dummy.scale.set(s,s,s);
-      dummy.updateMatrix();
-      leaves.setMatrixAt(ti, dummy.matrix);
+        const y = heightAt(x,z);
+        const s = THREE.MathUtils.randFloat(0.85, 1.70);
+        const rot = THREE.MathUtils.randFloat(0, Math.PI*2);
 
-      treeMeta[ti] = { x, z, s, rot, phase: (x*0.11 + z*0.07) };
+        dummy.position.set(x, y+1.1*s, z);
+        dummy.rotation.set(0, rot, 0);
+        dummy.scale.set(s,s,s);
+        dummy.updateMatrix();
+        trunks.setMatrixAt(placed, dummy.matrix);
 
-      // colliders only near play area
-      if(Math.abs(x) < 70 && z > -120 && z < 60){
-        treeColliders.push({x, z, r: 0.65*s});
+        dummy.position.set(x, y+2.55*s, z);
+        dummy.rotation.set(0, rot, 0);
+        dummy.scale.set(s,s,s);
+        dummy.updateMatrix();
+        leaves.setMatrixAt(placed, dummy.matrix);
+
+        treeMeta[placed] = { x, z, s, rot, phase: (x*0.11 + z*0.07) };
+
+        if(Math.abs(x) < 70 && z > -120 && z < 60){
+          treeColliders.push({x, z, r: 0.65*s});
+        }
+
+        placed++;
       }
-      ti++;
-    }
 
-    // ===== Totems: poster + aim video =====
+      // hide unused instances
+      const hide = new THREE.Matrix4().makeScale(0,0,0);
+      for(let i=placed;i<treeCount;i++){
+        trunks.setMatrixAt(i, hide);
+        leaves.setMatrixAt(i, hide);
+      }
+
+      trunks.instanceMatrix.needsUpdate = true;
+      leaves.instanceMatrix.needsUpdate = true;
+    }
+    rebuildTrees();
+
+    // ===== Totems =====
     const loader = new THREE.TextureLoader();
     const totems = [];
 
@@ -576,7 +642,7 @@
     ];
     PACKS.forEach((p,i)=> makeTotem(p,i, totemPositions[i].x, totemPositions[i].z));
 
-    // ===== Stable input =====
+    // ===== Input =====
     const keys = {w:false,a:false,s:false,d:false,q:false,e:false,shift:false};
     addEventListener("keydown",(ev)=>{
       const k = ev.key.toLowerCase();
@@ -603,7 +669,7 @@
       if(k==="shift") keys.shift=false;
     });
 
-    // First user gesture starts media (browser rule)
+    // Start media after first gesture (browser rule)
     let startedMedia=false;
     function startMedia(){
       if(startedMedia) return;
@@ -639,7 +705,9 @@
     // Quality toggle
     qualityBtn.addEventListener("click", ()=> {
       QUALITY.set(!QUALITY.ultra);
+      rebuildTrees();
     });
+    QUALITY.set(QUALITY.ultra);
 
     // ===== Focus / raycast =====
     const raycaster = new THREE.Raycaster();
@@ -664,7 +732,7 @@
       else dockSub.textContent = `Walk closer (${d.toFixed(1)}m)`;
     }
 
-    // ===== Physics + bounds (SINGLE definitions) =====
+    // ===== Physics =====
     function clampBounds(pos){
       pos.x = THREE.MathUtils.clamp(pos.x, BOUNDS.minX, BOUNDS.maxX);
       pos.z = THREE.MathUtils.clamp(pos.z, BOUNDS.minZ, BOUNDS.maxZ);
@@ -682,12 +750,24 @@
         }
       }
     }
-    function snapToGround(pos){
-      pos.y = heightAt(pos.x, pos.z) + 2.2;
-    }
+
+    // ===== Steam-feel movement (Upgrade Pack 1) =====
+    const vel = new THREE.Vector3(0,0,0);
+    const dir = new THREE.Vector3();
+    const forward = new THREE.Vector3();
+    const right = new THREE.Vector3();
+    const up = new THREE.Vector3(0,1,0);
+
+    let yawVel = 0;
+    let bobPhase = 0;
+
+    function groundY(x,z){ return heightAt(x,z); }
 
     function resetPosition(){
-      camera.position.set(0, heightAt(0,0)+2.2, 0);
+      camera.position.set(0, groundY(0,0) + 2.2, 0);
+      vel.set(0,0,0);
+      yawVel = 0;
+      bobPhase = 0;
       dockTitle.textContent = "Forest Clearing";
       dockSub.textContent = "Find a totem.";
     }
@@ -719,14 +799,13 @@
       mmCtx.fillStyle="rgba(0,0,0,0.35)";
       mmRoundRect(mmCtx,0,0,W,H,18); mmCtx.fill();
 
-      // bounds box
       mmCtx.globalAlpha=.70;
       mmCtx.strokeStyle="rgba(205,255,140,0.18)";
       mmCtx.lineWidth=2;
       mmCtx.strokeRect(18,18,W-36,H-36);
 
-      // totems
       const pad=18;
+
       for(let i=0;i<totems.length;i++){
         const t=totems[i];
         const m=mmWorldToMap(t.x, t.z);
@@ -745,7 +824,6 @@
         mmCtx.arc(x,y,2.6,0,Math.PI*2); mmCtx.fill();
       }
 
-      // player
       const mp=mmWorldToMap(camera.position.x, camera.position.z);
       const px=pad + mp.x*(W-2*pad);
       const py=pad + mp.y*(H-2*pad);
@@ -777,7 +855,6 @@
       mmNear.textContent = best.i>=0 ? `Nearest: ${PACKS[best.i].name} (${best.d.toFixed(1)}m)` : "Nearest: —";
     }
 
-    // ===== Totems update (billboard + aim video) =====
     function updateTotems(time){
       for(let i=0;i<totems.length;i++){
         const t = totems[i];
@@ -792,7 +869,7 @@
             t.screenMat.map = t.videoTex;
             t.screenMat.needsUpdate = true;
           }
-          t.screenMat.emissiveIntensity = 0.55;
+          t.screenMat.emissiveIntensity = 0.60;
         } else {
           if(t.screenMat.map !== t.posterTex){
             t.screenMat.map = t.posterTex;
@@ -803,18 +880,17 @@
       }
     }
 
-    // ===== Tree sway (cheap but good) =====
+    // sway (simple)
     const m4 = new THREE.Matrix4();
     const q = new THREE.Quaternion();
     const v3 = new THREE.Vector3();
     const s3 = new THREE.Vector3();
-    const swayEvery = QUALITY.ultra ? 2 : 4;
-
     function swayTrees(time, frame){
+      const swayEvery = QUALITY.ultra ? 2 : 4;
       if(frame % swayEvery !== 0) return;
       const step = QUALITY.ultra ? 3 : 5;
 
-      for(let i=0;i<treeCount;i+=step){
+      for(let i=0;i<targetTreeCount;i+=step){
         const meta = treeMeta[i];
         if(!meta) continue;
 
@@ -837,16 +913,10 @@
       leaves.instanceMatrix.needsUpdate = true;
     }
 
-    // ===== Movement =====
-    const dir = new THREE.Vector3();
-    const up = new THREE.Vector3(0,1,0);
-    const forward = new THREE.Vector3();
-    const right = new THREE.Vector3();
-    const move = new THREE.Vector3();
-
     // ===== Resize =====
     addEventListener("resize", ()=>{
       renderer.setSize(innerWidth, innerHeight);
+      composer.setSize(innerWidth, innerHeight);
       camera.aspect = innerWidth/innerHeight;
       camera.updateProjectionMatrix();
     }, {passive:true});
@@ -860,36 +930,78 @@
 
       const dt = Math.min(0.033, clock.getDelta());
 
-      // Q/E turn
-      if(keys.q) camera.rotation.y += 1.25 * dt;
-      if(keys.e) camera.rotation.y -= 1.25 * dt;
+      // Turn smoothing: Q/E adds angular velocity, then friction
+      const turnAccel = 3.2;
+      const turnFriction = 10.0;
+      if(keys.q) yawVel += turnAccel * dt;
+      if(keys.e) yawVel -= turnAccel * dt;
+      yawVel -= yawVel * Math.min(1, turnFriction * dt);
+      camera.rotation.y += yawVel * dt;
 
+      // Input direction
       dir.set(0,0,0);
-      const sp = (keys.shift ? 6.2 : 4.7) * (mobile ? 0.90 : 1);
-
       if(keys.w) dir.z -= 1;
       if(keys.s) dir.z += 1;
       if(keys.a) dir.x -= 1;
       if(keys.d) dir.x += 1;
       if(dir.lengthSq() > 0) dir.normalize();
 
+      // Build movement vector relative to view
       camera.getWorldDirection(forward);
       forward.y = 0; forward.normalize();
       right.crossVectors(forward, up).normalize().negate();
 
-      move.set(0,0,0)
+      const wish = new THREE.Vector3()
         .addScaledVector(forward, dir.z)
         .addScaledVector(right,   dir.x);
 
-      camera.position.addScaledVector(move, sp * dt);
+      // Steam-feel numbers
+      const run = keys.shift;
+      const maxSpeed = (run ? 5.4 : 4.1) * (mobile ? 0.90 : 1);
+      const accel = (run ? 18.0 : 14.0);
+      const friction = 10.5;
 
+      // accelerate towards wish direction
+      if(wish.lengthSq() > 0){
+        wish.normalize();
+        vel.x += wish.x * accel * dt;
+        vel.z += wish.z * accel * dt;
+      } else {
+        // friction when no input
+        const f = Math.min(1, friction * dt);
+        vel.x *= (1 - f);
+        vel.z *= (1 - f);
+      }
+
+      // clamp horizontal speed
+      const speed = Math.hypot(vel.x, vel.z);
+      if(speed > maxSpeed){
+        const k = maxSpeed / speed;
+        vel.x *= k; vel.z *= k;
+      }
+
+      // apply movement
+      camera.position.x += vel.x * dt;
+      camera.position.z += vel.z * dt;
+
+      // collisions + bounds
       clampBounds(camera.position);
       resolveTreeCollisions(camera.position);
-      snapToGround(camera.position);
+      clampBounds(camera.position);
 
-      // sky follows you
+      // ground snap + headbob
+      const gy = groundY(camera.position.x, camera.position.z);
+      const moving = speed > 0.25;
+
+      if(moving) bobPhase += dt * (run ? 11.0 : 9.0);
+      else bobPhase *= 0.96;
+
+      const bob = moving ? (Math.sin(bobPhase) * 0.06 + Math.sin(bobPhase*0.5) * 0.03) : 0;
+      camera.position.y = gy + 2.2 + bob;
+
+      // sky follows
       sky.position.copy(camera.position);
-      sky.rotation.y += 0.0002;
+      sky.rotation.y += 0.00018;
 
       // focus + UI
       updateFocus();
@@ -907,9 +1019,12 @@
       updateTotems(time);
       swayTrees(time, frame);
 
-      renderer.render(scene, camera);
+      // render with post fx (always)
+      composer.render();
+
       drawMinimap();
 
+      // FPS
       frames++;
       const now=performance.now();
       if(now - fpsLast > 500){
@@ -918,7 +1033,6 @@
       }
     }
 
-    // Start loop
     animate(performance.now());
   </script>
 </body>
